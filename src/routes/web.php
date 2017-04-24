@@ -3,7 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middleware' => 'web', 'prefix' => 'proposition'], function() {
+Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middleware' => ['web', 'auth'], 'prefix' => 'proposition'], function() {
     Route::get('basic_data', function() {
         return view(config('app.template') . '::proposition.basic_data');
     });
