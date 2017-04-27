@@ -24,5 +24,8 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
     });
     Route::get('distribution_expense', function() {
         return view(config('app.template') . '::proposition.distribution_expense');
+    });    
+    Route::get('layout_expense', function() {
+        return view(config('app.template') . '::proposition.layout_expense');
     });
 });
