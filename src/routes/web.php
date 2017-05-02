@@ -46,5 +46,11 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
     });    
     Route::get('proposition', function() {
         return view(config('app.template') . '::proposition.proposition');
+    });     
+    Route::get('work_order', function() {
+        return view(config('app.template') . '::proposition.work_order');
+    });     
+    Route::get('documents', function() {
+        return view(config('app.template') . '::proposition.documents');
     });    
 });
