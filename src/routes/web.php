@@ -44,4 +44,7 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
     Route::get('list', function() {
         return view(config('app.template') . '::proposition.list');
     });    
+    Route::get('proposition', function() {
+        return view(config('app.template') . '::proposition.proposition');
+    });    
 });
