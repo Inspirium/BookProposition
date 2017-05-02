@@ -40,5 +40,8 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
     }); 
     Route::get('precalculation', function() {
         return view(config('app.template') . '::proposition.precalculation');
+    });   
+    Route::get('list', function() {
+        return view(config('app.template') . '::proposition.list');
     });    
 });
