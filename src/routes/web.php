@@ -52,5 +52,20 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
     });     
     Route::get('documents', function() {
         return view(config('app.template') . '::proposition.documents');
+    });       
+    Route::get('expense', function() {
+        return view(config('app.template') . '::proposition.expense');
+    });        
+    Route::get('compare', function() {
+        return view(config('app.template') . '::proposition.compare');
+    });    
+    Route::get('task', function() {
+        return view(config('app.template') . '::proposition.task');
+    });     
+    Route::get('task_details', function() {
+        return view(config('app.template') . '::proposition.task_details');
+    });      
+    Route::get('categorization', function() {
+        return view(config('app.template') . '::proposition.categorization');
     });    
 });
