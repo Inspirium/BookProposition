@@ -67,5 +67,8 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
     });      
     Route::get('categorization', function() {
         return view(config('app.template') . '::proposition.categorization');
+    });       
+    Route::get('task_new', function() {
+        return view(config('app.template') . '::proposition.task_new');
     });    
 });
