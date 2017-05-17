@@ -7,6 +7,7 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
 
     Route::get('/', 'PropositionController@show');
     Route::get('edit/{id?}', 'PropositionController@edit');
+    Route::get('categorization', 'PropositionController@categorization');
 
     Route::get('basic_data', function() {
         return view(config('app.template') . '::proposition.basic_data');
@@ -69,9 +70,7 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
     Route::get('task_details', function() {
         return view(config('app.template') . '::proposition.task_details');
     });
-    Route::get('categorization', function() {
-        return view(config('app.template') . '::proposition.categorization');
-    });
+
     Route::get('task_new', function() {
         return view(config('app.template') . '::proposition.task_new');
     });
