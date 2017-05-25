@@ -70,8 +70,10 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
     Route::get('task_details', function() {
         return view(config('app.template') . '::proposition.task_details');
     });
-
     Route::get('task_new', function() {
         return view(config('app.template') . '::proposition.task_new');
+    });
+    Route::get('department-list', function() {
+        return view(config('app.template') . '::proposition.department-list');
     });
 });
