@@ -17,6 +17,17 @@ class BookProposition extends Model {
 
     protected $table = 'propositions';
 
+    protected $fillable = [
+        'id', 'title', 'status', 'step', 'concept', 'manuscript', 'dotation', 'dotation_origin', 'dotaion_amount',
+        'possible_products', 'basic_data_note',
+        'created_at', 'update_at', 'deleted_at'
+    ];
+    protected $visible = [
+        'id', 'title', 'status', 'step', 'concept', 'manuscript', 'dotation', 'dotation_origin', 'dotaion_amount',
+        'possible_products', 'basic_data_note',
+        'created_at', 'update_at', 'deleted_at'
+    ];
+
     protected $casts = [
         'title' => 'string',
         'concept' => 'string',

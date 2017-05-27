@@ -18,6 +18,7 @@ class CreatePropositionsTable extends Migration
             $table->integer('owner_id');
             $table->string('title');
             $table->string('status');
+            $table->string('step');
             $table->text('concept');
             $table->string('manuscript');
             $table->boolean('dotation');

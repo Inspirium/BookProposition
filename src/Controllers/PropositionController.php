@@ -4,6 +4,7 @@ namespace Inspirium\BookProposition\Controllers;
 
 use App\Http\Controllers\Controller;
 use Inspirium\BookManagement\Models\BookCategory;
+use Inspirium\BookProposition\Models\BookProposition;
 
 class PropositionController extends Controller {
 
@@ -12,8 +13,9 @@ class PropositionController extends Controller {
     }
 
     public function edit( $id = null ) {
-        //get step, return view
-        return view(config('app.template') . '::proposition.edit');
+        $proposition = BookProposition::firstOrNew(['id' => $id]);
+        //$proposition = [];
+        return view(config('app.template') . '::proposition.edit', compact('proposition'));
     }
 
     public function categorization() {
