@@ -3,8 +3,15 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middleware' => ['web', 'auth'], 'prefix' => 'proposition'], function() {
+Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Inspirium\BookProposition\Controllers',], function() {
 
+	Route::get('propositions', 'PropositionController@show');
+
+Route::group(['prefix' => 'proposition'], function() {
+
+	Route::any('{all}', function() {
+		return view(config('app.template') . '::router-view');
+	});
     Route::get('/', 'PropositionController@show');
     Route::get('edit/{id?}', 'PropositionController@edit');
     Route::get('categorization', 'PropositionController@categorization');
@@ -76,4 +83,6 @@ Route::group(['namespace' => 'Inspirium\BookProposition\Controllers', 'middlewar
     Route::get('department-list', function() {
         return view(config('app.template') . '::proposition.department-list');
     });
+});
+
 });
