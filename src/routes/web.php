@@ -9,14 +9,11 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Inspirium\BookPro
 
 Route::group(['prefix' => 'proposition'], function() {
 
-	Route::any('{all}', function() {
-		return view(config('app.template') . '::router-view');
-	});
     Route::get('/', 'PropositionController@show');
     Route::get('edit/{id?}', 'PropositionController@edit');
     Route::get('categorization', 'PropositionController@categorization');
 
-    Route::get('basic_data', function() {
+   /* Route::get('basic_data', function() {
         return view(config('app.template') . '::proposition.basic_data');
     });
     Route::get('market_potential', function() {
@@ -24,7 +21,7 @@ Route::group(['prefix' => 'proposition'], function() {
     });
     Route::get('technical_data', function() {
         return view(config('app.template') . '::proposition.technical_data');
-    });
+    });*/
     Route::get('print', function() {
         return view(config('app.template') . '::proposition.print');
     });
@@ -35,6 +32,7 @@ Route::group(['prefix' => 'proposition'], function() {
         return view(config('app.template') . '::proposition.production_expense');
         return view(config('app.template') . '::proposition.production_expense');
     });
+
     Route::get('marketing_expense', function() {
         return view(config('app.template') . '::proposition.marketing_expense');
     });
@@ -83,6 +81,9 @@ Route::group(['prefix' => 'proposition'], function() {
     Route::get('department-list', function() {
         return view(config('app.template') . '::proposition.department-list');
     });
+	Route::any('{all}', function() {
+		return view(config('app.template') . '::router-view');
+	});
 });
 
 });
