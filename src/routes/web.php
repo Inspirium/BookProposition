@@ -11,7 +11,6 @@ Route::group(['prefix' => 'proposition'], function() {
 
     Route::get('/', 'PropositionController@show');
     Route::get('edit/{id?}', 'PropositionController@edit');
-    Route::get('categorization', 'PropositionController@categorization');
 	Route::any('{all}', function() {
 		return view(config('app.template') . '::router-view');
 	});
@@ -34,7 +33,6 @@ Route::group(['prefix' => 'proposition'], function() {
         return view(config('app.template') . '::proposition.production_expense');
         return view(config('app.template') . '::proposition.production_expense');
     });
-*/
     Route::get('marketing_expense', function() {
         return view(config('app.template') . '::proposition.marketing_expense');
     });
@@ -53,6 +51,7 @@ Route::group(['prefix' => 'proposition'], function() {
     Route::get('precalculation', function() {
         return view(config('app.template') . '::proposition.precalculation');
     });
+   */
     Route::get('list', function() {
         return view(config('app.template') . '::proposition.list');
     });
