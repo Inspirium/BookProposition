@@ -10,7 +10,6 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Inspirium\BookPro
 Route::group(['prefix' => 'proposition'], function() {
 
     Route::get('/', 'PropositionController@show');
-    Route::get('edit/{id?}', 'PropositionController@edit');
 	Route::get('list', function() {
 		return view(config('app.template') . '::proposition.list');
 	});
@@ -41,10 +40,13 @@ Route::group(['prefix' => 'proposition'], function() {
 	Route::get('department-list', function() {
 		return view(config('app.template') . '::proposition.department-list');
 	});
-
+	Route::any('{id}/{all}', function() {
+		return view(config('app.template') . '::router-view');
+	});
 	Route::any('{all}', function() {
 		return view(config('app.template') . '::router-view');
 	});
+
    /* Route::get('basic_data', function() {
         return view(config('app.template') . '::proposition.basic_data');
     });

@@ -1,6 +1,7 @@
 <?php
 
-Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inpirium\BookProposition\Controllers', 'prefix' => 'api/proposition'], function() {
+Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\BookProposition\Controllers\Api', 'prefix' => 'api/proposition'], function() {
+	Route::get('{id}', 'PropositionController@getProposition');
     Route::post('/', function() {
        return response()->json(['id' => 1]);
     });

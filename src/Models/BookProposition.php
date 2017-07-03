@@ -18,14 +18,12 @@ class BookProposition extends Model {
     protected $table = 'propositions';
 
     protected $fillable = [
-        'id', 'title', 'status', 'step', 'concept', 'manuscript', 'dotation', 'dotation_origin', 'dotaion_amount',
-        'possible_products', 'basic_data_note',
-        'created_at', 'update_at', 'deleted_at'
-    ];
-    protected $visible = [
-        'id', 'title', 'status', 'step', 'concept', 'manuscript', 'dotation', 'dotation_origin', 'dotaion_amount',
-        'possible_products', 'basic_data_note',
-        'created_at', 'update_at', 'deleted_at'
+        'id', 'title',  'concept', 'manuscript', 'dotation', 'dotation_origin', 'dotaion_amount',
+        'possible_products', 'supergroup_id', 'upgroup_id',
+	    'group_id', 'book_type_group_id', 'book_type_id',
+	    'school_type', 'school_level', 'school_assignment',
+	    'school_subject_id', 'school_subject_detailed_id',
+	    'biblioteca', 'main_target', 'status'
     ];
 
     protected $casts = [
@@ -36,8 +34,24 @@ class BookProposition extends Model {
         'dotation_origin' => 'string',
         'dotation_amount' => 'float',
         'possible_products' => 'array',
-        'basic_data_note' => 'string'
+	    'supergroup_id' => 'integer',
+	    'upgroup_id' => 'integer',
+	    'group_id' => 'integer',
+	    'book_type_group_id' => 'integer',
+	    'book_type_id' => 'integer',
+	    'school_type' => 'string',
+	    'school_level' => 'array',
+	    'school_assignment' => 'boolean',
+	    'school_subject_id' => 'integer',
+	    'school_subject_detailed_id' => 'integer',
+	    'biblioteca' => 'integer',
+	    'main_target' => 'string',
+	    'status' => 'string'
     ];
+
+    public function owner() {
+    	return $this->belongsTo('Inspirium\UserManagement\Models\User', 'owner_id');
+    }
 
     public function authorExpenses() {
         return $this->hasMany('Inspirium\BookProposition\Models\AuthorExpense', 'proposition_id');
@@ -47,4 +61,11 @@ class BookProposition extends Model {
         return $this->belongsToMany('Inspirium\BookManagement\Models\Author', 'pivot_proposition_author', 'author_id', 'proposition_id');
     }
 
+	public function notes() {
+    	return $this->hasMany('Inspirium\BookProposition\Models\PropositionNote');
+	}
+
+	public function getNotesAttribute(){
+		return $this->attributes['notes'] = $this->getRelationValue('notes')->keyBy('type');
+	}
 }

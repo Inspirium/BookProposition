@@ -9,7 +9,11 @@ use Inspirium\BookProposition\Models\BookProposition;
 class PropositionController extends Controller {
 
     public function show() {
-        return view(config('app.template') . '::proposition.list');
+    	$approval = BookProposition::where('status', 'pending')->get();
+    	$unfinished = BookProposition::where('status', 'unfinished')->get();
+    	$active = BookProposition::where('status', 'active')->get();
+    	$rejected = BookProposition::where('status', 'rejected')->get();
+        return view(config('app.template') . '::proposition.list', compact('approval', 'unfinished', 'active', 'rejected'));
     }
 
     public function edit( $id = null ) {
