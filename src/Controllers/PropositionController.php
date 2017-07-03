@@ -14,7 +14,6 @@ class PropositionController extends Controller {
 
     public function edit( $id = null ) {
         $proposition = BookProposition::firstOrNew(['id' => $id]);
-        //$proposition = [];
         return view(config('app.template') . '::proposition.edit', compact('proposition'));
     }
 
