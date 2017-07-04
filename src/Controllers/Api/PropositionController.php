@@ -146,7 +146,91 @@ class PropositionController extends Controller {
 				'dotation_amount' => $proposition->dotation_amount,
 				'dotation_origin' => $proposition->dotation_origin,
 				'manuscript' => $proposition->manuscript,
-			]
+			],
+			'categorization' => [
+				'supergroup' => $proposition->supergroup_id,
+				'upgroup' => $proposition->upgroup_id,
+				'group' => $proposition->group_id,
+				'book_type_group' => $proposition->book_type_group_id,
+				'book_type' => $proposition->book_type_id,
+				'school_type' => $proposition->school_type,
+				'school_level' => $proposition->school_level,
+				'school_assignment' => $proposition->school_assignment,
+				'school_subject' => $proposition->school_subject_id,
+				'school_subject_detailed' => $proposition->school_subjecy_detailed_id,
+				'biblioteca' => $proposition->biblioteca_id
+			],
+			'market_potential' => [
+				'main_target' => $proposition->main_target
+			],
+			'technical_data' => [
+				'number_of_pages' => $proposition->number_of_pages,
+				'width' => $proposition->width,
+				'height' => $proposition->height,
+				'paper_type' => $proposition->paper_type,
+				'additional_work' => $proposition->additional_work,
+				'colors' => $proposition->colors,
+				'colors_first_page' => $proposition->colors_first_page,
+				'colors_last_page' => $proposition->colors_last_page,
+				'cover_type' => $proposition->cover_type,
+				'cover_paper_type' => $proposition->cover_paper_type,
+				'cover_colors' => $proposition->cover_colors,
+				'cover_plastification' => $proposition->cover_plastification,
+				'film_print' => $proposition->film_print,
+				'blind_print' => $proposition->blind_print,
+				'uv_film' => $proposition->uv_film,
+			],
+			'print' => [],
+			'authors_expense' => [
+				'expenses' => []
+			],
+			'production_expense' => [
+				'text_price' => $proposition->text_price,
+				'text_price_amount' => $proposition->text_price_amount,
+				'accontation' => $proposition->accontation,
+				'netto_price_percentage' => $proposition->netto_price_percentage,
+				'reviews' => $proposition->reviews,
+				'lecture' => $proposition->lecture,
+				'lecture_amount' => $proposition->lecture_amount,
+				'correction' => $proposition->correction,
+				'correction_amount' => $proposition->correction_amount,
+				'proofreading' => $proposition->proofreading,
+				'proofreading_amount' => $proposition->proofreading_amount,
+				'translation' => $proposition->translation,
+				'translation_amount' => $proposition->translation_amount,
+				'index' => $proposition->index,
+				'index_amount' => $proposition->index_amount,
+				'epilogue' => $proposition->epilogue,
+				'photos' => $proposition->photos,
+				'photos_amount' => $proposition->photos_amount,
+				'illustrations' => $proposition->illustrations,
+				'illustrations_amount' => $proposition->illustrations_amount,
+				'technical_drawings' => $proposition->technical_drawings,
+				'technical_drawings_amount' => $proposition->technical_drawings_amount,
+				'expert_report' => $proposition->expert_report,
+				'copyright' => $proposition->copyright,
+				'copyright_mediators' => $proposition->copyright_mediators,
+				'selection' => $proposition->selection,
+				'powerpoint_presentation' => $proposition->powerpoint_presentation,
+				'methodical_instrumentarium' => $proposition->methodical_instrumentarium,
+				'additional_expense' => []
+			],
+			'marketing_expense' => [],
+			'distribution_expense' => [
+				'margin' => $proposition->margin
+			],
+			'layout_expense' => [
+				'layout_complexity' => $proposition->layout_complexity,
+				'layout_include' => $proposition->layout_include,
+				'layout_note' => $proposition->layout_note,
+				'design_complexity' => $proposition->design_complexity,
+				'design_include' => $proposition->design_include,
+				'design_note' => $proposition->design_note,
+			],
+			'deadline' => [
+				'date' => $proposition->deadline,
+				'priority' => $proposition->priority
+			],
 		];
 		return $out;
 	}
