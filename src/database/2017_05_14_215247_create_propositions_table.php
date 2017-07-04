@@ -15,7 +15,7 @@ class CreatePropositionsTable extends Migration
     {
         Schema::create('propositions', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('owner_id');
+            $table->integer('owner_id')->nullable();
             $table->string('title')->nullable();
             $table->string('status')->nullable();
             $table->text('concept')->nullable();
