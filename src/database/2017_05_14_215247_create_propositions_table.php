@@ -23,15 +23,15 @@ class CreatePropositionsTable extends Migration
             $table->boolean('dotation')->nullable();
             $table->string('dotation_origin')->nullable();
             $table->string('dotation_amount')->nullable();
-            $table->text('possible_products')->default('[]');
+            $table->string('possible_products')->default('[]');
 
             $table->integer('supergroup_id')->nullable();
             $table->integer('upgroup_id')->nullable();
             $table->integer('group_id')->nullable();
             $table->integer('book_type_group_id')->nullable();
             $table->integer('book_type_id')->nullable();
-            $table->text('school_type')->default('[]');
-            $table->text('school_level')->default('[]');
+            $table->string('school_type')->default('[]');
+            $table->string('school_level')->default('[]');
 			$table->boolean('school_assignment')->nullable();
 			$table->integer('school_subject_id')->nullable();
 			$table->integer('school_subject_detailed_id')->nullable();
