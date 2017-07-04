@@ -23,7 +23,7 @@ class CreatePropositionsTable extends Migration
             $table->boolean('dotation')->nullable();
             $table->string('dotation_origin')->nullable();
             $table->string('dotation_amount')->nullable();
-            $table->string('possible_products')->nullable();
+            $table->text('possible_products')->default('[]');
 
             $table->integer('supergroup_id')->nullable();
             $table->integer('upgroup_id')->nullable();
