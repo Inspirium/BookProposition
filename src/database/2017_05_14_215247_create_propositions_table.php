@@ -38,6 +38,8 @@ class CreatePropositionsTable extends Migration
 			$table->integer('biblioteca_id')->nullable();
 
             $table->string('main_target')->nullable();
+
+            $table->string('additions')->default('[]');
             $table->string('number_of_pages')->nullable();
             $table->string('width')->nullable();
             $table->string('height')->nullable();

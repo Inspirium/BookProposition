@@ -148,7 +148,7 @@ class PropositionController extends Controller {
 				'dotation_amount' => $proposition->dotation_amount,
 				'dotation_origin' => $proposition->dotation_origin,
 				'manuscript' => $proposition->manuscript,
-				'authors' => []
+				'authors' => [],
 			],
 			'categorization' => [
 				'supergroup' => $proposition->supergroup_id,
@@ -167,6 +167,8 @@ class PropositionController extends Controller {
 				'main_target' => $proposition->main_target
 			],
 			'technical_data' => [
+				'additions' => $proposition->additions,
+				'circulations' => [],
 				'number_of_pages' => $proposition->number_of_pages,
 				'width' => $proposition->width,
 				'height' => $proposition->height,
