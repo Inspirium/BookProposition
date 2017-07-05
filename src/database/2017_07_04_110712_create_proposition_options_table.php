@@ -26,9 +26,9 @@ class CreatePropositionOptionsTable extends Migration
             $table->string('cover_paper_type')->nullable();
             $table->string('cover_colors')->nullable();
             $table->string('cover_plastification')->nullable();
-            $table->string('film_print')->nullable();
-            $table->string('blind_print')->nullable();
-            $table->string('uv_print')->nullable();
+            $table->boolean('film_print')->nullable();
+            $table->boolean('blind_print')->nullable();
+            $table->boolean('uv_print')->nullable();
             $table->string('number_of_pages')->nullable();
             $table->string('direct_cost_cover')->nullable();
             $table->string('complete_cost_cover')->nullable();

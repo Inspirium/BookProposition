@@ -51,7 +51,7 @@ class CreatePropositionsTable extends Migration
             $table->string('cover_plastification')->nullable();
             $table->boolean('film_print')->nullable();
             $table->boolean('blind_print')->nullable();
-            $table->boolean('uv_film')->nullable();
+            $table->boolean('uv_print')->nullable();
 
             $table->string('text_price')->nullable();
             $table->string('text_price_amount')->nullable();

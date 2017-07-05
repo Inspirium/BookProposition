@@ -30,4 +30,39 @@ class PropositionOption extends Model {
 	protected $table = 'proposition_options';
 
 	protected $guarded = [];
+
+	//attributes
+	public function getFilmPrintAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setFilmPrintAttribute($value) {
+		$this->attributes['film_print'] = $value==='yes'?1:0;
+	}
+
+	public function getBlindPrintAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setBlindPrintAttribute($value) {
+		$this->attributes['blind_print'] = $value==='yes'?1:0;
+	}
+
+	public function getUvPrintAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setUvPrintAttribute($value) {
+		$this->attributes['uv_print'] = $value==='yes'?1:0;
+	}
+
 }

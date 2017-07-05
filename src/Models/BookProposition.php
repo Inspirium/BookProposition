@@ -17,14 +17,7 @@ class BookProposition extends Model {
 
     protected $table = 'propositions';
 
-    protected $fillable = [
-        'id', 'title',  'concept', 'manuscript', 'dotation', 'dotation_origin', 'dotaion_amount',
-        'possible_products', 'supergroup_id', 'upgroup_id',
-	    'group_id', 'book_type_group_id', 'book_type_id',
-	    'school_type', 'school_level', 'school_assignment',
-	    'school_subject_id', 'school_subject_detailed_id',
-	    'biblioteca', 'main_target', 'status'
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'title' => 'string',
@@ -121,5 +114,83 @@ class BookProposition extends Model {
 
 	public function options() {
 		return $this->hasMany( 'Inspirium\BookProposition\Models\PropositionOption', 'proposition_id' );
+	}
+
+	//attributes
+	public function getDotationAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setDotationAttribute($value) {
+		$this->attributes['dotation'] = $value==='yes'?1:0;
+	}
+
+	public function getSchoolAssigmentAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setSchoolAssignmentAttribute($value) {
+		$this->attributes['school_assignment'] = $value==='yes'?1:0;
+	}
+
+	public function getFilmPrintAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setFilmPrintAttribute($value) {
+		$this->attributes['film_print'] = $value==='yes'?1:0;
+	}
+
+	public function getBlindPrintAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setBlindPrintAttribute($value) {
+		$this->attributes['blind_print'] = $value==='yes'?1:0;
+	}
+
+	public function getUvFilmAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setUvFilmAttribute($value) {
+		$this->attributes['uv_film'] = $value==='yes'?1:0;
+	}
+
+	public function getLayoutIncludeAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setLayoutIncludeAttribute($value) {
+		$this->attributes['uv_film'] = $value==='yes'?1:0;
+	}
+
+	public function getDesignIncludeAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setDesignIncludeAttribute($value) {
+		$this->attributes['uv_film'] = $value==='yes'?1:0;
 	}
 }
