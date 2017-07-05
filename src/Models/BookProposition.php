@@ -40,6 +40,8 @@ class BookProposition extends Model {
 	    'biblioteca' => 'integer',
 	    'main_target' => 'string',
 	    'status' => 'string',
+	    'additions' => 'array',
+	    'circulations' => 'array',
 	    'number_of_pages' => 'integer',
 	    'width' => 'string',
 	    'height' => 'string',
@@ -128,7 +130,7 @@ class BookProposition extends Model {
 		$this->attributes['dotation'] = $value==='yes'?1:0;
 	}
 
-	public function getSchoolAssigmentAttribute($value) {
+	public function getSchoolAssignmentAttribute($value) {
 		if ($value) {
 			return 'yes';
 		}
@@ -161,15 +163,15 @@ class BookProposition extends Model {
 		$this->attributes['blind_print'] = $value==='yes'?1:0;
 	}
 
-	public function getUvFilmAttribute($value) {
+	public function getUvPrintAttribute($value) {
 		if ($value) {
 			return 'yes';
 		}
 		return 'no';
 	}
 
-	public function setUvFilmAttribute($value) {
-		$this->attributes['uv_film'] = $value==='yes'?1:0;
+	public function setUvPrintAttribute($value) {
+		$this->attributes['uv_print'] = $value==='yes'?1:0;
 	}
 
 	public function getLayoutIncludeAttribute($value) {
@@ -192,5 +194,40 @@ class BookProposition extends Model {
 
 	public function setDesignIncludeAttribute($value) {
 		$this->attributes['uv_film'] = $value==='yes'?1:0;
+	}
+
+	public function getSchoolLevelAttribute($value) {
+		if (!$value) {
+			return [];
+		}
+		return json_decode($value, true);
+	}
+
+	public function getSchoolTypeAttribute($value) {
+		if (!$value) {
+			return [];
+		}
+		return json_decode($value, true);
+	}
+
+	public function getPossibleProductsAttribute($value) {
+		if (!$value) {
+			return [];
+		}
+		return json_decode($value, true);
+	}
+
+	public function getAdditionsAttribute($value) {
+		if (!$value) {
+			return [];
+		}
+		return json_decode($value, true);
+	}
+
+	public function getCirculationsAttribute($value) {
+		if (!$value) {
+			return [];
+		}
+		return json_decode($value, true);
 	}
 }

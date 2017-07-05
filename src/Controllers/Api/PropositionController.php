@@ -48,7 +48,7 @@ class PropositionController extends Controller {
 				$proposition->school_assignment = $request->input('data.school_assignment');
 				$proposition->school_subject_id = $request->input('data.school_subject');
 				$proposition->school_subject_detailed_id = $request->input('data.school_subject_detailed');
-				$proposition->biblioteca = $request->input('data.biblioteca');
+				$proposition->biblioteca_id = $request->input('data.biblioteca');
 				break;
 			case 'market_potential':
 				$proposition->main_target = $request->input('data.main_target');
@@ -67,8 +67,9 @@ class PropositionController extends Controller {
 				$proposition->cover_plastification = $request->input('data.cover_plastification');
 				$proposition->film_print = $request->input('data.film_print');
 				$proposition->blind_print = $request->input('data.blind_print');
-				$proposition->uv_film = $request->input('data.uv_film');
+				$proposition->uv_print = $request->input('data.uv_print');
 				$proposition->additions = $request->input('data.additions');
+				$proposition->circulations = $request->input('data.circulations');
 				break;
 			case 'print':
 				foreach ($request->input('data.offers') as $offer_id => $offer) {
@@ -167,7 +168,7 @@ class PropositionController extends Controller {
 				'school_level' => $proposition->school_level,
 				'school_assignment' => $proposition->school_assignment,
 				'school_subject' => $proposition->school_subject_id,
-				'school_subject_detailed' => $proposition->school_subjecy_detailed_id,
+				'school_subject_detailed' => $proposition->school_subject_detailed_id,
 				'biblioteca' => $proposition->biblioteca_id
 			],
 			'market_potential' => [
@@ -175,7 +176,7 @@ class PropositionController extends Controller {
 			],
 			'technical_data' => [
 				'additions' => $proposition->additions,
-				'circulations' => [],
+				'circulations' => $proposition->circulations,
 				'number_of_pages' => $proposition->number_of_pages,
 				'width' => $proposition->width,
 				'height' => $proposition->height,
@@ -190,7 +191,7 @@ class PropositionController extends Controller {
 				'cover_plastification' => $proposition->cover_plastification,
 				'film_print' => $proposition->film_print,
 				'blind_print' => $proposition->blind_print,
-				'uv_film' => $proposition->uv_film,
+				'uv_print' => $proposition->uv_print,
 			],
 			'print' => [],
 			'authors_expense' => [

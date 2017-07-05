@@ -23,15 +23,15 @@ class CreatePropositionsTable extends Migration
             $table->boolean('dotation')->nullable();
             $table->string('dotation_origin')->nullable();
             $table->string('dotation_amount')->nullable();
-            $table->string('possible_products')->default('[]');
+            $table->text('possible_products')->nullable();
 
             $table->integer('supergroup_id')->nullable();
             $table->integer('upgroup_id')->nullable();
             $table->integer('group_id')->nullable();
             $table->integer('book_type_group_id')->nullable();
             $table->integer('book_type_id')->nullable();
-            $table->string('school_type')->default('[]');
-            $table->string('school_level')->default('[]');
+            $table->text('school_type')->nullable();
+            $table->text('school_level')->nullable();
 			$table->boolean('school_assignment')->nullable();
 			$table->integer('school_subject_id')->nullable();
 			$table->integer('school_subject_detailed_id')->nullable();
@@ -39,7 +39,8 @@ class CreatePropositionsTable extends Migration
 
             $table->string('main_target')->nullable();
 
-            $table->string('additions')->default('[]');
+            $table->text('additions')->nullable();
+            $table->text('circulations')->nullable();
             $table->string('number_of_pages')->nullable();
             $table->string('width')->nullable();
             $table->string('height')->nullable();
