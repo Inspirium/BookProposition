@@ -18,9 +18,11 @@ class PropositionController extends Controller {
 
 	public function saveProposition( Request $request, $id = null ) {
 		$proposition = BookProposition::firstOrCreate(['id' => $id]);
+		if (!$proposition->owner_id) {
+			$proposition->owner_id = Auth::id();
+		}
 		switch ($request->input('step')) {
 			case 'basic_data':
-				$proposition->owner_id = Auth::id();
 				$proposition->title = $request->input('data.title');
 				$proposition->concept = $request->input('data.concept');
 				$proposition->possible_products = $request->input('data.possible_products');
@@ -146,6 +148,7 @@ class PropositionController extends Controller {
 				'dotation_amount' => $proposition->dotation_amount,
 				'dotation_origin' => $proposition->dotation_origin,
 				'manuscript' => $proposition->manuscript,
+				'authors' => []
 			],
 			'categorization' => [
 				'supergroup' => $proposition->supergroup_id,
