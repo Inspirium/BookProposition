@@ -5,6 +5,7 @@ namespace Inspirium\BookProposition\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inspirium\BookManagement\Models\Author;
 use Inspirium\BookProposition\Models\BookProposition;
 use Inspirium\BookProposition\Models\PropositionOption;
 
@@ -30,6 +31,11 @@ class PropositionController extends Controller {
 				$proposition->dotation_amount = $request->input('data.dotation_amount');
 				$proposition->dotation_origin = $request->input('data.dotation_origin');
 				$proposition->manuscript = $request->input('data.manuscript');
+				$authors = [];
+				foreach ($request->input('data.authors') as $author) {
+					$authors[] = $author['id'];
+				}
+				$proposition->authors()->sync($authors);
 				break;
 			case 'categorization':
 				$proposition->supergroup_id = $request->input('data.supergroup');
@@ -62,6 +68,7 @@ class PropositionController extends Controller {
 				$proposition->film_print = $request->input('data.film_print');
 				$proposition->blind_print = $request->input('data.blind_print');
 				$proposition->uv_film = $request->input('data.uv_film');
+				$proposition->additions = $request->input('data.additions');
 				break;
 			case 'print':
 				foreach ($request->input('data.offers') as $offer_id => $offer) {
@@ -148,7 +155,7 @@ class PropositionController extends Controller {
 				'dotation_amount' => $proposition->dotation_amount,
 				'dotation_origin' => $proposition->dotation_origin,
 				'manuscript' => $proposition->manuscript,
-				'authors' => [],
+				'authors' => $proposition->authors,
 			],
 			'categorization' => [
 				'supergroup' => $proposition->supergroup_id,

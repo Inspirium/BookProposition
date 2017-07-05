@@ -101,7 +101,7 @@ class BookProposition extends Model {
     }
 
     public function authors() {
-        return $this->belongsToMany('Inspirium\BookManagement\Models\Author', 'pivot_proposition_author', 'author_id', 'proposition_id');
+        return $this->belongsToMany('Inspirium\BookManagement\Models\Author', 'pivot_proposition_author', 'proposition_id', 'author_id');
     }
 
 	public function notes() {
