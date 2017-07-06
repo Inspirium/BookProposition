@@ -18,7 +18,9 @@ class CreatePropositionOptionsTable extends Migration
             $table->integer('proposition_id')->nullable();
             $table->string('title')->nullable();
             $table->string('print_offer')->nullable();
+            $table->string('paper_type')->nullable();
             $table->string('cover_type')->nullable();
+            $table->string('book_binding')->nullable();
             $table->string('colors')->nullable();
             $table->string('colors_first_page')->nullable();
             $table->string('colors_last_page')->nullable();

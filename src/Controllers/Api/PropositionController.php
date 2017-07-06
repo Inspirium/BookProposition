@@ -70,6 +70,7 @@ class PropositionController extends Controller {
 				$proposition->uv_print = $request->input('data.uv_print');
 				$proposition->additions = $request->input('data.additions');
 				$proposition->circulations = $request->input('data.circulations');
+				$proposition->book_binding = $request->input('data.book_binding');
 				break;
 			case 'print':
 				foreach ($request->input('data.offers') as $offer_id => $offer) {
@@ -181,6 +182,7 @@ class PropositionController extends Controller {
 				'width' => $proposition->width,
 				'height' => $proposition->height,
 				'paper_type' => $proposition->paper_type,
+				'book_binding' => $proposition->book_binding,
 				'additional_work' => $proposition->additional_work,
 				'colors' => $proposition->colors,
 				'colors_first_page' => $proposition->colors_first_page,
@@ -193,7 +195,9 @@ class PropositionController extends Controller {
 				'blind_print' => $proposition->blind_print,
 				'uv_print' => $proposition->uv_print,
 			],
-			'print' => [],
+			'print' => [
+				'offers' => []
+			],
 			'authors_expense' => [
 				'expenses' => []
 			],
