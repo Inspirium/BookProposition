@@ -17,9 +17,9 @@ class CreateAuthorExpensesTable extends Migration
             $table->increments('id');
             $table->integer('proposition_id');
             $table->integer('author_id');
-            $table->string('expense');
-            $table->string('advance');
-            $table->text('note');
+            $table->string('amount');
+            $table->string('percentage');
+            $table->string('accontation');
             $table->timestamps();
         });
     }

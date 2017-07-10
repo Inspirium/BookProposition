@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inspirium\BookManagement\Models\Author;
+use Inspirium\BookProposition\Models\AuthorExpense;
 use Inspirium\BookProposition\Models\BookProposition;
 use Inspirium\BookProposition\Models\PropositionOption;
 
@@ -87,6 +88,21 @@ class PropositionController extends Controller {
 				}
 				break;
 			case 'authors_expense':
+				foreach($request->input('data.expenses') as $author_id => $expenses) {
+					foreach ($expenses as $expense) {
+						$e = AuthorExpense::find($expense['id']);
+						if ($e) {
+							$e->fill($expense);
+						}
+						else {
+							unset($expense['id']);
+							$e = AuthorExpense::create($expense);
+							$e->author_id = $author_id;
+							$e->proposition_id = $id;
+						}
+						$e->save();
+					}
+				}
 				break;
 			case 'production_expense':
 				$proposition->text_price = $request->input('data.text_price');
@@ -196,10 +212,11 @@ class PropositionController extends Controller {
 				'uv_print' => $proposition->uv_print,
 			],
 			'print' => [
-				'offers' => []
+				'offers' => $proposition->offers
 			],
 			'authors_expense' => [
-				'expenses' => []
+				'expenses' => $proposition->author_expenses,
+				'note' => ''
 			],
 			'production_expense' => [
 				'text_price' => $proposition->text_price,

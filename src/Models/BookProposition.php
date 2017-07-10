@@ -102,7 +102,11 @@ class BookProposition extends Model {
         return $this->hasMany('Inspirium\BookProposition\Models\AuthorExpense', 'proposition_id');
     }
 
-    public function authors() {
+	public function getAuthorExpensesAttribute(){
+		return $this->attributes['author_expenses'] = $this->getRelationValue('authorExpenses')->keyBy('author_id');
+	}
+
+	public function authors() {
         return $this->belongsToMany('Inspirium\BookManagement\Models\Author', 'pivot_proposition_author', 'proposition_id', 'author_id');
     }
 
@@ -112,6 +116,10 @@ class BookProposition extends Model {
 
 	public function getNotesAttribute(){
 		return $this->attributes['notes'] = $this->getRelationValue('notes')->keyBy('type');
+	}
+
+	public function getAuthorsAttribute(){
+		return $this->attributes['authors'] = $this->getRelationValue('authors')->keyBy('id');
 	}
 
 	public function options() {
@@ -229,5 +237,9 @@ class BookProposition extends Model {
 			return [];
 		}
 		return json_decode($value, true);
+	}
+
+	public function getOffersAttribute() {
+		return $this->attributes['offers'] = $this->getRelationValue('options')->keyBy('id');
 	}
 }
