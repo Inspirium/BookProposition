@@ -57,6 +57,8 @@ class CreatePropositionsTable extends Migration
             $table->boolean('uv_print')->nullable();
             $table->string('book_binding')->nullable();
 
+            $table->text('author_other_expense')->nullable();
+
             $table->string('text_price')->nullable();
             $table->string('text_price_amount')->nullable();
             $table->string('accontation')->nullable();
@@ -85,7 +87,10 @@ class CreatePropositionsTable extends Migration
             $table->string('selection')->nullable();
             $table->string('powerpoint_presentation')->nullable();
             $table->string('methodical_instrumentarium')->nullable();
-            $table->string('additional_expense')->nullable();
+            $table->text('production_additional_expense')->nullable();
+
+            $table->string('marketing_expense')->nullable();
+			$table->text('marketing_additional_expense')->nullable();
 
             $table->string('margin')->nullable();
 

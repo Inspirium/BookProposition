@@ -100,8 +100,8 @@ class PropositionController extends Controller {
 							$e->proposition_id = $id;
 						}
 						$e->save();
-
 				}
+				$proposition->author_other_expense = $request->input('data.other');
 				break;
 			case 'production_expense':
 				$proposition->text_price = $request->input('data.text_price');
@@ -132,9 +132,11 @@ class PropositionController extends Controller {
 				$proposition->selection = $request->input('data.selection');
 				$proposition->powerpoint_presentation = $request->input('data.powerpoint_presentation');
 				$proposition->methodical_instrumentarium = $request->input('data.methodical_instrumentarium');
-				$proposition->additional_expense = $request->input('data.additional_expense');
+				$proposition->production_additional_expense = $request->input('data.additional_expense');
 				break;
 			case 'marketing_expense':
+				$proposition->marketing_expense = $request->input('data.expense');
+				$proposition->marketing_additional_expense = $request->input('data.additional_expense');
 				break;
 			case 'distribution_expense':
 				$proposition->margin = $request->input('data.margin');
@@ -218,7 +220,8 @@ class PropositionController extends Controller {
 			],
 			'authors_expense' => [
 				'expenses' => $proposition->author_expenses,
-				'note' => ''
+				'note' => '',
+				'other' => $proposition->author_other_expense
 			],
 			'production_expense' => [
 				'text_price' => $proposition->text_price,
@@ -249,9 +252,12 @@ class PropositionController extends Controller {
 				'selection' => $proposition->selection,
 				'powerpoint_presentation' => $proposition->powerpoint_presentation,
 				'methodical_instrumentarium' => $proposition->methodical_instrumentarium,
-				'additional_expense' => []
+				'additional_expense' => $proposition->production_additional_expense
 			],
-			'marketing_expense' => [],
+			'marketing_expense' => [
+				'expense' => $proposition->marketing_expense,
+				'additional_expense' => $proposition->marketing_additional_expense
+			],
 			'distribution_expense' => [
 				'margin' => $proposition->margin
 			],

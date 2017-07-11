@@ -91,7 +91,6 @@ class BookProposition extends Model {
 	    'selection' => 'string',
 	    'powerpoint_presentation' => 'string',
 	    'methodical_instrumentarium' => 'string',
-	    'additional_expense' => 'array',
 	    'margin' => 'string',
 	    'layout_complexity' => 'string',
 	    'layout_include' => 'boolean',
@@ -101,6 +100,10 @@ class BookProposition extends Model {
 	    'layout_note' => 'string',
 	    'deadline' => 'string',
 	    'prioriy' => 'string',
+	    'author_other_expense' => 'array',
+	    'production_additional_expense' => 'array',
+	    'marketing_expense' => 'float',
+	    'marketing_additional_expense' => 'array'
     ];
 
     public function owner() {
@@ -239,13 +242,6 @@ class BookProposition extends Model {
 		return json_decode($value, true);
 	}
 
-	public function getAdditionalExpenseAttribute($value) {
-		if (!$value) {
-			return [];
-		}
-		return json_decode($value, true);
-	}
-
 	public function getPossibleProductsAttribute($value) {
 		if (!$value) {
 			return [];
@@ -279,5 +275,26 @@ class BookProposition extends Model {
 		$date = Carbon::createFromFormat('d. m. Y.', $value);
 		$date->setTime(0,0,0,0);
 		$this->attributes['deadline'] = $date->toDateTimeString();
+	}
+
+	public function getProductionAdditionalExpenseAttribute($value) {
+		if (!$value) {
+			return [];
+		}
+		return json_decode($value, true);
+	}
+
+	public function getMarketingAdditionalExpenseAttribute($value) {
+		if (!$value) {
+			return [];
+		}
+		return json_decode($value, true);
+	}
+
+	public function getAuthorOtherExpenseAttribute($value) {
+		if (!$value) {
+			return [];
+		}
+		return json_decode($value, true);
 	}
 }
