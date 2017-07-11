@@ -2,6 +2,7 @@
 
 namespace Inspirium\BookProposition\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,6 +19,13 @@ class BookProposition extends Model {
     protected $table = 'propositions';
 
     protected $guarded = [];
+
+    protected $dates = [
+    	'deadline',
+	    'created_at',
+	    'updated_at',
+	    'deleted_at'
+    ];
 
     protected $casts = [
         'title' => 'string',
@@ -91,7 +99,7 @@ class BookProposition extends Model {
 	    'design_include' => 'boolean',
 	    'design_note' => 'string',
 	    'layout_note' => 'string',
-	    'deadline' => 'datetime',
+	    'deadline' => 'string',
 	    'prioriy' => 'string',
     ];
 
@@ -261,5 +269,15 @@ class BookProposition extends Model {
 
 	public function getOffersAttribute() {
 		return $this->attributes['offers'] = $this->getRelationValue('options')->keyBy('id');
+	}
+
+	public function getDeadlineAttribute($value) {
+		return date('d. m. Y.', strtotime($value));
+	}
+
+	public function setDeadlineAttribute($value) {
+		$date = Carbon::createFromFormat('d. m. Y.', $value);
+		$date->setTime(0,0,0,0);
+		$this->attributes['deadline'] = $date->toDateTimeString();
 	}
 }
