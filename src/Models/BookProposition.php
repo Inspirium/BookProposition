@@ -268,6 +268,9 @@ class BookProposition extends Model {
 	}
 
 	public function getDeadlineAttribute($value) {
+		if (!$value) {
+			return '';
+		}
 		return date('d. m. Y.', strtotime($value));
 	}
 
