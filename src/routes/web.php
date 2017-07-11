@@ -3,7 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Inspirium\BookProposition\Controllers',], function() {
+Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Inspirium\BookProposition\Controllers'], function() {
 
 	Route::get('propositions', 'PropositionController@show');
 
