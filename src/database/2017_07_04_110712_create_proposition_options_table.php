@@ -20,6 +20,8 @@ class CreatePropositionOptionsTable extends Migration
             $table->string('print_offer')->nullable();
             $table->string('paper_type')->nullable();
             $table->string('cover_type')->nullable();
+            $table->string('hard_cover_circulation')->nullable();
+            $table->string('soft_cover_circulation')->nullable();
             $table->string('book_binding')->nullable();
             $table->string('colors')->nullable();
             $table->string('colors_first_page')->nullable();
@@ -32,8 +34,13 @@ class CreatePropositionOptionsTable extends Migration
             $table->boolean('blind_print')->nullable();
             $table->boolean('uv_print')->nullable();
             $table->string('number_of_pages')->nullable();
-            $table->string('direct_cost_cover')->nullable();
-            $table->string('complete_cost_cover')->nullable();
+
+            $table->string('compensation')->nullable();
+            $table->string('indirect_expenses')->nullable();
+            $table->string('price_proposal')->nullable();
+            $table->string('calculated_profit_percent')->nullable();
+            $table->string('shop_percent')->nullable();
+            $table->string('vat_percent')->nullable();
             $table->timestamps();
         });
     }

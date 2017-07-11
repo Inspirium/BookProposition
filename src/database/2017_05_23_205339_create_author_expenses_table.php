@@ -15,11 +15,12 @@ class CreateAuthorExpensesTable extends Migration
     {
         Schema::create('author_expenses', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('proposition_id');
-            $table->integer('author_id');
-            $table->string('amount');
-            $table->string('percentage');
-            $table->string('accontation');
+            $table->integer('proposition_id')->nullable();
+            $table->integer('author_id')->nullable();
+            $table->string('amount')->nullable();
+            $table->string('percentage')->nullable();
+            $table->string('accontation')->nullable();
+            $table->text('additional_expenses');
             $table->timestamps();
         });
     }

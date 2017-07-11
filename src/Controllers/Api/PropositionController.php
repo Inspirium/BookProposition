@@ -74,34 +74,33 @@ class PropositionController extends Controller {
 				$proposition->book_binding = $request->input('data.book_binding');
 				break;
 			case 'print':
+				$circulations = [];
 				foreach ($request->input('data.offers') as $offer_id => $offer) {
-					$option = PropositionOption::find( $offer_id);
-					unset($offer['note']);//TODO: temp fix
-					if ($option) {
-						$option->fill($offer);
+					$option = PropositionOption::find( $offer_id );
+					if (!$option) {
+						$option = new PropositionOption();
 					}
-					else {
-						$option = PropositionOption::create($offer);
-					}
+					$option->mapModel($offer);
 					$option->proposition_id = $id;
 					$option->save();
+					$circulations[] = ['title' => $option->title, 'id' => $option->id];
 				}
+				$proposition->circulations = $circulations;
 				break;
 			case 'authors_expense':
-				foreach($request->input('data.expenses') as $author_id => $expenses) {
-					foreach ($expenses as $expense) {
-						$e = AuthorExpense::find($expense['id']);
-						if ($e) {
+				foreach($request->input('data.expenses') as $author_id => $expense) {
+
+						if (isset($expense['id']) && $expense['id']) { //we have id, so that means it was loaded from db, just update it
+							$e = AuthorExpense::find($expense['id']);
 							$e->fill($expense);
 						}
 						else {
-							unset($expense['id']);
 							$e = AuthorExpense::create($expense);
 							$e->author_id = $author_id;
 							$e->proposition_id = $id;
 						}
 						$e->save();
-					}
+
 				}
 				break;
 			case 'production_expense':
@@ -177,8 +176,11 @@ class PropositionController extends Controller {
 			],
 			'categorization' => [
 				'supergroup' => $proposition->supergroup_id,
+				'supergroup_text' => $proposition->supergroup_id?$proposition->supergroup->name:'',
 				'upgroup' => $proposition->upgroup_id,
+				'upgroup_coef' => $proposition->upgroup_id?$proposition->upgroup->coefficient:60,
 				'group' => $proposition->group_id,
+				'group_text' => $proposition->group_id?$proposition->group->name:'',
 				'book_type_group' => $proposition->book_type_group_id,
 				'book_type' => $proposition->book_type_id,
 				'school_type' => $proposition->school_type,
@@ -243,7 +245,7 @@ class PropositionController extends Controller {
 				'technical_drawings_amount' => $proposition->technical_drawings_amount,
 				'expert_report' => $proposition->expert_report,
 				'copyright' => $proposition->copyright,
-				'copyright_mediators' => $proposition->copyright_mediators,
+				'copyright_mediator' => $proposition->copyright_mediator,
 				'selection' => $proposition->selection,
 				'powerpoint_presentation' => $proposition->powerpoint_presentation,
 				'methodical_instrumentarium' => $proposition->methodical_instrumentarium,

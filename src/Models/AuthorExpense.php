@@ -9,7 +9,18 @@ class AuthorExpense extends Model {
 
     protected $guarded = [];
 
+    protected $casts = [
+        'additional_expenses' => 'array',
+	    'amount' => 'float',
+	    'percentage' => 'float',
+	    'accontation' => 'float',
+    ];
+
     public function author() {
         return $this->belongsTo('Inspirium\BookManagement\Models\Author');
+    }
+
+    public function proposition() {
+    	return $this->belongsTo('Inspirium\BookProposition\Models\BookProposition', 'proposition_id');
     }
 }

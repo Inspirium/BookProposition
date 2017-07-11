@@ -3,6 +3,7 @@
 namespace Inspirium\BookProposition\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class PropositionOption
@@ -30,6 +31,12 @@ class PropositionOption extends Model {
 	protected $table = 'proposition_options';
 
 	protected $guarded = [];
+
+	protected $appends = [
+		'total_cost',
+                            'complete_expense',
+                            'remainder_after_sales',
+	];
 
 	//attributes
 	public function getFilmPrintAttribute($value) {
@@ -64,5 +71,20 @@ class PropositionOption extends Model {
 	public function setUvPrintAttribute($value) {
 		$this->attributes['uv_print'] = $value==='yes'?1:0;
 	}
+
+	public function mapModel($input) {
+		$columns = Schema::getColumnListing($this->getTable());
+		foreach ($columns as $i => $key) {
+			if(isset($input[$key])) {
+				$this->{$key} = $input[$key];
+			}
+		}
+		return $this;
+	}
+
+	public function getTotalCostAttribute() { return 0; }
+
+	public function getCompleteExpenseAttribute() { return 0; }
+	public function getRemainderAfterSalesAttribute() { return 0; }
 
 }

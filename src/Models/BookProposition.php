@@ -55,7 +55,7 @@ class BookProposition extends Model {
 	    'cover_plastification' => 'string',
 	    'film_print' => 'boolean',
 	    'blind_print' => 'boolean',
-	    'uv_film' => 'boolean',
+	    'uv_print' => 'boolean',
 	    'text_price' => 'string',
 	    'text_price_amount' => 'string',
 	    'accontation' => 'string',
@@ -82,7 +82,8 @@ class BookProposition extends Model {
 	    'copyright_mediator' => 'string',
 	    'selection' => 'string',
 	    'powerpoint_presentation' => 'string',
-	    'additional_expense' => 'string',
+	    'methodical_instrumentarium' => 'string',
+	    'additional_expense' => 'array',
 	    'margin' => 'string',
 	    'layout_complexity' => 'string',
 	    'layout_include' => 'boolean',
@@ -124,6 +125,18 @@ class BookProposition extends Model {
 
 	public function options() {
 		return $this->hasMany( 'Inspirium\BookProposition\Models\PropositionOption', 'proposition_id' );
+	}
+
+	public function supergroup() {
+		return $this->belongsTo('Inspirium\BookManagement\Models\BookCategory', 'supergroup_id');
+	}
+
+	public function upgroup() {
+		return $this->belongsTo('Inspirium\BookManagement\Models\BookCategory', 'upgroup_id');
+	}
+
+	public function group() {
+		return $this->belongsTo('Inspirium\BookManagement\Models\BookCategory', 'group_id');
 	}
 
 	//attributes
@@ -190,7 +203,7 @@ class BookProposition extends Model {
 	}
 
 	public function setLayoutIncludeAttribute($value) {
-		$this->attributes['uv_film'] = $value==='yes'?1:0;
+		$this->attributes['layout_include'] = $value==='yes'?1:0;
 	}
 
 	public function getDesignIncludeAttribute($value) {
@@ -201,7 +214,7 @@ class BookProposition extends Model {
 	}
 
 	public function setDesignIncludeAttribute($value) {
-		$this->attributes['uv_film'] = $value==='yes'?1:0;
+		$this->attributes['design_include'] = $value==='yes'?1:0;
 	}
 
 	public function getSchoolLevelAttribute($value) {
@@ -212,6 +225,13 @@ class BookProposition extends Model {
 	}
 
 	public function getSchoolTypeAttribute($value) {
+		if (!$value) {
+			return [];
+		}
+		return json_decode($value, true);
+	}
+
+	public function getAdditionalExpenseAttribute($value) {
 		if (!$value) {
 			return [];
 		}
