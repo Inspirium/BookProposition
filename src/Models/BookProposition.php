@@ -130,10 +130,6 @@ class BookProposition extends Model {
 		return $this->attributes['notes'] = $this->getRelationValue('notes')->keyBy('type');
 	}
 
-	public function getAuthorsAttribute(){
-		return $this->attributes['authors'] = $this->getRelationValue('authors')->keyBy('id');
-	}
-
 	public function options() {
 		return $this->hasMany( 'Inspirium\BookProposition\Models\PropositionOption', 'proposition_id' );
 	}
