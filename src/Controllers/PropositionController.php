@@ -13,7 +13,8 @@ class PropositionController extends Controller {
     	$unfinished = BookProposition::where('status', 'unfinished')->get();
     	$active = BookProposition::where('status', 'active')->get();
     	$rejected = BookProposition::where('status', 'rejected')->get();
-        return view(config('app.template') . '::proposition.list', compact('approval', 'unfinished', 'active', 'rejected'));
+    	$deleted = BookProposition::onlyTrashed()->get();
+        return view(config('app.template') . '::proposition.list', compact('approval', 'unfinished', 'active', 'rejected', 'deleted'));
     }
 
     public function edit( $id = null ) {

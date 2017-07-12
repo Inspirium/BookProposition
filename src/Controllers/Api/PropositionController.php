@@ -278,4 +278,9 @@ class PropositionController extends Controller {
 		];
 		return $out;
 	}
+
+	public function deleteProposition($id) {
+		BookProposition::destroy($id);
+		return response()->json([]);
+	}
 }

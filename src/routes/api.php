@@ -4,4 +4,5 @@ Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\Boo
 	Route::get('{id}', 'PropositionController@getProposition');
     Route::post('/', 'PropositionController@saveProposition');
     Route::patch('{id?}', 'PropositionController@saveProposition');
+    Route::delete('{id?}', 'PropositionController@deleteProposition');
 });
