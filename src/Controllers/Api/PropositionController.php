@@ -273,6 +273,8 @@ class PropositionController extends Controller {
 				'date' => $proposition->deadline,
 				'priority' => $proposition->priority
 			],
+			'owner' => $proposition->owner,
+			'created_at' => $proposition->created_at
 		];
 		return $out;
 	}
