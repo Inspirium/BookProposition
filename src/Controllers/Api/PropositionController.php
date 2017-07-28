@@ -298,7 +298,8 @@ class PropositionController extends Controller {
 				$task->name = 'Proposition: ' . $proposition->title;
 				$task->related()->associate($proposition);
 				$task->description = 'You have been assigned to edit the following proposition';
-				$task->type=1;
+				$task->status = 'new';
+				$task->type = 1;
 				$task->save();
 				$task->employees()->attach($employees);
 		}
