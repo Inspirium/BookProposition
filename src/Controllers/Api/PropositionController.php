@@ -5,7 +5,6 @@ namespace Inspirium\BookProposition\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inspirium\BookManagement\Models\Author;
 use Inspirium\BookProposition\Models\AuthorExpense;
 use Inspirium\BookProposition\Models\BookProposition;
 use Inspirium\BookProposition\Models\PropositionOption;
@@ -298,10 +297,10 @@ class PropositionController extends Controller {
 				$task->assigner()->associate($assigner);
 				$task->name = 'Proposition: ' . $proposition->title;
 				$task->related()->associate($proposition);
+				$task->description = 'You have been assigned to edit the following proposition';
 				$task->type=1;
 				$task->save();
 				$task->employees()->attach($employees);
-
 		}
 	}
 }
