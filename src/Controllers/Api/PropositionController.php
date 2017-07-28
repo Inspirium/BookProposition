@@ -9,6 +9,8 @@ use Inspirium\BookManagement\Models\Author;
 use Inspirium\BookProposition\Models\AuthorExpense;
 use Inspirium\BookProposition\Models\BookProposition;
 use Inspirium\BookProposition\Models\PropositionOption;
+use Inspirium\HumanResources\Models\Employee;
+use Inspirium\TaskManagement\Models\Task;
 
 class PropositionController extends Controller {
 
@@ -21,7 +23,8 @@ class PropositionController extends Controller {
 	public function saveProposition( Request $request, $id = null ) {
 		$proposition = BookProposition::firstOrCreate(['id' => $id]);
 		if (!$proposition->owner_id) {
-			$proposition->owner_id = Auth::id();
+			$employee = Employee::where('user_id', Auth::id())->first();
+			$proposition->owner()->associate($employee);
 		}
 		switch ($request->input('step')) {
 			case 'basic_data':
@@ -282,5 +285,23 @@ class PropositionController extends Controller {
 	public function deleteProposition($id) {
 		BookProposition::destroy($id);
 		return response()->json([]);
+	}
+
+	public function assignProposition(Request $request, $id) {
+		$proposition = BookProposition::find($id);
+		$departments = $request->input('departments');
+		$employees = $request->input('employees');
+		$assigner = Employee::where('user_id', Auth::id())->first();
+		if ($employees) {
+			$employees = array_pluck($employees, 'id');
+				$task = new Task();
+				$task->assigner()->associate($assigner);
+				$task->name = 'Proposition: ' . $proposition->title;
+				$task->related()->associate($proposition);
+				$task->type=1;
+				$task->save();
+				$task->employees()->attach($employees);
+
+		}
 	}
 }

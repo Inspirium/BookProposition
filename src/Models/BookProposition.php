@@ -107,7 +107,7 @@ class BookProposition extends Model {
     ];
 
     public function owner() {
-    	return $this->belongsTo('Inspirium\UserManagement\Models\User', 'owner_id');
+    	return $this->belongsTo('Inspirium\HumanResources\Models\Employee', 'owner_id');
     }
 
     public function authorExpenses() {
