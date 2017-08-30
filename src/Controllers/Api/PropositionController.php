@@ -315,7 +315,10 @@ class PropositionController extends Controller {
 				$task->type = 1;
 				$task->save();
 				$task->employees()->attach($employees);
-				Notification::send($employees, new TaskAssigned($proposition));
+				foreach ($employees as $employee_id) {
+					$employee = Employee::find($employee_id);
+					$employee->user->notify(new TaskAssigned( $task ));
+				}
 		}
 		else if ($departments) {
 			$departments = array_pluck($departments, 'id');
