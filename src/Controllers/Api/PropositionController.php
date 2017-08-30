@@ -3,11 +3,14 @@
 namespace Inspirium\BookProposition\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\TaskAssigned;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Inspirium\BookProposition\Models\AuthorExpense;
 use Inspirium\BookProposition\Models\BookProposition;
 use Inspirium\BookProposition\Models\PropositionOption;
+use Inspirium\FileManagement\Models\File;
 use Inspirium\HumanResources\Models\Employee;
 use Inspirium\TaskManagement\Models\Task;
 
@@ -34,6 +37,10 @@ class PropositionController extends Controller {
 				$proposition->dotation_amount = $request->input('data.dotation_amount');
 				$proposition->dotation_origin = $request->input('data.dotation_origin');
 				$proposition->manuscript = $request->input('data.manuscript');
+				foreach ($request->input('data.manuscript_documents') as $document) {
+					$file = File::find($document['id']);
+					$proposition->documents()->save($file, ['type' => 'manuscript']);
+				}
 				$authors = [];
 				foreach ($request->input('data.authors') as $author) {
 					$authors[] = $author['id'];
@@ -55,6 +62,10 @@ class PropositionController extends Controller {
 				break;
 			case 'market_potential':
 				$proposition->main_target = $request->input('data.main_target');
+				foreach ($request->input('data.market_potential_documents') as $document) {
+					$file = File::find($document['id']);
+					$proposition->documents()->save($file, ['type' => 'market_potential']);
+				}
 				break;
 			case 'technical_data':
 				$proposition->number_of_pages = $request->input('data.number_of_pages');
@@ -176,6 +187,7 @@ class PropositionController extends Controller {
 				'dotation_amount' => $proposition->dotation_amount,
 				'dotation_origin' => $proposition->dotation_origin,
 				'manuscript' => $proposition->manuscript,
+				'manuscript_documents' => $proposition->documents()->wherePivot('type', 'manuscript')->get(),
 				'authors' => $proposition->authors,
 			],
 			'categorization' => [
@@ -195,7 +207,8 @@ class PropositionController extends Controller {
 				'biblioteca' => $proposition->biblioteca_id
 			],
 			'market_potential' => [
-				'main_target' => $proposition->main_target
+				'main_target' => $proposition->main_target,
+				'market_potential_documents' => $proposition->documents()->wherePivot('type', 'market_potential')->get()
 			],
 			'technical_data' => [
 				'additions' => $proposition->additions,
@@ -302,6 +315,20 @@ class PropositionController extends Controller {
 				$task->type = 1;
 				$task->save();
 				$task->employees()->attach($employees);
+				Notification::send($employees, new TaskAssigned($proposition));
+		}
+		else if ($departments) {
+			$departments = array_pluck($departments, 'id');
+			$task = new Task();
+			$task->assigner()->associate($assigner);
+			$task->name = 'Proposition: ' . $proposition->title;
+			$task->related()->associate($proposition);
+			$task->description = 'You have been assigned to edit the following proposition';
+			$task->status = 'new';
+			$task->type = 1;
+			$task->save();
+			$task->departments()->attach($departments);
+			//TODO: send notification
 		}
 	}
 }

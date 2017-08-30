@@ -146,6 +146,10 @@ class BookProposition extends Model {
 		return $this->belongsTo('Inspirium\BookManagement\Models\BookCategory', 'group_id');
 	}
 
+	public function documents() {
+		return $this->morphToMany('Inspirium\FileManagement\Models\File', 'fileable')->withPivot('type');
+	}
+
 	//attributes
 	public function getDotationAttribute($value) {
 		if ($value) {
