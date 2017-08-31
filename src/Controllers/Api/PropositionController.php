@@ -83,8 +83,24 @@ class PropositionController extends Controller {
 				$proposition->blind_print = $request->input('data.blind_print');
 				$proposition->uv_print = $request->input('data.uv_print');
 				$proposition->additions = $request->input('data.additions');
-				$proposition->circulations = $request->input('data.circulations');
+				//$proposition->circulations = $request->input('data.circulations');
 				$proposition->book_binding = $request->input('data.book_binding');
+				$circs = [];
+				foreach ($request->input('data.circulations') as $circulation) {
+					$option = PropositionOption::find( $circulation['id'] );
+					if (!$option) {
+						$option = new PropositionOption();
+					}
+					$option->title = $circulation['title'];
+					$option->proposition_id = $id;
+					$option->save();
+					$circs[] = $option->id;
+				}
+				foreach ($proposition->options as $option) {
+					if (!in_array($option->id, $circs)) {
+						$option->delete();
+					}
+				}
 				break;
 			case 'print':
 				$circulations = [];
@@ -98,7 +114,7 @@ class PropositionController extends Controller {
 					$option->save();
 					$circulations[] = ['title' => $option->title, 'id' => $option->id];
 				}
-				$proposition->circulations = $circulations;
+				//$proposition->circulations = $circulations;
 				break;
 			case 'authors_expense':
 				foreach($request->input('data.expenses') as $author_id => $expense) {

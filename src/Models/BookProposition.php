@@ -257,6 +257,15 @@ class BookProposition extends Model {
 	}
 
 	public function getCirculationsAttribute($value) {
+		$out = [];
+		foreach ($this->getRelationValue('options') as $option) {
+			$out[] = [
+				'title' => $option->title,
+				'id' => $option->id
+			];
+		}
+		return $out;
+
 		if (!$value) {
 			return [];
 		}
