@@ -107,10 +107,10 @@ class PropositionController extends Controller {
 				foreach ($request->input('data.offers') as $offer_id => $offer) {
 					$option = PropositionOption::find( $offer_id );
 					if (!$option) {
+						continue;
 						$option = new PropositionOption();
 					}
 					$option->mapModel($offer);
-					$option->proposition_id = $id;
 					$option->save();
 					$circulations[] = ['title' => $option->title, 'id' => $option->id];
 				}
