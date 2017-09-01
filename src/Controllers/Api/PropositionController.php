@@ -88,11 +88,32 @@ class PropositionController extends Controller {
 				$circs = [];
 				foreach ($request->input('data.circulations') as $circulation) {
 					$option = PropositionOption::find( $circulation['id'] );
-					if (!$option) {
-						$option = new PropositionOption();
+					if ($option) {
+						//do not modify existing;
+						$circs[] = $option->id;
+						continue;
 					}
+					$option = new PropositionOption();
 					$option->title = $circulation['title'];
 					$option->proposition_id = $id;
+					$option->cover_type = $request->input('data.cover_type');
+					$option->cover_paper_type = $request->input('data.cover_paper_type');
+					$option->cover_colors = $request->input('data.cover_colors');
+					$option->cover_plastification = $request->input('data.cover_plastification');
+					$option->film_print = $request->input('data.film_print');
+					$option->uv_print = $request->input('data.uv_print');
+					$option->blind_print = $request->input('data.blind_print');
+					$option->colors = $request->input('data.colors');
+					$option->paper_type = $request->input('data.paper_type');
+					$option->hard_cover_circulation = $request->input('data.hard_cover_circulation');
+					$option->soft_cover_circulation = $request->input('data.soft_cover_circulation');
+					$option->book_binding = $request->input('data.book_binding');
+					$option->colors_first_page = $request->input('data.colors_first_page');
+					$option->colors_last_page = $request->input('data.color_last_page');
+					$option->number_of_pages = $request->input('data.number_of_pages');
+					$option->calculated_profit_percent = 18;
+					$option->shop_percent = 20;
+					$option->vat_percent = 5;
 					$option->save();
 					$circs[] = $option->id;
 				}

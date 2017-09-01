@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Schema;
  * @property $cover_plastification
  * @property $film_print
  * @property $blind_print
- * @property $uv_film
+ * @property $uv_print
  * @property $number_of_pages
  * @property $direct_cost_cover
  * @property $complete_cost_cover
