@@ -18,8 +18,7 @@ use Inspirium\TaskManagement\Models\Task;
 class PropositionController extends Controller {
 
 	public function getProposition( $id ) {
-		$proposition = BookProposition::findOrFail($id);
-		$out = $this->buildResponse($proposition);
+		$out = $this->buildResponse($id);
 		return response()->json($out);
 	}
 
@@ -214,7 +213,7 @@ class PropositionController extends Controller {
 	}
 
 	/**
-	 * @param BookProposition $proposition
+	 * @param int $proposition
 	 *
 	 * @return array
 	 */
