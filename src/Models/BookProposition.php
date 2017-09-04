@@ -289,7 +289,7 @@ class BookProposition extends Model {
 		}
 		else {
 			$date = Carbon::createFromFormat( 'd. m. Y.', $value );
-			$date->setTime( 0, 0, 0, 0 );
+			$date->setTime( 0, 0, 0);
 			$this->attributes['deadline'] = $date->toDateTimeString();
 		}
 	}
