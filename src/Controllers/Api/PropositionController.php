@@ -7,6 +7,7 @@ use App\Notifications\TaskAssigned;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
+use Inspirium\BookManagement\Models\Book;
 use Inspirium\BookProposition\Models\AuthorExpense;
 use Inspirium\BookProposition\Models\BookProposition;
 use Inspirium\BookProposition\Models\PropositionOption;
@@ -23,6 +24,7 @@ class PropositionController extends Controller {
 	}
 
 	public function saveProposition( Request $request, $id = null ) {
+		/** @var BookProposition $proposition */
 		$proposition = BookProposition::firstOrCreate(['id' => $id]);
 		if (!$proposition->owner_id) {
 			$employee = Employee::where('user_id', Auth::id())->first();
@@ -95,7 +97,7 @@ class PropositionController extends Controller {
 					}
 					$option = new PropositionOption();
 					$option->title = $circulation['title'];
-					$option->proposition_id = $id;
+					//$option->proposition_id = $id;
 					$option->cover_type = $request->input('data.cover_type');
 					$option->cover_paper_type = $request->input('data.cover_paper_type');
 					$option->cover_colors = $request->input('data.cover_colors');
@@ -115,8 +117,10 @@ class PropositionController extends Controller {
 					$option->shop_percent = 20;
 					$option->vat_percent = 5;
 					$option->save();
+					$proposition->options()->save($option);
 					$circs[] = $option->id;
 				}
+				/** @var PropositionOption $option */
 				foreach ($proposition->options as $option) {
 					if (!in_array($option->id, $circs)) {
 						$option->delete();
@@ -129,7 +133,6 @@ class PropositionController extends Controller {
 					$option = PropositionOption::find( $offer_id );
 					if (!$option) {
 						continue;
-						$option = new PropositionOption();
 					}
 					$option->mapModel($offer);
 					$option->save();
@@ -203,17 +206,21 @@ class PropositionController extends Controller {
 				$proposition->deadline = $request->input('data.date');
 				$proposition->priority = $request->input('data.priority');
 				break;
-			case 'price_sales':
-				break;
 		}
 		$proposition->status = 'unfinished';
 		$proposition->save();
-		$out = $this->buildResponse($proposition);
+		$out = $this->buildResponse($proposition->id);
 		return response()->json($out);
 	}
 
+	/**
+	 * @param BookProposition $proposition
+	 *
+	 * @return array
+	 */
 	private function buildResponse($proposition) {
 		//TODO: build proposition object according to access rights
+		$proposition = BookProposition::find($proposition);
 		$out = [
 			'id' => $proposition->id,
 			'basic_data' => [
