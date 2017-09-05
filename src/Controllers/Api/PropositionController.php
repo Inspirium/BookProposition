@@ -76,6 +76,7 @@ class PropositionController extends Controller {
 				$proposition->additional_work = $request->input('data.additional_work');
 				$proposition->colors = $request->input('data.colors');
 				$proposition->colors_first_page = $request->input('data.colors_first_page');
+				$proposition->colors_last_page = $request->input('data.colors_last_page');
 				$proposition->cover_type = $request->input('data.cover_type');
 				$proposition->cover_paper_type = $request->input('data.cover_paper_type');
 				$proposition->cover_colors = $request->input('data.cover_colors');
