@@ -6,4 +6,7 @@ Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\Boo
     Route::post('/', 'PropositionController@saveProposition');
     Route::patch('{id?}', 'PropositionController@saveProposition');
     Route::delete('{id?}', 'PropositionController@deleteProposition');
+    Route::post('restore/{id?}', 'PropositionController@restoreProposition');
 });
+
+\Illuminate\Translation\FileLoader::class;

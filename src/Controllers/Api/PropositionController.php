@@ -220,7 +220,7 @@ class PropositionController extends Controller {
 	 */
 	private function buildResponse($proposition) {
 		//TODO: build proposition object according to access rights
-		$proposition = BookProposition::find($proposition);
+		$proposition = BookProposition::withTrashed()->find($proposition);
 		$out = [
 			'id' => $proposition->id,
 			'basic_data' => [
@@ -333,13 +333,20 @@ class PropositionController extends Controller {
 				'priority' => $proposition->priority
 			],
 			'owner' => $proposition->owner,
-			'created_at' => $proposition->created_at
+			'created_at' => $proposition->created_at,
+			'deleted_at' => $proposition->deleted_at
 		];
 		return $out;
 	}
 
 	public function deleteProposition($id) {
 		BookProposition::destroy($id);
+		return response()->json([]);
+	}
+
+	public function restoreProposition($id) {
+		$proposition = BookProposition::withTrashed()->find($id);
+		$proposition->restore();
 		return response()->json([]);
 	}
 
