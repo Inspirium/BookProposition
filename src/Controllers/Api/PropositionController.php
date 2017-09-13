@@ -39,8 +39,13 @@ class PropositionController extends Controller {
 				$proposition->dotation_origin = $request->input('data.dotation_origin');
 				$proposition->manuscript = $request->input('data.manuscript');
 				foreach ($request->input('data.manuscript_documents') as $document) {
+
 					$file = File::find($document['id']);
-					$proposition->documents()->save($file, ['type' => 'manuscript']);
+					$file->title = $document['title'];
+					$file->save();
+					if (!$proposition->documents->contains($document['id'])) {
+						$proposition->documents()->save( $file, [ 'type' => 'manuscript' ] );
+					}
 				}
 				$authors = [];
 				foreach ($request->input('data.authors') as $author) {
@@ -65,7 +70,11 @@ class PropositionController extends Controller {
 				$proposition->main_target = $request->input('data.main_target');
 				foreach ($request->input('data.market_potential_documents') as $document) {
 					$file = File::find($document['id']);
-					$proposition->documents()->save($file, ['type' => 'market_potential']);
+					$file->title = $document['title'];
+					$file->save();
+					if (!$proposition->documents->contains($document['id'])) {
+						$proposition->documents()->save( $file, [ 'type' => 'manuscript' ] );
+					}
 				}
 				break;
 			case 'technical_data':
