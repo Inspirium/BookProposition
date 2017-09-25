@@ -394,4 +394,96 @@ class PropositionController extends Controller {
 			//TODO: send notification
 		}
 	}
+
+	public function getPropositionStep($id, $step) {
+		$proposition = BookProposition::withTrashed()->find($id);
+		$allowed_steps = [
+			'basic_data', 'translation'
+		];
+		$out = [];
+		if (in_array($step, $allowed_steps)) {
+			$function = 'get' . str_replace(' ', '', ucfirst(str_replace('_', ' ',$step)));
+			$out = $this->$function($proposition);
+		}
+
+		return response()->json($out);
+	}
+
+	public function setPropositionStep(Request $request, $id, $step) {
+		$proposition = BookProposition::withTrashed()->find($id);
+		$allowed_steps = [
+			'basic_data', 'translation'
+		];
+		$out = [];
+		if (in_array($step, $allowed_steps)) {
+			$function = 'set' . str_replace(' ', '', ucfirst(str_replace('_', ' ',$step)));
+			$out = $this->$function($request, $proposition);
+		}
+
+		return response()->json($out);
+	}
+
+	//TODO: move
+
+	/**
+	 * @param BookProposition $proposition
+	 *
+	 * @return array
+	 */
+	private function getBasicData(BookProposition $proposition) {
+		return [
+			'title' => $proposition->title,
+			'authors' => $proposition->authors()->get(),
+			'concept' => $proposition->concept,
+			'possible_products' => $proposition->possible_products,
+			'dotation' => $proposition->dotation,
+			'dotation_amount' => $proposition->dotation_amount,
+			'dotation_origin' => $proposition->dotation_origin,
+			'manuscript' => $proposition->manuscript,
+			'manuscript_documents' => $proposition->documents()->wherePivot('type', 'manuscript')->get()
+		];
+	}
+
+	private function setBasicData(Request $request, $proposition) {
+		$proposition->title = $request->input('title');
+		$proposition->concept = $request->input('concept');
+		$proposition->possible_products = $request->input('possible_products');
+		$proposition->dotation = $request->input('dotation');
+		$proposition->dotation_amount = $request->input('dotation_amount');
+		$proposition->dotation_origin = $request->input('dotation_origin');
+		$proposition->manuscript = $request->input('manuscript');
+
+		foreach ($request->input('manuscript_documents') as $document) {
+			$file = File::find($document['id']);
+			$file->title = $document['title'];
+			$file->save();
+			if (!$proposition->documents->contains($document['id'])) {
+				$proposition->documents()->save( $file, [ 'type' => 'manuscript' ] );
+			}
+		}
+		$authors = [];
+		foreach ($request->input('authors') as $author) {
+			$authors[] = $author['id'];
+		}
+		$proposition->authors()->sync($authors);
+		$proposition->save();
+		return true;
+	}
+
+	private function getTranslation($proposition) {
+		return [
+			'files' => $proposition->documents()->wherePivot('type', 'translation')->get()
+		];
+	}
+
+	private function setTranslation($request, $proposition) {
+		foreach ($request->input('files') as $document) {
+			$file = File::find($document['id']);
+			$file->title = $document['title'];
+			$file->save();
+			if (!$proposition->documents->contains($document['id'])) {
+				$proposition->documents()->save( $file, [ 'type' => 'translation' ] );
+			}
+		}
+	}
 }
