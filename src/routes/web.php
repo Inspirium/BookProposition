@@ -40,6 +40,9 @@ Route::group(['prefix' => 'proposition'], function() {
 	Route::get('department-list', function() {
 		return view(config('app.template') . '::proposition.department-list');
 	});
+	Route::any('{id}/{all}/{step}', function() {
+		return view(config('app.template') . '::router-view');
+	});
 	Route::any('{id}/{all}', function() {
 		return view(config('app.template') . '::router-view');
 	});

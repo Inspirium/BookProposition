@@ -5,6 +5,7 @@ namespace Inspirium\BookProposition\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Inspirium\FileManagement\Models\File;
 
 /**
  * Class BookProposition
@@ -144,6 +145,30 @@ class BookProposition extends Model {
 
 	public function group() {
 		return $this->belongsTo('Inspirium\BookManagement\Models\BookCategory', 'group_id');
+	}
+
+	public function biblioteca() {
+		return $this->belongsTo('Inspirium\BookManagement\Models\BookBiblioteca', 'biblioteca_id');
+	}
+
+	public function book_type() {
+		return $this->belongsTo('Inspirium\BookManagement\Models\BookType', 'book_type_id');
+	}
+
+	public function book_type_group() {
+		return $this->belongsTo('Inspirium\BookManagement\Models\BookTypeGroup', 'book_type_group_id');
+	}
+
+	public function school_subject() {
+		return $this->belongsTo('Inspirium\BookManagement\Models\SchoolSubjectGroup', 'school_subject_id');
+	}
+
+	public function school_subject_detailed() {
+		return $this->belongsTo('Inspirium\BookManagement\Models\SchoolSubject', 'school_subject_detailed_id');
+	}
+
+	public function school_type() {
+		return $this->belongsTo('Inpirium\BookManagement\Models\SchoolType', 'school_type_id');
 	}
 
 	public function documents() {
@@ -313,5 +338,23 @@ class BookProposition extends Model {
 			return [];
 		}
 		return json_decode($value, true);
+	}
+
+
+
+	public function getCategorizationAttribute() {
+		return [
+			'supergroup' => $this->getRelationValue('supergroup'),
+			'upgroup' => $this->getRelationValue('upgroup'),
+			'group' => $this->getRelationValue('group'),
+			'book_type_group' => $this->getRelationValue('book_type_group'),
+			'book_type' => $this->getRelationValue('book_type'),
+			'school_type' => $this->getRelationValue('school_type'),
+			'school_level' => $this->attributes['school_level'],
+			'school_assignment' => $this->attributes['school_assignment'],
+			'school_subject' => $this->getRelationValue('school_subject'),
+			'school_subject_detailed' => $this->getRelationValue('school_subject_detailed'),
+			'biblioteca' => $this->getRelationValue('biblioteca'),
+		];
 	}
 }
