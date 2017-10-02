@@ -425,6 +425,15 @@ class PropositionController extends Controller {
 
 	//TODO: move
 
+	private function getStart(BookProposition $proposition) {
+		return [
+			'project_number' => $proposition->project_number,
+			'project_name' => $proposition->project_name,
+			'additional_project_number' => $proposition->additional_project_number,
+			'note' => $proposition->notes()->where('type', '=', 'start')->get('note')
+		];
+	}
+
 	/**
 	 * @param BookProposition $proposition
 	 *
@@ -440,7 +449,8 @@ class PropositionController extends Controller {
 			'dotation_amount' => $proposition->dotation_amount,
 			'dotation_origin' => $proposition->dotation_origin,
 			'manuscript' => $proposition->manuscript,
-			'manuscript_documents' => $proposition->documents()->wherePivot('type', 'manuscript')->get()
+			'manuscript_documents' => $proposition->documents()->wherePivot('type', 'manuscript')->get(),
+			'note' => $proposition->notes()->where('type', '=', 'basic_data')->get('note')
 		];
 	}
 
@@ -456,14 +466,16 @@ class PropositionController extends Controller {
 			'school_assignment' => $proposition->school_assignment,
 			'school_subject' => $proposition->school_subject,
 			'school_subject_detailed' => $proposition->school_subject_detailed,
-			'biblioteca' => $proposition->biblioteca
+			'biblioteca' => $proposition->biblioteca,
+			'note' => $proposition->notes()->where('type', '=', 'categorization')->get('note')
 		];
 	}
 
 	private function getMarketPotential(BookProposition $proposition) {
 		return [
 			'main_target' => $proposition->main_target,
-			'market_potential_documents' => $proposition->documents()->wherePivot('type', 'market_potential')->get()
+			'market_potential_documents' => $proposition->documents()->wherePivot('type', 'market_potential')->get(),
+			'note' => $proposition->notes()->where('type', '=', 'market_potential')->get('note')
 		];
 	}
 
@@ -487,19 +499,22 @@ class PropositionController extends Controller {
 			'film_print' => $proposition->film_print,
 			'blind_print' => $proposition->blind_print,
 			'uv_print' => $proposition->uv_print,
+			'note' => $proposition->notes()->where('type', '=', 'technical_data')->get('note')
 		];
 	}
 
 	private function getPrint(BookProposition $proposition) {
 		return [
-			'offers' => $proposition->offers
+			'offers' => $proposition->offers,
+			'note' => $proposition->notes()->where('type', '=', 'print')->get('note')
 		];
 	}
 
 	private function getAuthorsExpense(BookProposition $proposition) {
 		return [
 			'expenses' => $proposition->author_expenses,
-			'other' => $proposition->author_other_expense
+			'other' => $proposition->author_other_expense,
+			'note' => $proposition->notes()->where('type', '=', 'authors_expense')->get('note')
 		];
 	}
 
@@ -533,20 +548,23 @@ class PropositionController extends Controller {
 			'selection' => $proposition->selection,
 			'powerpoint_presentation' => $proposition->powerpoint_presentation,
 			'methodical_instrumentarium' => $proposition->methodical_instrumentarium,
-			'additional_expense' => $proposition->production_additional_expense
+			'additional_expense' => $proposition->production_additional_expense,
+			'note' => $proposition->notes()->where('type', '=', 'production_expense')->get('note')
 		];
 	}
 
 	private function getMarketingExpense(BookProposition $proposition) {
 		return [
 			'expense' => $proposition->marketing_expense,
-			'additional_expense' => $proposition->marketing_additional_expense
+			'additional_expense' => $proposition->marketing_additional_expense,
+			'note' => $proposition->notes()->where('type', '=', 'marketing_expense')->get('note')
 		];
 	}
 
 	private function getDistributionExpense(BookProposition $proposition) {
 		return [
-			'margin' => $proposition->margin
+			'margin' => $proposition->margin,
+			'note' => $proposition->notes()->where('type', '=', 'distribution_expense')->get('note')
 		];
 	}
 
@@ -558,13 +576,15 @@ class PropositionController extends Controller {
 			'design_complexity' => $proposition->design_complexity,
 			'design_include' => $proposition->design_include,
 			'design_note' => $proposition->design_note,
+			'note' => $proposition->notes()->where('type', '=', 'layout_expense')->get('note')
 		];
 	}
 
 	private function getDeadline(BookProposition $proposition) {
 		return [
 			'date' => $proposition->deadline,
-			'priority' => $proposition->priority
+			'priority' => $proposition->priority,
+			'note' => $proposition->notes()->where('type', '=', 'deadline')->get('note')
 		];
 	}
 
@@ -603,12 +623,20 @@ class PropositionController extends Controller {
 
 	public function setFiles(Request $request, $id, $type) {
 		$proposition = BookProposition::withTrashed()->find($id);
-		foreach ($request->input('files') as $document) {
+		foreach ($request->input('initial') as $document) {
 			$file = File::find($document['id']);
 			$file->title = $document['title'];
 			$file->save();
 			if (!$proposition->documents()->wherePivot('type', $type)->get()->contains($document['id'])) {
 				$proposition->documents()->save( $file, [ 'type' => $type ] );
+			}
+		}
+		foreach ($request->input('final') as $document) {
+			$file = File::find($document['id']);
+			$file->title = $document['title'];
+			$file->save();
+			if (!$proposition->documents()->wherePivot('type', $type)->get()->contains($document['id'])) {
+				$proposition->documents()->save( $file, [ 'type' => $type, 'final' => true ] );
 			}
 		}
 	}
