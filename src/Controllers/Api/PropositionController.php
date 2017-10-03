@@ -643,7 +643,8 @@ class PropositionController extends Controller {
 	public function getFiles($id, $type) {
 		$proposition = BookProposition::withTrashed()->find($id);
 		return [
-			'files' => $proposition->documents()->wherePivot('type', $type)->get()
+			'files' => $proposition->documents()->wherePivot('type', $type)->wherePivot('final', false)->get(),
+			'final' => $proposition->documents()->wherePivot('type', $type)->wherePivot('final', true)->get()
 		];
 	}
 
