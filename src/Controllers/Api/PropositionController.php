@@ -428,6 +428,7 @@ class PropositionController extends Controller {
 			$function = 'set' . str_replace(' ', '', ucfirst(str_replace('_', ' ',$step)));
 			$out = $this->$function($request, $proposition);
 		}
+		$out['id'] = $proposition->id;
 
 		return response()->json($out);
 	}
