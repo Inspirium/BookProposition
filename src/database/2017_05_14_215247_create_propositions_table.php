@@ -51,6 +51,7 @@ class CreatePropositionsTable extends Migration
             $table->string('additional_work')->nullable();
             $table->string('colors')->nullable();
             $table->string('colors_first_page')->nullable();
+            $table->string('colors_last_page')->nullable();
             $table->string('cover_type')->nullable();
             $table->string('cover_paper_type')->nullable();
             $table->string('cover_colors')->nullable();
