@@ -107,6 +107,8 @@ class CreatePropositionsTable extends Migration
             $table->datetime('deadline')->nullable();
             $table->string('priority')->nullable();
 
+            $table->text('expenses')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

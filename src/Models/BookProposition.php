@@ -104,7 +104,8 @@ class BookProposition extends Model {
 	    'author_other_expense' => 'array',
 	    'production_additional_expense' => 'array',
 	    'marketing_expense' => 'float',
-	    'marketing_additional_expense' => 'array'
+	    'marketing_additional_expense' => 'array',
+	    'expenses' => 'array'
     ];
 
     public function owner() {
@@ -340,6 +341,31 @@ class BookProposition extends Model {
 		return json_decode($value, true);
 	}
 
+	public function getExpensesAttribute($value){
+		if ($value) {
+			return $value;
+		}
+		return [
+			'text_price' => 0,
+			'reviews' => 0,
+			'lecture' => 0,
+			'correction' => 0,
+			'proofreading' => 0,
+			'translation' => 0,
+			'index' => 0,
+			'epilogue' => 0,
+			'photos' => 0,
+			'illustrations' => 0,
+			'expert_report' => 0,
+			'copyright' => 0,
+			'copyright_mediator' => 0,
+			'methodical_instrumentarium' => 0,
+			'selection' => 0,
+			'powerpoint_presentation' => 0,
+			'additional_expense' => 0,
+			'marketing_expense' => 0,
+		];
+	}
 
 
 	public function getCategorizationAttribute() {

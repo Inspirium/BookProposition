@@ -395,10 +395,19 @@ class PropositionController extends Controller {
 		}
 	}
 
+	public function initProposition(Request $request) {
+		$proposition = new BookProposition();
+		$proposition->project_name = $request->input('project_name');
+		$proposition->project_number = $request->input('project_number');
+		$proposition->additional_project_number = $request->input('additional_project_number');
+		$proposition->save();
+		return response()->json(['id' => $proposition->id]);
+ 	}
+
 	public function getPropositionStep($id, $step) {
 		$proposition = BookProposition::withTrashed()->find($id);
 		$allowed_steps = [
-			'basic_data', 'translation'
+			'basic_data', 'translation', 'start'
 		];
 		$out = [];
 		if (in_array($step, $allowed_steps)) {
@@ -412,7 +421,7 @@ class PropositionController extends Controller {
 	public function setPropositionStep(Request $request, $id, $step) {
 		$proposition = BookProposition::withTrashed()->find($id);
 		$allowed_steps = [
-			'basic_data', 'translation'
+			'basic_data', 'translation', 'start'
 		];
 		$out = [];
 		if (in_array($step, $allowed_steps)) {
@@ -430,8 +439,15 @@ class PropositionController extends Controller {
 			'project_number' => $proposition->project_number,
 			'project_name' => $proposition->project_name,
 			'additional_project_number' => $proposition->additional_project_number,
-			'note' => $proposition->notes()->where('type', '=', 'start')->get('note')
+			'note' => $proposition->notes()->where('type', '=', 'start')
 		];
+	}
+
+	private function setStart(Request $request, BookProposition $proposition) {
+		$proposition->project_number = $request->input('project_number');
+		$proposition->project_name = $request->input('project_name');
+		$proposition->additional_project_number = $request->input('additional_project_number');
+		$proposition->save();
 	}
 
 	/**
@@ -586,6 +602,15 @@ class PropositionController extends Controller {
 			'priority' => $proposition->priority,
 			'note' => $proposition->notes()->where('type', '=', 'deadline')->get('note')
 		];
+	}
+
+	private function getCompare(BookProposition $proposition) {
+		return $proposition->expenses;
+	}
+
+	private function setCompare(Request $request, $proposition) {
+		$proposition->expenses = $request->input('expenses');
+		$proposition->save();
 	}
 
 	private function setBasicData(Request $request, $proposition) {
