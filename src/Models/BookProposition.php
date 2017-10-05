@@ -125,7 +125,7 @@ class BookProposition extends Model {
     }
 
 	public function notes() {
-    	return $this->hasMany('Inspirium\BookProposition\Models\PropositionNote');
+    	return $this->hasMany('Inspirium\BookProposition\Models\PropositionNote', 'proposition_id');
 	}
 
 	public function getNotesAttribute(){
@@ -169,7 +169,7 @@ class BookProposition extends Model {
 	}
 
 	public function school_type() {
-		return $this->belongsTo('Inpirium\BookManagement\Models\SchoolType', 'school_type_id');
+		return $this->belongsToMany('Inpirium\BookManagement\Models\SchoolType', '', 'school_type_id');
 	}
 
 	public function documents() {

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Notification;
 use Inspirium\BookManagement\Models\Book;
 use Inspirium\BookProposition\Models\AuthorExpense;
 use Inspirium\BookProposition\Models\BookProposition;
+use Inspirium\BookProposition\Models\PropositionNote;
 use Inspirium\BookProposition\Models\PropositionOption;
 use Inspirium\FileManagement\Models\File;
 use Inspirium\HumanResources\Models\Employee;
@@ -407,7 +408,9 @@ class PropositionController extends Controller {
 	public function getPropositionStep($id, $step) {
 		$proposition = BookProposition::withTrashed()->find($id);
 		$allowed_steps = [
-			'basic_data', 'translation', 'start'
+			'basic_data', 'translation', 'start', 'categorization', 'market_potential', 'technical_data', 'print',
+			'authors_expenses', 'production_expense', 'marketing_expense', 'distribution_expense', 'layout_expense',
+			'deadline', 'compare'
 		];
 		$out = [];
 		if (in_array($step, $allowed_steps)) {
@@ -440,7 +443,7 @@ class PropositionController extends Controller {
 			'project_number' => $proposition->project_number,
 			'project_name' => $proposition->project_name,
 			'additional_project_number' => $proposition->additional_project_number,
-			'note' => $proposition->notes()->where('type', '=', 'start')
+			'note' => $this->getNote($proposition, 'start')
 		];
 	}
 
@@ -448,7 +451,25 @@ class PropositionController extends Controller {
 		$proposition->project_number = $request->input('project_number');
 		$proposition->project_name = $request->input('project_name');
 		$proposition->additional_project_number = $request->input('additional_project_number');
+		$this->setNote($proposition, $request->input('note'), 'start');
 		$proposition->save();
+	}
+
+	private function setNote(BookProposition $proposition, $text, $type) {
+		$note = $proposition->notes()->where('type', '=', $type)->first();
+		if (!$note) {
+			$note = new PropositionNote(['type' => $type, 'proposition_id' => $proposition->id]);
+		}
+		$note->note = $text;
+		$note->save();
+	}
+
+	private function getNote(BookProposition $proposition, $type) {
+		$note = $proposition->notes()->where('type', '=', 'categorization')->first();
+		if ($note) {
+			return $note->note;
+		}
+		return '';
 	}
 
 	/**
@@ -467,11 +488,12 @@ class PropositionController extends Controller {
 			'dotation_origin' => $proposition->dotation_origin,
 			'manuscript' => $proposition->manuscript,
 			'manuscript_documents' => $proposition->documents()->wherePivot('type', 'manuscript')->get(),
-			'note' => $proposition->notes()->where('type', '=', 'basic_data')->get('note')
+			'note' => $this->getNote($proposition, 'basic_data')
 		];
 	}
 
 	private function getCategorization(BookProposition $proposition) {
+
 		return [
 			'supergroup' => $proposition->supergroup,
 			'upgroup' => $proposition->upgroup,
@@ -484,15 +506,23 @@ class PropositionController extends Controller {
 			'school_subject' => $proposition->school_subject,
 			'school_subject_detailed' => $proposition->school_subject_detailed,
 			'biblioteca' => $proposition->biblioteca,
-			'note' => $proposition->notes()->where('type', '=', 'categorization')->get('note')
+			'note' => $this->getNote($proposition, 'categorization')
 		];
+	}
+
+	private function setCategorization(Request $request, BookProposition $proposition) {
+		$proposition->supergroup_id = $request->input('supergroup');
+		$proposition->upgroup_id = $request->input('upgroup');
+		$proposition->group_id = $request->input('group');
+		$proposition->book_type_group_id = $request->input('book_type_group');
+		$proposition->book_type_id = $request->input('book_type');
 	}
 
 	private function getMarketPotential(BookProposition $proposition) {
 		return [
 			'main_target' => $proposition->main_target,
 			'market_potential_documents' => $proposition->documents()->wherePivot('type', 'market_potential')->get(),
-			'note' => $proposition->notes()->where('type', '=', 'market_potential')->get('note')
+			'note' => $this->getNote($proposition, '')
 		];
 	}
 
@@ -516,14 +546,14 @@ class PropositionController extends Controller {
 			'film_print' => $proposition->film_print,
 			'blind_print' => $proposition->blind_print,
 			'uv_print' => $proposition->uv_print,
-			'note' => $proposition->notes()->where('type', '=', 'technical_data')->get('note')
+			'note' => $this->getNote($proposition, '')
 		];
 	}
 
 	private function getPrint(BookProposition $proposition) {
 		return [
 			'offers' => $proposition->offers,
-			'note' => $proposition->notes()->where('type', '=', 'print')->get('note')
+			'note' => $this->getNote($proposition, '')
 		];
 	}
 
@@ -531,7 +561,7 @@ class PropositionController extends Controller {
 		return [
 			'expenses' => $proposition->author_expenses,
 			'other' => $proposition->author_other_expense,
-			'note' => $proposition->notes()->where('type', '=', 'authors_expense')->get('note')
+			'note' => $this->getNote($proposition, '')
 		];
 	}
 
@@ -566,7 +596,7 @@ class PropositionController extends Controller {
 			'powerpoint_presentation' => $proposition->powerpoint_presentation,
 			'methodical_instrumentarium' => $proposition->methodical_instrumentarium,
 			'additional_expense' => $proposition->production_additional_expense,
-			'note' => $proposition->notes()->where('type', '=', 'production_expense')->get('note')
+			'note' => $this->getNote($proposition, '')
 		];
 	}
 
@@ -574,14 +604,14 @@ class PropositionController extends Controller {
 		return [
 			'expense' => $proposition->marketing_expense,
 			'additional_expense' => $proposition->marketing_additional_expense,
-			'note' => $proposition->notes()->where('type', '=', 'marketing_expense')->get('note')
+			'note' => $this->getNote($proposition, '')
 		];
 	}
 
 	private function getDistributionExpense(BookProposition $proposition) {
 		return [
 			'margin' => $proposition->margin,
-			'note' => $proposition->notes()->where('type', '=', 'distribution_expense')->get('note')
+			'note' => $this->getNote($proposition, '')
 		];
 	}
 
@@ -593,7 +623,7 @@ class PropositionController extends Controller {
 			'design_complexity' => $proposition->design_complexity,
 			'design_include' => $proposition->design_include,
 			'design_note' => $proposition->design_note,
-			'note' => $proposition->notes()->where('type', '=', 'layout_expense')->get('note')
+			'note' => $this->getNote($proposition, '')
 		];
 	}
 
@@ -601,7 +631,7 @@ class PropositionController extends Controller {
 		return [
 			'date' => $proposition->deadline,
 			'priority' => $proposition->priority,
-			'note' => $proposition->notes()->where('type', '=', 'deadline')->get('note')
+			'note' => $this->getNote($proposition, '')
 		];
 	}
 
@@ -637,6 +667,7 @@ class PropositionController extends Controller {
 		}
 		$proposition->authors()->sync($authors);
 		$proposition->save();
+		$this->setNote($proposition, $request->input('note'), 'basic_data');
 		return true;
 	}
 
