@@ -73,7 +73,7 @@ class PropositionController extends Controller {
 					$file->title = $document['title'];
 					$file->save();
 					if (!$proposition->documents->contains($document['id'])) {
-						$proposition->documents()->save( $file, [ 'type' => 'manuscript' ] );
+						$proposition->documents()->save( $file, [ 'type' => 'market_potential' ] );
 					}
 				}
 				break;
