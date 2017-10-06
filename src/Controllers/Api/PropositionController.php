@@ -424,7 +424,9 @@ class PropositionController extends Controller {
 	public function setPropositionStep(Request $request, $id, $step) {
 		$proposition = BookProposition::withTrashed()->find($id);
 		$allowed_steps = [
-			'basic_data', 'translation', 'start'
+			'basic_data', 'translation', 'start', 'categorization', 'market_potential', 'technical_data', 'print',
+			'authors_expenses', 'production_expense', 'marketing_expense', 'distribution_expense', 'layout_expense',
+			'deadline', 'compare'
 		];
 		$out = [];
 		if (in_array($step, $allowed_steps)) {
@@ -492,30 +494,55 @@ class PropositionController extends Controller {
 		];
 	}
 
-	private function getCategorization(BookProposition $proposition) {
+	private function setBasicData(Request $request, $proposition) {
+		$proposition->title = $request->input('title');
+		$proposition->concept = $request->input('concept');
+		$proposition->possible_products = $request->input('possible_products');
+		$proposition->dotation = $request->input('dotation');
+		$proposition->dotation_amount = $request->input('dotation_amount');
+		$proposition->dotation_origin = $request->input('dotation_origin');
+		$proposition->manuscript = $request->input('manuscript');
 
+		foreach ($request->input('manuscript_documents') as $document) {
+			$file = File::find($document['id']);
+			$file->title = $document['title'];
+			$file->save();
+			if (!$proposition->documents->contains($document['id'])) {
+				$proposition->documents()->save( $file, [ 'type' => 'manuscript' ] );
+			}
+		}
+		$authors = [];
+		foreach ($request->input('authors') as $author) {
+			$authors[] = $author['id'];
+		}
+		$proposition->authors()->sync($authors);
+		$proposition->save();
+		$this->setNote($proposition, $request->input('note'), 'basic_data');
+	}
+
+	private function getCategorization(BookProposition $proposition) {
 		return [
-			'supergroup' => $proposition->supergroup,
-			'upgroup' => $proposition->upgroup,
-			'group' => $proposition->group,
-			'book_type_group' => $proposition->book_type_group,
+			'group' => $proposition->bookCategories()->with('parent')->first(),
 			'book_type' => $proposition->book_type,
 			'school_type' => $proposition->school_type,
 			'school_level' => $proposition->school_level,
 			'school_assignment' => $proposition->school_assignment,
 			'school_subject' => $proposition->school_subject,
-			'school_subject_detailed' => $proposition->school_subject_detailed,
 			'biblioteca' => $proposition->biblioteca,
 			'note' => $this->getNote($proposition, 'categorization')
 		];
 	}
 
 	private function setCategorization(Request $request, BookProposition $proposition) {
-		$proposition->supergroup_id = $request->input('supergroup');
-		$proposition->upgroup_id = $request->input('upgroup');
-		$proposition->group_id = $request->input('group');
-		$proposition->book_type_group_id = $request->input('book_type_group');
-		$proposition->book_type_id = $request->input('book_type');
+		$proposition->bookCategories()->sync($request->input('group'));
+		$proposition->bookCategories()->sync($request->input('group'));
+		$proposition->schoolTypes()->sync($request->input('school_type'));
+		$proposition->schoolSubjects()->sync($request->input('school_subject_detailed'));
+		$proposition->school_level = $request->input('school_level');
+		$proposition->school_assignment = $request->input('school_assignment');
+		$proposition->bibliotecas()->sync($request->input('biblioteca'));
+		$proposition->save();
+		$this->setNote($proposition, $request->input('note'), 'categorization');
 	}
 
 	private function getMarketPotential(BookProposition $proposition) {
@@ -642,33 +669,6 @@ class PropositionController extends Controller {
 	private function setCompare(Request $request, $proposition) {
 		$proposition->expenses = $request->input('expenses');
 		$proposition->save();
-	}
-
-	private function setBasicData(Request $request, $proposition) {
-		$proposition->title = $request->input('title');
-		$proposition->concept = $request->input('concept');
-		$proposition->possible_products = $request->input('possible_products');
-		$proposition->dotation = $request->input('dotation');
-		$proposition->dotation_amount = $request->input('dotation_amount');
-		$proposition->dotation_origin = $request->input('dotation_origin');
-		$proposition->manuscript = $request->input('manuscript');
-
-		foreach ($request->input('manuscript_documents') as $document) {
-			$file = File::find($document['id']);
-			$file->title = $document['title'];
-			$file->save();
-			if (!$proposition->documents->contains($document['id'])) {
-				$proposition->documents()->save( $file, [ 'type' => 'manuscript' ] );
-			}
-		}
-		$authors = [];
-		foreach ($request->input('authors') as $author) {
-			$authors[] = $author['id'];
-		}
-		$proposition->authors()->sync($authors);
-		$proposition->save();
-		$this->setNote($proposition, $request->input('note'), 'basic_data');
-		return true;
 	}
 
 	public function getFiles($id, $type) {

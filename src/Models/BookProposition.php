@@ -5,6 +5,7 @@ namespace Inspirium\BookProposition\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Inspirium\BookManagement\Models\Book;
 use Inspirium\FileManagement\Models\File;
 
 /**
@@ -28,148 +29,52 @@ class BookProposition extends Model {
 	    'deleted_at'
     ];
 
-    protected $casts = [
-        'title' => 'string',
-        'concept' => 'string',
-        'manuscript' => 'string',
-        'dotation' => 'boolean',
-        'dotation_origin' => 'string',
-        'dotation_amount' => 'float',
-        'possible_products' => 'array',
-	    'supergroup_id' => 'integer',
-	    'upgroup_id' => 'integer',
-	    'group_id' => 'integer',
-	    'book_type_group_id' => 'integer',
-	    'book_type_id' => 'integer',
-	    'school_type' => 'array',
-	    'school_level' => 'array',
-	    'school_assignment' => 'boolean',
-	    'school_subject_id' => 'integer',
-	    'school_subject_detailed_id' => 'integer',
-	    'biblioteca' => 'integer',
-	    'main_target' => 'string',
-	    'status' => 'string',
-	    'additions' => 'array',
-	    'circulations' => 'array',
-	    'number_of_pages' => 'integer',
-	    'width' => 'string',
-	    'height' => 'string',
-	    'paper_type' => 'string',
-	    'additional_work' => 'string',
-	    'colors' => 'string',
-	    'colors_first_page' => 'string',
-	    'cover_type' => 'string',
-	    'cover_paper_type' => 'string',
-	    'cover_colors' => 'string',
-	    'cover_plastification' => 'string',
-	    'film_print' => 'boolean',
-	    'blind_print' => 'boolean',
-	    'uv_print' => 'boolean',
-	    'text_price' => 'string',
-	    'text_price_amount' => 'string',
-	    'accontation' => 'string',
-	    'netto_price_percentage' => 'string',
-	    'reviews' => 'string',
-	    'lecture' => 'string',
-	    'lecture_amount' => 'string',
-	    'correction' => 'string',
-	    'correction_amount' => 'string',
-	    'proofreading' => 'string',
-	    'proofreading_amount' => 'string',
-	    'translation' => 'string',
-	    'translation_amount' => 'string',
-	    'index' => 'string',
-	    'index_amount' => 'string',
-	    'epilogue' => 'string',
-	    'photos_amount' => 'string',
-	    'illustrations' => 'string',
-	    'illustrations_amount' => 'string',
-	    'technical_drawings' => 'string',
-	    'technical_drawings_amount' => 'string',
-	    'export_report' => 'string',
-	    'copyright' => 'string',
-	    'copyright_mediator' => 'string',
-	    'selection' => 'string',
-	    'powerpoint_presentation' => 'string',
-	    'methodical_instrumentarium' => 'string',
-	    'margin' => 'string',
-	    'layout_complexity' => 'string',
-	    'layout_include' => 'boolean',
-	    'design_complexity' => 'string',
-	    'design_include' => 'boolean',
-	    'design_note' => 'string',
-	    'layout_note' => 'string',
-	    'deadline' => 'string',
-	    'prioriy' => 'string',
-	    'author_other_expense' => 'array',
-	    'production_additional_expense' => 'array',
-	    'marketing_expense' => 'float',
-	    'marketing_additional_expense' => 'array',
-	    'expenses' => 'array'
-    ];
-
+    //relationships
+	//one-to-many
     public function owner() {
     	return $this->belongsTo('Inspirium\HumanResources\Models\Employee', 'owner_id');
     }
 
-    public function authorExpenses() {
-        return $this->hasMany('Inspirium\BookProposition\Models\AuthorExpense', 'proposition_id');
-    }
-
-	public function getAuthorExpensesAttribute(){
-		return $this->attributes['author_expenses'] = $this->getRelationValue('authorExpenses')->keyBy('author_id');
-	}
-
-	public function authors() {
-        return $this->belongsToMany('Inspirium\BookManagement\Models\Author', 'pivot_proposition_author', 'proposition_id', 'author_id');
-    }
-
 	public function notes() {
-    	return $this->hasMany('Inspirium\BookProposition\Models\PropositionNote', 'proposition_id');
-	}
-
-	public function getNotesAttribute(){
-		return $this->attributes['notes'] = $this->getRelationValue('notes')->keyBy('type');
+		return $this->hasMany('Inspirium\BookProposition\Models\PropositionNote', 'proposition_id');
 	}
 
 	public function options() {
 		return $this->hasMany( 'Inspirium\BookProposition\Models\PropositionOption', 'proposition_id' );
 	}
 
-	public function supergroup() {
-		return $this->belongsTo('Inspirium\BookManagement\Models\BookCategory', 'supergroup_id');
+	//many-to-many
+	public function authorExpenses() {
+		return $this->hasMany('Inspirium\BookProposition\Models\AuthorExpense', 'proposition_id');
 	}
 
-	public function upgroup() {
-		return $this->belongsTo('Inspirium\BookManagement\Models\BookCategory', 'upgroup_id');
+	public function getAuthorExpensesAttribute(){
+		return $this->attributes['author_expenses'] = $this->getRelationValue('authorExpenses')->keyBy('author_id');
 	}
 
-	public function group() {
-		return $this->belongsTo('Inspirium\BookManagement\Models\BookCategory', 'group_id');
+	//polymorph
+	public function authors() {
+        return $this->morphToMany('Inspirium\BookManagement\Models\Author', 'connection', 'author_pivot', 'connection_id', 'author_id');
+    }
+
+	public function bookCategories() {
+		return $this->morphToMany('Inspirium\BookManagement\Models\BookCategory', 'connection', 'book_category_pivot', 'connection_id', 'book_category_id');
 	}
 
-	public function biblioteca() {
-		return $this->belongsTo('Inspirium\BookManagement\Models\BookBiblioteca', 'biblioteca_id');
+	public function bibliotecas() {
+		return $this->morphToMany('Inspirium\BookManagement\Models\BookBiblioteca', 'connection', 'biblioteca_pivot', 'connection_id', 'biblioteca_id');
 	}
 
-	public function book_type() {
-		return $this->belongsTo('Inspirium\BookManagement\Models\BookType', 'book_type_id');
+	public function bookTypes() {
+		return $this->morphToMany('Inspirium\BookManagement\Models\BookType', 'connection', 'book_type_pivot', 'connection_id', 'book_type_id');
 	}
 
-	public function book_type_group() {
-		return $this->belongsTo('Inspirium\BookManagement\Models\BookTypeGroup', 'book_type_group_id');
+	public function schoolSubjects() {
+		return $this->morphToMany('Inspirium\BookManagement\Models\SchoolSubjectGroup', 'connection', 'school_subjects_pivot', 'connection_id', 'school_subject_id');
 	}
 
-	public function school_subject() {
-		return $this->belongsTo('Inspirium\BookManagement\Models\SchoolSubjectGroup', 'school_subject_id');
-	}
-
-	public function school_subject_detailed() {
-		return $this->belongsTo('Inspirium\BookManagement\Models\SchoolSubject', 'school_subject_detailed_id');
-	}
-
-	public function school_type() {
-		return $this->belongsToMany('Inpirium\BookManagement\Models\SchoolType', '', 'school_type_id');
+	public function schoolTypes() {
+		return $this->morphToMany('Inpirium\BookManagement\Models\SchoolType', 'connection', 'school_type_pivot', 'connection_id', 'school_type_id');
 	}
 
 	public function documents() {
@@ -367,12 +272,11 @@ class BookProposition extends Model {
 		];
 	}
 
-
 	public function getCategorizationAttribute() {
 		return [
-			'supergroup' => $this->getRelationValue('supergroup'),
-			'upgroup' => $this->getRelationValue('upgroup'),
-			'group' => $this->getRelationValue('group'),
+			'supergroup' => $this->bookCategories->parent->parent,
+			'upgroup' => $this->bookCategories->parent,
+			'group' => $this->bookCategories,
 			'book_type_group' => $this->getRelationValue('book_type_group'),
 			'book_type' => $this->getRelationValue('book_type'),
 			'school_type' => $this->getRelationValue('school_type'),

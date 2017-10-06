@@ -28,17 +28,8 @@ class CreatePropositionsTable extends Migration
             $table->string('dotation_amount')->nullable();
             $table->text('possible_products')->nullable();
 
-            $table->integer('supergroup_id')->nullable();
-            $table->integer('upgroup_id')->nullable();
-            $table->integer('group_id')->nullable();
-            $table->integer('book_type_group_id')->nullable();
-            $table->integer('book_type_id')->nullable();
-            $table->text('school_type')->nullable();
             $table->text('school_level')->nullable();
 			$table->boolean('school_assignment')->nullable();
-			$table->integer('school_subject_id')->nullable();
-			$table->integer('school_subject_detailed_id')->nullable();
-			$table->integer('biblioteca_id')->nullable();
 
             $table->string('main_target')->nullable();
 
