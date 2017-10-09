@@ -17,7 +17,7 @@ class CreatePropositionNotesTable extends Migration
             $table->increments('id');
             $table->string('type');
             $table->integer('proposition_id');
-            $table->text('note');
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }

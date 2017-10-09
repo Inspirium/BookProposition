@@ -29,6 +29,11 @@ class BookProposition extends Model {
 	    'deleted_at'
     ];
 
+    protected $casts = [
+	    'school_level' => 'array',
+	    'possible_products' => 'array'
+    ];
+
     //relationships
 	//one-to-many
     public function owner() {
@@ -70,11 +75,11 @@ class BookProposition extends Model {
 	}
 
 	public function schoolSubjects() {
-		return $this->morphToMany('Inspirium\BookManagement\Models\SchoolSubjectGroup', 'connection', 'school_subjects_pivot', 'connection_id', 'school_subject_id');
+		return $this->morphToMany('Inspirium\BookManagement\Models\SchoolSubject', 'connection', 'school_subjects_pivot', 'connection_id', 'school_subject_id');
 	}
 
 	public function schoolTypes() {
-		return $this->morphToMany('Inpirium\BookManagement\Models\SchoolType', 'connection', 'school_type_pivot', 'connection_id', 'school_type_id');
+		return $this->morphToMany('Inspirium\BookManagement\Models\SchoolType', 'connection', 'school_type_pivot', 'connection_id', 'school_type_id');
 	}
 
 	public function documents() {
@@ -162,6 +167,9 @@ class BookProposition extends Model {
 	public function getSchoolLevelAttribute($value) {
 		if (!$value) {
 			return [];
+		}
+		if (is_array($value)) {
+			return $value;
 		}
 		return json_decode($value, true);
 	}
