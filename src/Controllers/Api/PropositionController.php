@@ -89,7 +89,7 @@ class PropositionController extends Controller {
 		$proposition = BookProposition::withTrashed()->find($id);
 		$allowed_steps = [
 			'basic_data', 'translation', 'start', 'categorization', 'market_potential', 'technical_data', 'print',
-			'authors_expenses', 'production_expense', 'marketing_expense', 'distribution_expense', 'layout_expense',
+			'authors_expense', 'production_expense', 'marketing_expense', 'distribution_expense', 'layout_expense',
 			'deadline', 'compare'
 		];
 		$out = [];
@@ -111,7 +111,7 @@ class PropositionController extends Controller {
 		$proposition = BookProposition::withTrashed()->find($id);
 		$allowed_steps = [
 			'basic_data', 'translation', 'start', 'categorization', 'market_potential', 'technical_data', 'print',
-			'authors_expenses', 'production_expense', 'marketing_expense', 'distribution_expense', 'layout_expense',
+			'authors_expense', 'production_expense', 'marketing_expense', 'distribution_expense', 'layout_expense',
 			'deadline', 'compare'
 		];
 		$out = [];
@@ -198,8 +198,23 @@ class PropositionController extends Controller {
 			}
 		}
 		$authors = [];
+		$expenses = [];
 		foreach ($request->input('authors') as $author) {
 			$authors[] = $author['id'];
+			if (!$proposition->authorExpenses->contains($author['id'])) {
+				$e = $proposition->authorExpenses()->create(['author_id' => $author['id']]);
+				$expenses[] = $e->id;
+			}
+			else {
+				$e = $proposition->authorExpenses()->where('author_id', '=', $author['id'])->first();
+				$expenses[] = $e->id;
+			}
+		}
+		/** @var AuthorExpense $e */
+		foreach ($proposition->authorExpenses as $e) {
+			if (!in_array($e->id, $expenses)) {
+				$e->delete();
+			}
 		}
 		$proposition->authors()->sync($authors);
 		$proposition->save();
@@ -365,6 +380,7 @@ class PropositionController extends Controller {
 
 	private function getAuthorsExpense(BookProposition $proposition) {
 		return [
+			'authors' => $proposition->authors,
 			'expenses' => $proposition->author_expenses,
 			'other' => $proposition->author_other_expense,
 			'note' => $this->getNote($proposition, 'authors_expense')

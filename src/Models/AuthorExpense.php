@@ -16,6 +16,8 @@ class AuthorExpense extends Model {
 	    'accontation' => 'float',
     ];
 
+    protected $fillable = ['author_id', 'amount', 'percentage', 'accontation'];
+
     public function author() {
         return $this->belongsTo('Inspirium\BookManagement\Models\Author');
     }
