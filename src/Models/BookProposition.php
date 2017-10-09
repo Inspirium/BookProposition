@@ -195,7 +195,7 @@ class BookProposition extends Model {
 		return json_decode($value, true);
 	}
 
-	public function getCirculationsAttribute($value) {
+	public function getCirculationsAttribute() {
 		$out = [];
 		foreach ($this->getRelationValue('options') as $option) {
 			$out[] = [
@@ -204,11 +204,6 @@ class BookProposition extends Model {
 			];
 		}
 		return $out;
-
-		if (!$value) {
-			return [];
-		}
-		return json_decode($value, true);
 	}
 
 	public function getOffersAttribute() {

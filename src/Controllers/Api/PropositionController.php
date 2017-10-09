@@ -329,12 +329,17 @@ class PropositionController extends Controller {
 			$circs[] = $option->id;
 		}
 		/** @var PropositionOption $option */
+		$out = [];
 		foreach ($proposition->options as $option) {
 			if (!in_array($option->id, $circs)) {
 				$option->delete();
 			}
+			else {
+				$out[] =  ['id' => $option->id, 'title' => $option->title];
+			}
 		}
 		$this->setNote($proposition, $request->input('note'), 'technical_data');
+		return ['circulations' => $out];
 	}
 
 	private function getPrint(BookProposition $proposition) {
