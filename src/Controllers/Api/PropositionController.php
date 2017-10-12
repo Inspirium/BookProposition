@@ -90,6 +90,9 @@ class PropositionController extends Controller {
 
 	public function getPropositionStep( $id, $step ) {
 		$proposition   = BookProposition::withTrashed()->find( $id );
+		if (!$proposition) {
+			return response()->json([]);
+		}
 		$allowed_steps = [
 			'basic_data',
 			'translation',
@@ -166,6 +169,7 @@ class PropositionController extends Controller {
 		$proposition->project_number            = $request->input( 'project_number' );
 		$proposition->project_name              = $request->input( 'project_name' );
 		$proposition->additional_project_number = $request->input( 'additional_project_number' );
+		$proposition->owner()->associate(\Auth::user());
 		$this->setNote( $proposition, $request->input( 'note' ), 'start' );
 		$proposition->save();
 	}
