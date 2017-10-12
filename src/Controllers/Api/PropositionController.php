@@ -647,22 +647,40 @@ class PropositionController extends Controller {
 	private function getCompare( BookProposition $proposition ) {
 		$marketing_expense = $proposition->marketing_expense + collect($proposition->marketing_additional_expense)->sum('amount');
 
-		$production_expense = $proposition->text_price * $proposition->text_price_amount + $proposition->lecture + $proposition->lecture_amount + $proposition->correction + $proposition->correction_amount + $proposition->proofreading + $proposition->proofreading_amount + $proposition->translation + $proposition->translation_amount + $proposition->index + $proposition->index_amount + $proposition->photos + $proposition->photos_amount + $proposition->illustrations + $proposition->illustrations_amount + $proposition->technical_drawings + $proposition->technical_drawings_amount + $proposition->accontation + $proposition->reviews + $proposition->epilogue + $proposition->accontation + $proposition->reviews + $proposition->epilogue + $proposition->expert_report + $proposition->copyright + $proposition->copyright_mediator + $proposition->methodical_instrumentarium + $proposition->selection + $proposition->powerpoint_presentation + collect($proposition->production_additional_expense)->sum('amount');
-
-		$design_layout_expense = $this->calcDesignLayoutExpense($proposition);
-
 		$authors = $proposition->authorExpenses;
 		$authors_other = $authors->sum(function($author) {
 			return collect($author->additional_expenses)->sum('amount');
 		});
-		$authors_advance = $authors->sum('accontation');
 		$authors_total = $authors->sum('amount') + $authors_other + collect($proposition->author_other_expense)->sum('amount');
 
 		return [
+			'authors' => $proposition->authors()->with(['expenses' => function($query) use ($proposition) {
+				$query->where('proposition_id', $proposition->id);
+			}] )->get(),
 			'total_authors' => $authors_total,
 			'marketing_expense' => $marketing_expense,
-			'production_expense' => $production_expense,
-			'expenses' => $proposition->expenses
+			'expenses' => $proposition->expenses,
+			'production_expense' => [
+			'text_price' => $proposition->text_price * $proposition->text_price_amount,
+			'reviews' => $proposition->reviews,
+			'lecture' => $proposition->lecture + $proposition->lecture_amount,
+			'correction' => $proposition->correction + $proposition->correction_amount,
+			'proofreading' => $proposition->proofreading + $proposition->proofreading_amount,
+			'translation' => $proposition->translation + $proposition->translation_amount,
+			'index' => $proposition->index + $proposition->index_amount,
+			'epilogue' => $proposition->epilogue,
+			'photos' => $proposition->photos + $proposition->photos_amount,
+			'illustrations' => $proposition->illustrations + $proposition->illustrations_amount,
+			'technical_drawings' => $proposition->technical_drawings + $proposition->technical_drawings_amount,
+			'expert_report' => $proposition->expert_report,
+			'copyright' => $proposition->copyright,
+			'copyright_mediator' => $proposition->copyright_mediator,
+			'methodical_instrumentarium' => $proposition->methodical_instrumentarium,
+			'selection' => $proposition->selection,
+			'powerpoint_presentation' => $proposition->powerpoint_presentation,
+			'additional_expense' => collect($proposition->production_additional_expense)->sum('amount'),
+			'accontation' => $proposition->accontation
+				]
 		];
 	}
 

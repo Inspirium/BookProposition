@@ -15,6 +15,8 @@ class AuthorExpense extends Model {
 
     protected $fillable = ['author_id', 'amount', 'percentage', 'accontation', 'additional_expenses'];
 
+    protected $appends = ['total'];
+
     public function author() {
         return $this->belongsTo('Inspirium\BookManagement\Models\Author');
     }
@@ -31,5 +33,9 @@ class AuthorExpense extends Model {
     		return $value;
 	    }
     	return json_decode($value, true);
+    }
+
+    public function getTotalAttribute() {
+    	return $this->attributes['amount'] + collect($this->attributes['additional_expenses'])->sum('amount');
     }
 }

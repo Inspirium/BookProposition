@@ -35,7 +35,8 @@ class BookProposition extends Model {
 	    'possible_products' => 'array',
 	    'marketing_additional_expense' => 'array',
 	    'production_additional_expense' => 'array',
-	    'author_other_expense' => 'array'
+	    'author_other_expense' => 'array',
+	    'expenses' => 'array'
     ];
 
     //relationships
@@ -216,9 +217,18 @@ class BookProposition extends Model {
 
 	public function getExpensesAttribute($value){
 		if ($value) {
-			return $value;
+			if (is_array($value)) {
+				return $value;
+			}
+			else {
+				return json_decode($value, true);
+			}
 		}
+		$authors = $this->authors()->get(['id'])->mapWithKeys(function($author) {
+			return [$author->id => 0];
+		});
 		return [
+			'authors' => $authors,
 			'text_price' => 0,
 			'reviews' => 0,
 			'lecture' => 0,
@@ -237,6 +247,7 @@ class BookProposition extends Model {
 			'powerpoint_presentation' => 0,
 			'additional_expense' => 0,
 			'marketing_expense' => 0,
+			'technical_drawings' => 0
 		];
 	}
 }
