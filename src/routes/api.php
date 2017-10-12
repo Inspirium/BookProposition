@@ -4,6 +4,12 @@ Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\Boo
 	Route::post('assign/{id}', 'PropositionController@assignProposition');
 	Route::get('{id}', 'PropositionController@getProposition');
 	Route::post('start', 'PropositionController@initProposition');
+
+	Route::get('{id}/files/multimedia', 'PropositionController@getMultimedia');
+	Route::post('{id}/files/multimedia', 'PropositionController@setMultimedia');
+	Route::get('{id}/files/marketing', 'PropositionController@getMarketing');
+	Route::post('{id}/files/marketing', 'PropositionController@setMarketing');
+
 	Route::get('{id}/files/{type}', 'PropositionController@getFiles');
 	Route::post('{id}/files/{type}', 'PropositionController@setFiles');
 
@@ -17,5 +23,3 @@ Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\Boo
 
 
 });
-
-\Illuminate\Translation\FileLoader::class;

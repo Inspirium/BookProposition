@@ -720,4 +720,68 @@ class PropositionController extends Controller {
 			}
 		}
 	}
+
+	public function getMultimedia($id) {
+		$proposition = BookProposition::withTrashed()->find( $id );
+
+		return [
+			'webshop' => $this->getNote($proposition, 'webshop'),
+			'jpg' => $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->get(),
+			'psd' => $proposition->documents()->wherePivot( 'type', 'multimedia.psd' )->get()
+		];
+	}
+
+	public function setMultimedia(Request $request, $id) {
+		$proposition = BookProposition::withTrashed()->find( $id );
+		$this->setNote($proposition, $request->input('webshop'), 'webshop');
+		foreach ( $request->input( 'jpg' ) as $document ) {
+			$file        = File::find( $document['id'] );
+			$file->title = $document['title'];
+			$file->save();
+			if ( ! $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->get()->contains( $document['id'] ) ) {
+				$proposition->documents()->save( $file, [ 'type' => 'multimedia.jpg' ] );
+			}
+		}
+		foreach ( $request->input( 'psd' ) as $document ) {
+			$file        = File::find( $document['id'] );
+			$file->title = $document['title'];
+			$file->save();
+			if ( ! $proposition->documents()->wherePivot( 'type', 'multimedia.psd' )->get()->contains( $document['id'] ) ) {
+				$proposition->documents()->save( $file, [
+					'type'  => 'multimedia.psd'
+				] );
+			}
+		}
+	}
+
+	public function getMarketing($id) {
+		$proposition = BookProposition::withTrashed()->find( $id );
+
+		return [
+			'cover' => $proposition->documents()->wherePivot( 'type', 'marketing.cover' )->get(),
+			'leaflet' => $proposition->documents()->wherePivot( 'type', 'marketing.leaflet' )->get()
+		];
+	}
+
+	public function setMarketing(Request $request, $id) {
+		$proposition = BookProposition::withTrashed()->find( $id );
+		foreach ( $request->input( 'cover' ) as $document ) {
+			$file        = File::find( $document['id'] );
+			$file->title = $document['title'];
+			$file->save();
+			if ( ! $proposition->documents()->wherePivot( 'type', 'marketing.cover' )->get()->contains( $document['id'] ) ) {
+				$proposition->documents()->save( $file, [ 'type' => 'marketing.cover' ] );
+			}
+		}
+		foreach ( $request->input( 'leaflet' ) as $document ) {
+			$file        = File::find( $document['id'] );
+			$file->title = $document['title'];
+			$file->save();
+			if ( ! $proposition->documents()->wherePivot( 'type', 'marketing.leaflet')->get()->contains( $document['id'] ) ) {
+				$proposition->documents()->save( $file, [
+					'type'  => 'marketing.leaflet'
+				] );
+			}
+		}
+	}
 }
