@@ -42,8 +42,13 @@ class PropositionController extends Controller {
 			$task->assigner()->associate( $assigner );
 			$task->name = 'Proposition: ' . $proposition->title;
 			$task->related()->associate( $proposition );
-			$task->description = 'You have been assigned to edit the following proposition';
+			$task->description = $request->input('description');
+			if ($request->input('access') === 'onepage') {
+				$task->description .= ' <a href="'.$request->input('path').'">Link</a>';
+			}
 			$task->status      = 'new';
+			$task->priority = $request->input('priority');
+			$task->deadline = $request->input('date');
 			$task->type        = 1;
 			$task->save();
 			$task->employees()->attach( $employees );
@@ -57,8 +62,13 @@ class PropositionController extends Controller {
 			$task->assigner()->associate( $assigner );
 			$task->name = 'Proposition: ' . $proposition->title;
 			$task->related()->associate( $proposition );
-			$task->description = 'You have been assigned to edit the following proposition';
+			$task->description = $request->input('description');
+			if ($request->input('access') === 'onepage') {
+				$task->description .= ' <a href="'.$request->input('path').'">Link</a>';
+			}
 			$task->status      = 'new';
+			$task->priority = $request->input('priority');
+			$task->deadline = $request->input('date');
 			$task->type        = 1;
 			$task->save();
 			$task->departments()->attach( $departments );
