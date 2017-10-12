@@ -589,13 +589,18 @@ class PropositionController extends Controller {
 		$design_layout_expense = $this->calcDesignLayoutExpense($proposition);
 
 		$authors = $proposition->authorExpenses;
-		$authors_other = $authors->additional_expenses->sum('amount');
+		$authors_other = $authors->sum(function($author) {
+			return collect($author->additional_expenses)->sum('amount');
+		});
+		$authors_advance = $authors->sum('accontation');
+		$authors_total = $authors->sum('amount') + $authors_other + collect($proposition->author_other_expense)->sum('amount');
 
 		return [
-			'authors_total' => $authors,
-			'authors_advance' => 0,
+			'authors_total' => $authors_total,
+			'authors_advance' => $authors_advance,
 			'authors_other' => $authors_other,
-			'offers' => $proposition->print,
+			'author_expenses' => $authors,
+			'offers' => $proposition->offers,
 			'marketing_expense' => $marketing_expense,
 			'production_expense' => $production_expense,
 			'design_layout_expense' => $design_layout_expense,
@@ -624,7 +629,12 @@ class PropositionController extends Controller {
 		return $number_of_hours * 8000/175 + $number_of_hours * 15000 / 175 * $rcomplexity[$proposition->design_complexity]/2;
 
 	}
-	private function setCalculation( BookProposition $proposition ) {
+	private function setCalculation(Request $request, BookProposition $proposition ) {
+		foreach ($request->input('offers') as $offer) {
+			$option = PropositionOption::find($offer['id']);
+			$option->fill($offer);
+			$option->save();
+		}
 		$proposition->save();
 	}
 

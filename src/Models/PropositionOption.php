@@ -32,12 +32,6 @@ class PropositionOption extends Model {
 
 	protected $guarded = [];
 
-	protected $appends = [
-		'total_cost',
-                            'complete_expense',
-                            'remainder_after_sales',
-	];
-
 	//attributes
 	public function getFilmPrintAttribute($value) {
 		if ($value) {
@@ -81,10 +75,5 @@ class PropositionOption extends Model {
 		}
 		return $this;
 	}
-
-	public function getTotalCostAttribute() { return 0; }
-
-	public function getCompleteExpenseAttribute() { return 0; }
-	public function getRemainderAfterSalesAttribute() { return 0; }
 
 }
