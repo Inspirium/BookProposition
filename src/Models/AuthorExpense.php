@@ -11,12 +11,9 @@ class AuthorExpense extends Model {
 
     protected $casts = [
         'additional_expenses' => 'array',
-	    'amount' => 'float',
-	    'percentage' => 'float',
-	    'accontation' => 'float',
     ];
 
-    protected $fillable = ['author_id', 'amount', 'percentage', 'accontation'];
+    protected $fillable = ['author_id', 'amount', 'percentage', 'accontation', 'additional_expenses'];
 
     public function author() {
         return $this->belongsTo('Inspirium\BookManagement\Models\Author');
@@ -24,5 +21,15 @@ class AuthorExpense extends Model {
 
     public function proposition() {
     	return $this->belongsTo('Inspirium\BookProposition\Models\BookProposition', 'proposition_id');
+    }
+
+    public function getAdditionalExpensesAttribute($value) {
+    	if (!$value) {
+    		return [];
+	    }
+	    else if (is_array($value)) {
+    		return $value;
+	    }
+    	return json_decode($value, true);
     }
 }

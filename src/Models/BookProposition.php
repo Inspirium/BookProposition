@@ -30,8 +30,12 @@ class BookProposition extends Model {
     ];
 
     protected $casts = [
+    	'additions' => 'array',
 	    'school_level' => 'array',
-	    'possible_products' => 'array'
+	    'possible_products' => 'array',
+	    'marketing_additional_expense' => 'array',
+	    'production_additional_expense' => 'array',
+	    'author_other_expense' => 'array'
     ];
 
     //relationships
@@ -51,10 +55,6 @@ class BookProposition extends Model {
 	//many-to-many
 	public function authorExpenses() {
 		return $this->hasMany('Inspirium\BookProposition\Models\AuthorExpense', 'proposition_id');
-	}
-
-	public function getAuthorExpensesAttribute(){
-		return $this->attributes['author_expenses'] = $this->getRelationValue('authorExpenses')->keyBy('author_id');
 	}
 
 	//polymorph
@@ -181,20 +181,6 @@ class BookProposition extends Model {
 		return json_decode($value, true);
 	}
 
-	public function getPossibleProductsAttribute($value) {
-		if (!$value) {
-			return [];
-		}
-		return json_decode($value, true);
-	}
-
-	public function getAdditionsAttribute($value) {
-		if (!$value) {
-			return [];
-		}
-		return json_decode($value, true);
-	}
-
 	public function getCirculationsAttribute() {
 		$out = [];
 		foreach ($this->getRelationValue('options') as $option) {
@@ -228,27 +214,6 @@ class BookProposition extends Model {
 		}
 	}
 
-	public function getProductionAdditionalExpenseAttribute($value) {
-		if (!$value) {
-			return [];
-		}
-		return json_decode($value, true);
-	}
-
-	public function getMarketingAdditionalExpenseAttribute($value) {
-		if (!$value) {
-			return [];
-		}
-		return json_decode($value, true);
-	}
-
-	public function getAuthorOtherExpenseAttribute($value) {
-		if (!$value) {
-			return [];
-		}
-		return json_decode($value, true);
-	}
-
 	public function getExpensesAttribute($value){
 		if ($value) {
 			return $value;
@@ -272,22 +237,6 @@ class BookProposition extends Model {
 			'powerpoint_presentation' => 0,
 			'additional_expense' => 0,
 			'marketing_expense' => 0,
-		];
-	}
-
-	public function getCategorizationAttribute() {
-		return [
-			'supergroup' => $this->bookCategories->parent->parent,
-			'upgroup' => $this->bookCategories->parent,
-			'group' => $this->bookCategories,
-			'book_type_group' => $this->getRelationValue('book_type_group'),
-			'book_type' => $this->getRelationValue('book_type'),
-			'school_type' => $this->getRelationValue('school_type'),
-			'school_level' => $this->attributes['school_level'],
-			'school_assignment' => $this->attributes['school_assignment'],
-			'school_subject' => $this->getRelationValue('school_subject'),
-			'school_subject_detailed' => $this->getRelationValue('school_subject_detailed'),
-			'biblioteca' => $this->getRelationValue('biblioteca'),
 		];
 	}
 }
