@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Notification;
 use Inspirium\BookManagement\Models\Book;
 use Inspirium\BookProposition\Models\AuthorExpense;
 use Inspirium\BookProposition\Models\BookProposition;
+use Inspirium\BookProposition\Models\ProductionExpense;
 use Inspirium\BookProposition\Models\PropositionNote;
 use Inspirium\BookProposition\Models\PropositionOption;
 use Inspirium\FileManagement\Models\File;
@@ -98,7 +99,7 @@ class PropositionController extends Controller {
 		return response()->json( [ 'id' => $proposition->id ] );
 	}
 
-	public function getPropositionStep( $id, $step ) {
+	public function getPropositionStep( $id, $step, $type = null ) {
 		$proposition   = BookProposition::withTrashed()->find( $id );
 		if (!$proposition) {
 			return response()->json([]);
@@ -123,7 +124,12 @@ class PropositionController extends Controller {
 		$out           = [];
 		if ( in_array( $step, $allowed_steps ) ) {
 			$function = 'get' . str_replace( ' ', '', ucfirst( str_replace( '_', ' ', $step ) ) );
-			$out      = $this->$function( $proposition );
+			if (strpos($function, 'expense')) {
+				$out = $this->$function( $proposition, $type );
+			}
+			else {
+				$out = $this->$function( $proposition );
+			}
 		}
 
 		$out['id']         = $proposition->id;
@@ -135,7 +141,7 @@ class PropositionController extends Controller {
 		return response()->json( $out );
 	}
 
-	public function setPropositionStep( Request $request, $id, $step ) {
+	public function setPropositionStep( Request $request, $id, $step, $type = null ) {
 		$proposition   = BookProposition::withTrashed()->find( $id );
 		$allowed_steps = [
 			'basic_data',
@@ -157,7 +163,13 @@ class PropositionController extends Controller {
 		$out           = [];
 		if ( in_array( $step, $allowed_steps ) ) {
 			$function = 'set' . str_replace( ' ', '', ucfirst( str_replace( '_', ' ', $step ) ) );
-			$out      = $this->$function( $request, $proposition );
+
+			if (strpos($function, 'expense')) {
+				$out = $this->$function( $request, $proposition, $type );
+			}
+			else {
+				$out      = $this->$function( $request, $proposition );
+			}
 		}
 		$out['id'] = $proposition->id;
 
@@ -184,6 +196,12 @@ class PropositionController extends Controller {
 		$proposition->owner()->associate($employee);
 		$this->setNote( $proposition, $request->input( 'note' ), 'start' );
 		$proposition->save();
+		if (!$proposition->productionExpenses->count()) {
+			$proposition->productionExpenses()->saveMany([
+				new ProductionExpense(['type' => 'budget']),
+				new ProductionExpense(['type' => 'expense'])
+			]);
+		}
 	}
 
 	private function setNote( BookProposition $proposition, $text, $type ) {
@@ -429,7 +447,7 @@ class PropositionController extends Controller {
 		$this->setNote( $proposition, $request->input( 'note' ), 'print' );
 	}
 
-	private function getAuthorsExpense( BookProposition $proposition ) {
+	private function getAuthorsExpense( BookProposition $proposition, $type ) {
 		return [
 			'authors' => $proposition->authors()->with( [
 				'expenses' => function ( $query ) use ( $proposition ) {
@@ -441,7 +459,7 @@ class PropositionController extends Controller {
 		];
 	}
 
-	private function setAuthorsExpense( Request $request, BookProposition $proposition ) {
+	private function setAuthorsExpense( Request $request, BookProposition $proposition, $type ) {
 		foreach ( $request->input( 'authors' ) as $author ) {
 			$expense = $author['expenses'][0];
 			$e       = AuthorExpense::find( $expense['id'] );
@@ -458,104 +476,91 @@ class PropositionController extends Controller {
 		$this->setNote( $proposition, $request->input( 'note' ), 'authors_expense' );
 	}
 
-	private function getProductionExpense( BookProposition $proposition ) {
-		return [
-			'text_price'                 => $proposition->text_price,
-			'text_price_amount'          => $proposition->text_price_amount,
-			'accontation'                => $proposition->accontation,
-			'netto_price_percentage'     => $proposition->netto_price_percentage,
-			'reviews'                    => $proposition->reviews,
-			'lecture'                    => $proposition->lecture,
-			'lecture_amount'             => $proposition->lecture_amount,
-			'correction'                 => $proposition->correction,
-			'correction_amount'          => $proposition->correction_amount,
-			'proofreading'               => $proposition->proofreading,
-			'proofreading_amount'        => $proposition->proofreading_amount,
-			'translation'                => $proposition->translation,
-			'translation_amount'         => $proposition->translation_amount,
-			'index'                      => $proposition->index,
-			'index_amount'               => $proposition->index_amount,
-			'epilogue'                   => $proposition->epilogue,
-			'photos'                     => $proposition->photos,
-			'photos_amount'              => $proposition->photos_amount,
-			'illustrations'              => $proposition->illustrations,
-			'illustrations_amount'       => $proposition->illustrations_amount,
-			'technical_drawings'         => $proposition->technical_drawings,
-			'technical_drawings_amount'  => $proposition->technical_drawings_amount,
-			'expert_report'              => $proposition->expert_report,
-			'copyright'                  => $proposition->copyright,
-			'copyright_mediator'         => $proposition->copyright_mediator,
-			'selection'                  => $proposition->selection,
-			'powerpoint_presentation'    => $proposition->powerpoint_presentation,
-			'methodical_instrumentarium' => $proposition->methodical_instrumentarium,
-			'additional_expense'         => $proposition->production_additional_expense,
-			'note'                       => $this->getNote( $proposition, 'production_expense' )
-		];
+	private function getProductionExpense( BookProposition $proposition, $type ) {
+		if (!$type) {
+			$type = 'budget';
+		}
+		$out = $proposition->productionExpenses()->where('type', '=', $type)->first();
+		$out['note'] = $this->getNote( $proposition, 'production_expense' );
+		if ($type === 'expense') {
+			$out['placeholders'] = $proposition->productionExpenses()->where('type', '=','budget')->first();
+		}
+		return $out;
 	}
 
-	private function setProductionExpense( Request $request, BookProposition $proposition ) {
-		$proposition->text_price                    = $request->input( 'text_price' );
-		$proposition->text_price_amount             = $request->input( 'text_price_amount' );
-		$proposition->accontation                   = $request->input( 'accontation' );
-		$proposition->netto_price_percentage        = $request->input( 'netto_price_percentage' );
-		$proposition->reviews                       = $request->input( 'reviews' );
-		$proposition->lecture                       = $request->input( 'lecture' );
-		$proposition->lecture_amount                = $request->input( 'lecture_amount' );
-		$proposition->correction                    = $request->input( 'correction' );
-		$proposition->correction_amount             = $request->input( 'correction_amount' );
-		$proposition->proofreading                  = $request->input( 'proofreading' );
-		$proposition->proofreading_amount           = $request->input( 'proofreading_amount' );
-		$proposition->translation                   = $request->input( 'translation' );
-		$proposition->translation_amount            = $request->input( 'translation_amount' );
-		$proposition->index                         = $request->input( 'index' );
-		$proposition->index_amount                  = $request->input( 'index_amount' );
-		$proposition->epilogue                      = $request->input( 'epilogue' );
-		$proposition->photos                        = $request->input( 'photos' );
-		$proposition->photos_amount                 = $request->input( 'photos_amount' );
-		$proposition->illustrations                 = $request->input( 'illustrations' );
-		$proposition->illustrations_amount          = $request->input( 'illustrations_amount' );
-		$proposition->technical_drawings            = $request->input( 'technical_drawings' );
-		$proposition->technical_drawings_amount     = $request->input( 'technical_drawings_amount' );
-		$proposition->expert_report                 = $request->input( 'expert_report' );
-		$proposition->copyright                     = $request->input( 'copyright' );
-		$proposition->copyright_mediator            = $request->input( 'copyright_mediator' );
-		$proposition->selection                     = $request->input( 'selection' );
-		$proposition->powerpoint_presentation       = $request->input( 'powerpoint_presentation' );
-		$proposition->methodical_instrumentarium    = $request->input( 'methodical_instrumentarium' );
-		$proposition->production_additional_expense = $request->input( 'additional_expense' );
+	private function setProductionExpense( Request $request, BookProposition $proposition, $type ) {
+		if (!$type) {
+			$type = 'budget';
+		}
+		/** @var ProductionExpense $expense */
+		$expense = $proposition->productionExpenses()->where('type', '=', $type)->first();
+		$expense->text_price                    = $request->input( 'text_price' );
+		$expense->text_price_amount             = $request->input( 'text_price_amount' );
+		$expense->accontation                   = $request->input( 'accontation' );
+		$expense->netto_price_percentage        = $request->input( 'netto_price_percentage' );
+		$expense->reviews                       = $request->input( 'reviews' );
+		$expense->lecture                       = $request->input( 'lecture' );
+		$expense->lecture_amount                = $request->input( 'lecture_amount' );
+		$expense->correction                    = $request->input( 'correction' );
+		$expense->correction_amount             = $request->input( 'correction_amount' );
+		$expense->proofreading                  = $request->input( 'proofreading' );
+		$expense->proofreading_amount           = $request->input( 'proofreading_amount' );
+		$expense->translation                   = $request->input( 'translation' );
+		$expense->translation_amount            = $request->input( 'translation_amount' );
+		$expense->index                         = $request->input( 'index' );
+		$expense->index_amount                  = $request->input( 'index_amount' );
+		$expense->epilogue                      = $request->input( 'epilogue' );
+		$expense->photos                        = $request->input( 'photos' );
+		$expense->photos_amount                 = $request->input( 'photos_amount' );
+		$expense->illustrations                 = $request->input( 'illustrations' );
+		$expense->illustrations_amount          = $request->input( 'illustrations_amount' );
+		$expense->technical_drawings            = $request->input( 'technical_drawings' );
+		$expense->technical_drawings_amount     = $request->input( 'technical_drawings_amount' );
+		$expense->expert_report                 = $request->input( 'expert_report' );
+		$expense->copyright                     = $request->input( 'copyright' );
+		$expense->copyright_mediator            = $request->input( 'copyright_mediator' );
+		$expense->selection                     = $request->input( 'selection' );
+		$expense->powerpoint_presentation       = $request->input( 'powerpoint_presentation' );
+		$expense->methodical_instrumentarium    = $request->input( 'methodical_instrumentarium' );
+		$expense->additional_expense = $request->input( 'additional_expense' );
 		$this->setNote( $proposition, $request->input( 'note' ), 'production_expense' );
-		$proposition->save();
+		$expense->save();
 	}
 
-	private function getMarketingExpense( BookProposition $proposition ) {
-		return [
-			'expense'            => $proposition->marketing_expense,
-			'additional_expense' => $proposition->marketing_additional_expense,
-			'note'               => $this->getNote( $proposition, 'marketing_expense' )
-		];
+	private function getMarketingExpense( BookProposition $proposition, $type ) {
+		if (!$type) {
+			$type = 'budget';
+		}
+		$out = $proposition->marketingExpenses()->where('type', '=', $type)->first();
+		$out['note'] = $this->getNote( $proposition, 'marketing_expense' );
+		return $out;
 	}
 
-	private function setMarketingExpense( Request $request, BookProposition $proposition ) {
-		$proposition->marketing_expense            = $request->input( 'expense' );
-		$proposition->marketing_additional_expense = $request->input( 'additional_expense' );
+	private function setMarketingExpense( Request $request, BookProposition $proposition, $type ) {
+		if (!$type) {
+			$type = 'budget';
+		}
+		$expense = $proposition->marketingExpenses()->where('type', '=', $type)->first();
+		$expense->marketing_expense            = $request->input( 'expense' );
+		$expense->additional_expense = $request->input( 'additional_expense' );
 		$this->setNote( $proposition, $request->input( 'note' ), 'marketing_expense' );
 		$proposition->save();
 	}
 
-	private function getDistributionExpense( BookProposition $proposition ) {
+	private function getDistributionExpense( BookProposition $proposition, $type ) {
 		return [
 			'margin' => $proposition->margin,
 			'note'   => $this->getNote( $proposition, 'distribution_expense' )
 		];
 	}
 
-	private function setDistributionExpense( Request $request, BookProposition $proposition ) {
+	private function setDistributionExpense( Request $request, BookProposition $proposition, $type ) {
 		$proposition->margin = $request->input( 'margin' );
 		$this->setNote( $proposition, $request->input( 'note' ), 'distribution_expense' );
 		$proposition->save();
 	}
 
-	private function getLayoutExpense( BookProposition $proposition ) {
+	private function getLayoutExpense( BookProposition $proposition, $type ) {
 		return [
 			'layout_complexity'         => $proposition->layout_complexity,
 			'layout_include'            => $proposition->layout_include,
@@ -571,7 +576,7 @@ class PropositionController extends Controller {
 		];
 	}
 
-	private function setLayoutExpense( Request $request, BookProposition $proposition ) {
+	private function setLayoutExpense( Request $request, BookProposition $proposition, $type ) {
 		$proposition->layout_complexity = $request->input( 'layout_complexity' );
 		$proposition->layout_include    = $request->input( 'layout_include' );
 		$proposition->design_complexity = $request->input( 'design_complexity' );
@@ -688,8 +693,7 @@ class PropositionController extends Controller {
 			'methodical_instrumentarium' => $proposition->methodical_instrumentarium,
 			'selection' => $proposition->selection,
 			'powerpoint_presentation' => $proposition->powerpoint_presentation,
-			'additional_expense' => collect($proposition->production_additional_expense)->sum('amount'),
-			'accontation' => $proposition->accontation
+			'additional_expense' => collect($proposition->production_additional_expense)->sum('amount')
 				]
 		];
 	}

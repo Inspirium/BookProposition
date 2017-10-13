@@ -54,39 +54,6 @@ class CreatePropositionsTable extends Migration
 
             $table->text('author_other_expense')->nullable();
 
-            $table->string('text_price')->nullable();
-            $table->string('text_price_amount')->nullable();
-            $table->string('accontation')->nullable();
-            $table->string('netto_price_percentage')->nullable();
-            $table->string('reviews')->nullable();
-            $table->string('lecture')->nullable();
-            $table->string('lecture_amount')->nullable();
-            $table->string('correction')->nullable();
-            $table->string('correction_amount')->nullable();
-            $table->string('proofreading')->nullable();
-            $table->string('proofreading_amount')->nullable();
-            $table->string('translation')->nullable();
-            $table->string('translation_amount')->nullable();
-            $table->string('index')->nullable();
-            $table->string('index_amount')->nullable();
-            $table->string('epilogue')->nullable();
-            $table->string('photos')->nullable();
-            $table->string('photos_amount')->nullable();
-            $table->string('illustrations')->nullable();
-            $table->string('illustrations_amount')->nullable();
-            $table->string('technical_drawings')->nullable();
-            $table->string('technical_drawings_amount')->nullable();
-            $table->string('expert_report')->nullable();
-            $table->string('copyright')->nullable();
-            $table->string('copyright_mediator')->nullable();
-            $table->string('selection')->nullable();
-            $table->string('powerpoint_presentation')->nullable();
-            $table->string('methodical_instrumentarium')->nullable();
-            $table->text('production_additional_expense')->nullable();
-
-            $table->string('marketing_expense')->nullable();
-			$table->text('marketing_additional_expense')->nullable();
-
             $table->string('margin')->nullable();
 
             $table->string('layout_complexity')->nullable();

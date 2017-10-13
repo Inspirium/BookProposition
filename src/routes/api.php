@@ -14,8 +14,8 @@ Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\Boo
 	Route::post('{id}/files/{type}', 'PropositionController@setFiles');
 
 	Route::get('{id}/init', 'PropositionController@getInitData');
-	Route::get('{id}/{step}', 'PropositionController@getPropositionStep');
-	Route::post('{id}/{step}', 'PropositionController@setPropositionStep');
+	Route::get('{id}/{step}/{type?}', 'PropositionController@getPropositionStep');
+	Route::post('{id}/{step}/{type?}', 'PropositionController@setPropositionStep');
     Route::post('/', 'PropositionController@saveProposition');
     Route::patch('{id?}', 'PropositionController@saveProposition');
     Route::delete('{id?}', 'PropositionController@deleteProposition');

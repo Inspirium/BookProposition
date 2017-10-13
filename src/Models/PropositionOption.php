@@ -6,26 +6,65 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Class PropositionOption
- * @package Inspirium\BookProposition\Models
+ * Inspirium\BookProposition\Models\PropositionOption
  *
- * @property $id
- * @property $title
- * @property $print_offer
- * @property $cover_type
- * @property $colors
- * @property $colors_first_page
- * @property $color_last_page
- * @property $additional_work
- * @property $cover_paper_type
- * @property $cover_colors
- * @property $cover_plastification
- * @property $film_print
- * @property $blind_print
- * @property $uv_print
- * @property $number_of_pages
- * @property $direct_cost_cover
- * @property $complete_cost_cover
+ * @property int $id
+ * @property int|null $proposition_id
+ * @property string|null $title
+ * @property string|null $print_offer
+ * @property string|null $paper_type
+ * @property string|null $cover_type
+ * @property string|null $hard_cover_circulation
+ * @property string|null $soft_cover_circulation
+ * @property string|null $book_binding
+ * @property string|null $colors
+ * @property string|null $colors_first_page
+ * @property string|null $colors_last_page
+ * @property string|null $additional_work
+ * @property string|null $cover_paper_type
+ * @property string|null $cover_colors
+ * @property string|null $cover_plastification
+ * @property int|null $film_print
+ * @property int|null $blind_print
+ * @property int|null $uv_print
+ * @property string|null $number_of_pages
+ * @property string|null $compensation
+ * @property string|null $indirect_expenses
+ * @property string|null $price_proposal
+ * @property string|null $calculated_profit_percent
+ * @property string|null $shop_percent
+ * @property string|null $vat_percent
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereAdditionalWork($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereBlindPrint($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereBookBinding($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereCalculatedProfitPercent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereColors($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereColorsFirstPage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereColorsLastPage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereCompensation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereCoverColors($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereCoverPaperType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereCoverPlastification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereCoverType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereFilmPrint($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereHardCoverCirculation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereIndirectExpenses($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereNumberOfPages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption wherePaperType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption wherePriceProposal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption wherePrintOffer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption wherePropositionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereShopPercent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereSoftCoverCirculation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereUvPrint($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereVatPercent($value)
+ * @mixin \Eloquent
  */
 class PropositionOption extends Model {
 	protected $table = 'proposition_options';

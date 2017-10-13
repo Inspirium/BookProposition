@@ -21,6 +21,7 @@ class CreateAuthorExpensesTable extends Migration
             $table->string('percentage')->nullable();
             $table->string('accontation')->nullable();
             $table->text('additional_expenses')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }
