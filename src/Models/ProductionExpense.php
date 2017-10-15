@@ -78,6 +78,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereUpdatedAt($value)
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AdditionalExpense[] $additionalExpenses
+ * @property int|null $parent_id
+ * @property-read \Inspirium\BookProposition\Models\ProductionExpense|null $parent
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereParentId($value)
  */
 class ProductionExpense extends Model {
 	protected $table = 'production_expenses';

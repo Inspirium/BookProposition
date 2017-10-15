@@ -24,6 +24,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\AdditionalExpense whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\AdditionalExpense whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int|null $parent_id
+ * @property-read \Inspirium\BookProposition\Models\AdditionalExpense $child
+ * @property-read \Inspirium\BookProposition\Models\AdditionalExpense|null $parent
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\AdditionalExpense whereParentId($value)
  */
 class AdditionalExpense extends Model {
 	protected $table = 'additional_expenses';

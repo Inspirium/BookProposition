@@ -27,6 +27,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AdditionalExpense[] $additionalExpenses
  * @property-read mixed $totals
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\MarketingExpense whereExpense($value)
+ * @property int|null $parent_id
+ * @property-read \Inspirium\BookProposition\Models\MarketingExpense|null $parent
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\MarketingExpense whereParentId($value)
  */
 class MarketingExpense extends Model {
 	protected $table = 'marketing_expenses';

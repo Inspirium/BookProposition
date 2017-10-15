@@ -33,6 +33,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\AuthorExpense whereType($value)
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AdditionalExpense[] $additionalExpenses
  * @property-read mixed $totals
+ * @property int|null $parent_id
+ * @property-read mixed $additional_expense
+ * @property-read \Inspirium\BookProposition\Models\AuthorExpense|null $parent
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\AuthorExpense whereParentId($value)
  */
 class AuthorExpense extends Model {
     protected $table = 'author_expenses';
