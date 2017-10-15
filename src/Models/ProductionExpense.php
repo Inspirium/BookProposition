@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $additional_expense
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read mixed $total
+ * @property-read mixed $totals
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereAccontation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereAdditionalExpense($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereCopyright($value)
@@ -77,16 +77,40 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereTranslationAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AdditionalExpense[] $additionalExpenses
  */
 class ProductionExpense extends Model {
 	protected $table = 'production_expenses';
 
 	protected $fillable = ['type'];
 
-	protected $appends = ['total'];
+	protected $appends = ['totals'];
 
-	public function getTotalAttribute() {
+	public function getTotalsAttribute() {
+		return [
+			'text_price' => $this->text_price * $this->text_price_amount,
+			'reviews' => $this->reviews,
+			'lecture' => $this->lecture * $this->lecture_amount,
+			'correction' => $this->correction * $this->correction_amount,
+			'proofreading' => $this->proofreading * $this->proofreading_amount,
+			'translation' => $this->translation * $this->translation_amount,
+			'index' => $this->index * $this->index_amount,
+			'epilogue' => $this->epilogue,
+			'photos' => $this->photos * $this->photos_amount,
+			'illustrations' => $this->illustrations * $this->illustrations_amount,
+			'technical_drawings' => $this->technical_drawings * $this->technical_drawings_amount,
+			'export_report' => $this->expert_report,
+			'copyright' => $this->copyright,
+			'copyright_mediator' => $this->copyright_mediator,
+			'methodical_instrumentarium' => $this->methodical_instrumentarium,
+			'selection' => $this->selection,
+			'powerpoint_presentation' => $this->powerpoint_presentation,
+			'accontation' => $this->accontation
+		];
+	}
 
+	public function additionalExpenses() {
+		return $this->morphMany('Inspirium\BookProposition\Models\AdditionalExpense', 'connection');
 	}
 
 }

@@ -23,16 +23,26 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\MarketingExpense whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\MarketingExpense whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $expense
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AdditionalExpense[] $additionalExpenses
+ * @property-read mixed $totals
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\MarketingExpense whereExpense($value)
  */
 class MarketingExpense extends Model {
 	protected $table = 'marketing_expenses';
 
-	protected $fillable = ['type'];
+	protected $fillable = ['type', 'proposition_id'];
 
-	protected $appends = ['total'];
+	protected $appends = ['totals'];
 
-	public function getTotalAttribute() {
+	public function getTotalsAttribute() {
+		return [
+			'expense' => $this->expense
+		];
+	}
 
+	public function additionalExpenses() {
+		return $this->morphMany('Inspirium\BookProposition\Models\AdditionalExpense', 'connection');
 	}
 
 }

@@ -31,19 +31,19 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property string|null $type
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\AuthorExpense whereType($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AdditionalExpense[] $additionalExpenses
+ * @property-read mixed $totals
  */
 class AuthorExpense extends Model {
     protected $table = 'author_expenses';
 
     protected $guarded = [];
 
-    protected $casts = [
-        'additional_expenses' => 'array',
-    ];
+    protected $fillable = ['author_id', 'amount', 'percentage', 'accontation', 'type'];
 
-    protected $fillable = ['author_id', 'amount', 'percentage', 'accontation', 'additional_expenses'];
+    protected $appends = ['totals'];
 
-    protected $appends = ['total'];
+    protected $with = ['additionalExpenses'];
 
     public function author() {
         return $this->belongsTo('Inspirium\BookManagement\Models\Author');
@@ -53,17 +53,11 @@ class AuthorExpense extends Model {
     	return $this->belongsTo('Inspirium\BookProposition\Models\BookProposition', 'proposition_id');
     }
 
-    public function getAdditionalExpensesAttribute($value) {
-    	if (!$value) {
-    		return [];
-	    }
-	    else if (is_array($value)) {
-    		return $value;
-	    }
-    	return json_decode($value, true);
+    public function getTotalsAttribute() {
+    	return $this->amount + $this->additionalExpenses->sum('amount');
     }
 
-    public function getTotalAttribute() {
-    	return $this->attributes['amount'] + collect($this->attributes['additional_expenses'])->sum('amount');
+    public function additionalExpenses() {
+    	return $this->morphMany('Inspirium\BookProposition\Models\AdditionalExpense', 'connection');
     }
 }

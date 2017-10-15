@@ -8,8 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Inspirium\BookManagement\Models\Book;
+use Inspirium\BookProposition\Models\AdditionalExpense;
 use Inspirium\BookProposition\Models\AuthorExpense;
 use Inspirium\BookProposition\Models\BookProposition;
+use Inspirium\BookProposition\Models\MarketingExpense;
 use Inspirium\BookProposition\Models\ProductionExpense;
 use Inspirium\BookProposition\Models\PropositionNote;
 use Inspirium\BookProposition\Models\PropositionOption;
@@ -267,17 +269,18 @@ class PropositionController extends Controller {
 		foreach ( $request->input( 'authors' ) as $author ) {
 			$authors[] = $author['id'];
 			if ( ! $proposition->authorExpenses->contains( $author['id'] ) ) {
-				$e          = $proposition->authorExpenses()->create( [ 'author_id' => $author['id'] ] );
-				$expenses[] = $e->id;
-			} else {
-				$e          = $proposition->authorExpenses()->where( 'author_id', '=', $author['id'] )->first();
-				$expenses[] = $e->id;
+				$proposition->authorExpenses()->createMany([
+					[ 'author_id' => $author['id'], 'type' => 'budget' ],
+					[ 'author_id' => $author['id'], 'type' => 'expense' ],
+				]);
 			}
 		}
-		/** @var AuthorExpense $e */
-		foreach ( $proposition->authorExpenses as $e ) {
-			if ( ! in_array( $e->id, $expenses ) ) {
-				$e->delete();
+		foreach ( $proposition->authorExpenses->groupBy('author_id') as $author_id => $expenses ) {
+			if ( ! in_array( $author_id, $authors ) ) {
+				/** @var AuthorExpense $expens */
+				foreach ($expenses as $expens) {
+					$expens->delete();
+				}
 			}
 		}
 		$proposition->authors()->sync( $authors );
@@ -448,18 +451,24 @@ class PropositionController extends Controller {
 	}
 
 	private function getAuthorsExpense( BookProposition $proposition, $type ) {
+		if (!$type) {
+			$type = 'budget';
+		}
 		return [
 			'authors' => $proposition->authors()->with( [
-				'expenses' => function ( $query ) use ( $proposition ) {
-					$query->where( 'proposition_id', '=', $proposition->id )->first();
+				'expenses' => function ( $query ) use ( $proposition, $type ) {
+					$query->where( 'proposition_id', '=', $proposition->id )->where('type', '=', $type)->first();
 				}
 			] )->get()->keyBy( 'id' ),
-			'other'   => $proposition->author_other_expense,
+			'other'   => $proposition->authorOtherExpenses()->where('type', '=', 'author_other_expense')->get(),
 			'note'    => $this->getNote( $proposition, 'authors_expense' )
 		];
 	}
 
 	private function setAuthorsExpense( Request $request, BookProposition $proposition, $type ) {
+		if (!$type) {
+			$type = 'budget';
+		}
 		foreach ( $request->input( 'authors' ) as $author ) {
 			$expense = $author['expenses'][0];
 			$e       = AuthorExpense::find( $expense['id'] );
@@ -467,13 +476,57 @@ class PropositionController extends Controller {
 				'amount'              => $expense['amount'],
 				'accontation'         => $expense['accontation'],
 				'percentage'          => $expense['percentage'],
-				'additional_expenses' => $expense['additional_expenses']
+				'type' => $type
 			] );
 			$e->save();
+			$additional = [];
+			foreach ($expense['additional_expenses'] as $ae) {
+				if (isset($ae['id']) && $ae['id']) {
+					$a = AdditionalExpense::find( $ae['id'] );
+				}
+				else {
+					$a = new AdditionalExpense();
+				}
+				$a->expense = $ae['expense'];
+				$a->amount = $ae['amount'];
+				$a->save();
+				$additional[] = $a->id;
+				$e->additionalExpenses()->save($a);
+			}
+			if ($e->additionalExpenses && $additional) {
+				foreach ( $e->additionalExpenses as $ae ) {
+					if ( ! in_array( $ae->id, $additional ) ) {
+						$ae->delete();
+					}
+				}
+			}
 		}
-		$proposition->author_other_expense = $request->input( 'other' );
+		$other_expenses = [];
+		foreach($request->input( 'other' ) as $other) {
+			if ($other['id']) {
+				$o = AdditionalExpense::find($other['id']);
+			}
+			else {
+				$o = new AdditionalExpense();
+			}
+			$o->expense = $other['expense'];
+			$o->amount = $other['amount'];
+			$o->type = 'author_other_expense';
+			$o->save();
+			$other_expenses[] = $o->id;
+			$proposition->authorOtherExpenses()->save($o);
+		}
+		if ($proposition->authorOtherExpenses && $other_expenses) {
+			foreach ( $proposition->authorOtherExpenses as $o ) {
+				if ( ! in_array( $o->id, $other_expenses ) ) {
+					$o->delete();
+				}
+			}
+		}
 		$proposition->save();
 		$this->setNote( $proposition, $request->input( 'note' ), 'authors_expense' );
+
+		return $this->getAuthorsExpense($proposition, $type);
 	}
 
 	private function getProductionExpense( BookProposition $proposition, $type ) {
@@ -522,9 +575,33 @@ class PropositionController extends Controller {
 		$expense->selection                     = $request->input( 'selection' );
 		$expense->powerpoint_presentation       = $request->input( 'powerpoint_presentation' );
 		$expense->methodical_instrumentarium    = $request->input( 'methodical_instrumentarium' );
-		$expense->additional_expense = $request->input( 'additional_expense' );
+
+		$other_expenses = [];
+		foreach($request->input( 'additional_expense' ) as $other) {
+			if ($other['id']) {
+				$o = AdditionalExpense::find($other['id']);
+			}
+			else {
+				$o = new AdditionalExpense();
+			}
+			$o->expense = $other['expense'];
+			$o->amount = $other['amount'];
+			$o->save();
+			$other_expenses[] = $o->id;
+			$expense->save($o);
+		}
+		if ($expense->additionalExpenses && $other_expenses) {
+			foreach ( $expense->additionalExpenses as $o ) {
+				if ( ! in_array( $o->id, $other_expenses ) ) {
+					$o->delete();
+				}
+			}
+		}
+
 		$this->setNote( $proposition, $request->input( 'note' ), 'production_expense' );
 		$expense->save();
+
+		return $this->getProductionExpense($proposition, $type);
 	}
 
 	private function getMarketingExpense( BookProposition $proposition, $type ) {
@@ -532,6 +609,12 @@ class PropositionController extends Controller {
 			$type = 'budget';
 		}
 		$out = $proposition->marketingExpenses()->where('type', '=', $type)->first();
+		if (!$out) {
+			$out = MarketingExpense::create(['proposition_id' => $proposition->id, 'type' => $type]);
+		}
+		if ($type === 'expense') {
+			$out['placeholders'] = $proposition->marketingExpenses()->where('type', '=','budget')->first();
+		}
 		$out['note'] = $this->getNote( $proposition, 'marketing_expense' );
 		return $out;
 	}
@@ -541,10 +624,35 @@ class PropositionController extends Controller {
 			$type = 'budget';
 		}
 		$expense = $proposition->marketingExpenses()->where('type', '=', $type)->first();
-		$expense->marketing_expense            = $request->input( 'expense' );
-		$expense->additional_expense = $request->input( 'additional_expense' );
+		if (!$expense) {
+			$expense = new MarketingExpense(['proposition_id' => $proposition->id, 'type' => $type]);
+		}
+		$expense->expense  = $request->input( 'expense' );
+		$other_expenses = [];
+		foreach($request->input( 'additional_expense' ) as $other) {
+			if ($other['id']) {
+				$o = AdditionalExpense::find($other['id']);
+			}
+			else {
+				$o = new AdditionalExpense();
+			}
+			$o->expense = $other['expense'];
+			$o->amount = $other['amount'];
+			$o->save();
+			$other_expenses[] = $o->id;
+			$expense->save($o);
+		}
+		if ($expense->additionalExpenses && $other_expenses) {
+			foreach ( $expense->additionalExpenses as $o ) {
+				if ( ! in_array( $o->id, $other_expenses ) ) {
+					$o->delete();
+				}
+			}
+		}
+		$expense->save();
 		$this->setNote( $proposition, $request->input( 'note' ), 'marketing_expense' );
 		$proposition->save();
+		return $this->getMarketingExpense($proposition, $type);
 	}
 
 	private function getDistributionExpense( BookProposition $proposition, $type ) {
@@ -668,33 +776,13 @@ class PropositionController extends Controller {
 		});
 		$authors_total = $authors->sum('amount') + $authors_other + collect($proposition->author_other_expense)->sum('amount');
 
+		$marketing_expense = $proposition->marketingExpenses->keyBy('type');
+		$production_expense = $proposition->productionExpenses->keyBy('type');
+		$authors_expense = $proposition->authorExpenses->keyBy('type');
 		return [
-			'authors' => $proposition->authors()->with(['expenses' => function($query) use ($proposition) {
-				$query->where('proposition_id', $proposition->id);
-			}] )->get(),
-			'total_authors' => $authors_total,
 			'marketing_expense' => $marketing_expense,
-			'expenses' => $proposition->expenses,
-			'production_expense' => [
-			'text_price' => $proposition->text_price * $proposition->text_price_amount,
-			'reviews' => $proposition->reviews,
-			'lecture' => $proposition->lecture + $proposition->lecture_amount,
-			'correction' => $proposition->correction + $proposition->correction_amount,
-			'proofreading' => $proposition->proofreading + $proposition->proofreading_amount,
-			'translation' => $proposition->translation + $proposition->translation_amount,
-			'index' => $proposition->index + $proposition->index_amount,
-			'epilogue' => $proposition->epilogue,
-			'photos' => $proposition->photos + $proposition->photos_amount,
-			'illustrations' => $proposition->illustrations + $proposition->illustrations_amount,
-			'technical_drawings' => $proposition->technical_drawings + $proposition->technical_drawings_amount,
-			'expert_report' => $proposition->expert_report,
-			'copyright' => $proposition->copyright,
-			'copyright_mediator' => $proposition->copyright_mediator,
-			'methodical_instrumentarium' => $proposition->methodical_instrumentarium,
-			'selection' => $proposition->selection,
-			'powerpoint_presentation' => $proposition->powerpoint_presentation,
-			'additional_expense' => collect($proposition->production_additional_expense)->sum('amount')
-				]
+			'production_expense' => $production_expense,
+			'authors_expense' => $authors_expense
 		];
 	}
 

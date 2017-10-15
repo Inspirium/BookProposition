@@ -16,8 +16,7 @@ class CreateMarketingExpensesTable extends Migration
         Schema::create('marketing_expenses', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('proposition_id');
-	        $table->string('marketing_expense')->nullable();
-	        $table->text('additional_expense')->nullable();
+	        $table->string('expense')->nullable();
 	        $table->string('type')->nullable();
             $table->timestamps();
         });

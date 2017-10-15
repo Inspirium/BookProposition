@@ -52,8 +52,6 @@ class CreatePropositionsTable extends Migration
             $table->boolean('uv_print')->nullable();
             $table->string('book_binding')->nullable();
 
-            $table->text('author_other_expense')->nullable();
-
             $table->string('margin')->nullable();
 
             $table->string('layout_complexity')->nullable();

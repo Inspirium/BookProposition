@@ -190,6 +190,7 @@ use Inspirium\FileManagement\Models\File;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\ProductionExpense[] $productionExpenses
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\MarketingExpense[] $marketingExpenses
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AdditionalExpense[] $authorOtherExpenses
  */
 class BookProposition extends Model {
     use SoftDeletes;
@@ -267,6 +268,10 @@ class BookProposition extends Model {
 
 	public function documents() {
 		return $this->morphToMany('Inspirium\FileManagement\Models\File', 'fileable')->withPivot('type');
+	}
+
+	public function authorOtherExpenses() {
+    	return $this->morphMany('Inspirium\BookProposition\Models\AdditionalExpense', 'connection');
 	}
 
 	//attributes
