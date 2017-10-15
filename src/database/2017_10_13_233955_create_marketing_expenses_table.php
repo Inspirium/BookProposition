@@ -18,6 +18,7 @@ class CreateMarketingExpensesTable extends Migration
             $table->integer('proposition_id');
 	        $table->string('expense')->nullable();
 	        $table->string('type')->nullable();
+	        $table->integer('parent_id')->nullable();
             $table->timestamps();
         });
     }

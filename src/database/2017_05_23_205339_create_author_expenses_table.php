@@ -22,6 +22,7 @@ class CreateAuthorExpensesTable extends Migration
             $table->string('accontation')->nullable();
             $table->text('additional_expenses')->nullable();
             $table->string('type')->nullable();
+            $table->integer('parent_id')->nullable();
             $table->timestamps();
         });
     }

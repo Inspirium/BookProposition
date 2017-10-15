@@ -39,11 +39,11 @@ class AuthorExpense extends Model {
 
     protected $guarded = [];
 
-    protected $fillable = ['author_id', 'amount', 'percentage', 'accontation', 'type'];
+    protected $fillable = ['author_id', 'amount', 'percentage', 'accontation', 'type', 'parent_id'];
 
-    protected $appends = ['totals'];
+    protected $appends = ['totals', 'additional_expense'];
 
-    protected $with = ['additionalExpenses'];
+    protected $with = ['additionalExpenses', 'parent'];
 
     public function author() {
         return $this->belongsTo('Inspirium\BookManagement\Models\Author');
@@ -60,4 +60,21 @@ class AuthorExpense extends Model {
     public function additionalExpenses() {
     	return $this->morphMany('Inspirium\BookProposition\Models\AdditionalExpense', 'connection');
     }
+
+    public function parent() {
+    	return $this->belongsTo(AuthorExpense::class, 'parent_id');
+    }
+
+	public function getAdditionalExpenseAttribute() {
+		if ($this->type === 'expense') {
+			foreach($this->parent->additionalExpenses as $a) {
+				$a->load('child');
+				if (!$a->child && !$a->parent) {
+					$e = AdditionalExpense::create(['expense' => $a->expense, 'connection_id' => $this->id, 'connection_type' => $a->connection_type, 'parent_id' => $a->id]);
+					$e->parent = $a;
+					$this->additionalExpenses->push($e);
+				}
+			}
+		}
+	}
 }

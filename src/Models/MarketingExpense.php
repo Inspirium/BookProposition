@@ -31,18 +31,35 @@ use Illuminate\Database\Eloquent\Model;
 class MarketingExpense extends Model {
 	protected $table = 'marketing_expenses';
 
-	protected $fillable = ['type', 'proposition_id'];
+	protected $fillable = ['type', 'proposition_id', 'parent_id'];
 
-	protected $appends = ['totals'];
+	protected $appends = ['totals', 'additional_expense'];
+
+	protected $with = ['additionalExpenses', 'parent'];
 
 	public function getTotalsAttribute() {
-		return [
-			'expense' => $this->expense
-		];
+		return $this->expense + $this->additionalExpenses->sum('amount');
 	}
 
 	public function additionalExpenses() {
 		return $this->morphMany('Inspirium\BookProposition\Models\AdditionalExpense', 'connection');
 	}
 
+	public function parent() {
+		return $this->belongsTo(MarketingExpense::class, 'parent_id');
+	}
+
+	public function getAdditionalExpenseAttribute() {
+		//$out = $this->additionalExpenses;
+		if ($this->type === 'expense') {
+			foreach($this->parent->additionalExpenses as $a) {
+				$a->load('child');
+				if (!$a->child && !$a->parent) {
+					$e = AdditionalExpense::create(['expense' => $a->expense, 'connection_id' => $this->id, 'connection_type' => $a->connection_type, 'parent_id' => $a->id]);
+					$e->parent = $a;
+					$this->additionalExpenses->push($e);
+				}
+			}
+		}
+	}
 }

@@ -82,12 +82,14 @@ use Illuminate\Database\Eloquent\Model;
 class ProductionExpense extends Model {
 	protected $table = 'production_expenses';
 
-	protected $fillable = ['type'];
+	protected $fillable = ['type', 'parent_id', 'proposition_id'];
 
-	protected $appends = ['totals'];
+	protected $appends = ['totals', 'additional_expense'];
+
+	protected $with = ['additionalExpenses', 'parent'];
 
 	public function getTotalsAttribute() {
-		return [
+		$out =  [
 			'text_price' => $this->text_price * $this->text_price_amount,
 			'reviews' => $this->reviews,
 			'lecture' => $this->lecture * $this->lecture_amount,
@@ -105,12 +107,31 @@ class ProductionExpense extends Model {
 			'methodical_instrumentarium' => $this->methodical_instrumentarium,
 			'selection' => $this->selection,
 			'powerpoint_presentation' => $this->powerpoint_presentation,
-			'accontation' => $this->accontation
+			'additional_expenses' => $this->additionalExpenses->sum('amount'),
 		];
+		$out['total'] = collect($out)->sum();
+		return $out;
 	}
 
 	public function additionalExpenses() {
 		return $this->morphMany('Inspirium\BookProposition\Models\AdditionalExpense', 'connection');
+	}
+
+	public function parent() {
+		return $this->belongsTo(ProductionExpense::class, 'parent_id');
+	}
+
+	public function getAdditionalExpenseAttribute() {
+		if ($this->type === 'expense') {
+			foreach($this->parent->additionalExpenses as $a) {
+				$a->load('child');
+				if (!$a->child && !$a->parent) {
+					$e = AdditionalExpense::create(['expense' => $a->expense, 'connection_id' => $this->id, 'connection_type' => $a->connection_type, 'parent_id' => $a->id]);
+					$e->parent = $a;
+					$this->additionalExpenses->push($e);
+				}
+			}
+		}
 	}
 
 }

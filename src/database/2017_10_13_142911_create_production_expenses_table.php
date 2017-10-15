@@ -17,6 +17,7 @@ class CreateProductionExpensesTable extends Migration
         	$table->increments('id');
         	$table->integer('proposition_id');
         	$table->string('type')->nullable();
+        	$table->integer('parent_id')->nullable();
 	        $table->string('text_price')->nullable();
 	        $table->string('text_price_amount')->nullable();
 	        $table->string('accontation')->nullable();

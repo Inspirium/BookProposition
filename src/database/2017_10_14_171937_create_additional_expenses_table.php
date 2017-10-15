@@ -18,6 +18,7 @@ class CreateAdditionalExpensesTable extends Migration
             $table->string('expense')->nullable();
             $table->string('amount')->nullable();
             $table->string('type')->nullable();
+            $table->integer('parent_id')->nullable();
             $table->integer('connection_id')->nullable();
             $table->string('connection_type')->nullable();
             $table->timestamps();

@@ -134,11 +134,12 @@ class PropositionController extends Controller {
 			}
 		}
 
-		$out['id']         = $proposition->id;
+		$out['proposition_id']         = $proposition->id;
 		$out['created_at'] = $proposition->created_at;
 		$out['updated_at'] = $proposition->updated_at;
 		$out['deleted_at'] = $proposition->deleted_at;
 		$out['owner']      = $proposition->owner;
+		$out['type']      = $type;
 
 		return response()->json( $out );
 	}
@@ -173,7 +174,8 @@ class PropositionController extends Controller {
 				$out      = $this->$function( $request, $proposition );
 			}
 		}
-		$out['id'] = $proposition->id;
+		$out['proposition_id'] = $proposition->id;
+		$out['type']      = $type;
 
 		return response()->json( $out );
 	}
@@ -199,10 +201,12 @@ class PropositionController extends Controller {
 		$this->setNote( $proposition, $request->input( 'note' ), 'start' );
 		$proposition->save();
 		if (!$proposition->productionExpenses->count()) {
-			$proposition->productionExpenses()->saveMany([
-				new ProductionExpense(['type' => 'budget']),
-				new ProductionExpense(['type' => 'expense'])
-			]);
+			$expense1 = ProductionExpense::create(['type' => 'budget', 'proposition_id' => $proposition->id]);
+			$expense2 = ProductionExpense::create(['type' => 'expense', 'proposition_id' => $proposition->id, 'parent_id' => $expense1->id]);
+		}
+		if (!$proposition->marketingExpenses->count()) {
+			$expense1 = MarketingExpense::create(['type' => 'budget', 'proposition_id' => $proposition->id]);
+			$expense2 = MarketingExpense::create(['type' => 'expense', 'proposition_id' => $proposition->id, 'parent_id' => $expense1->id]);
 		}
 	}
 
@@ -269,9 +273,10 @@ class PropositionController extends Controller {
 		foreach ( $request->input( 'authors' ) as $author ) {
 			$authors[] = $author['id'];
 			if ( ! $proposition->authorExpenses->contains( $author['id'] ) ) {
-				$proposition->authorExpenses()->createMany([
-					[ 'author_id' => $author['id'], 'type' => 'budget' ],
-					[ 'author_id' => $author['id'], 'type' => 'expense' ],
+				$expense1 = AuthorExpense::create(['author_id' => $author['id'], 'type' => 'budget']);
+				$expense2 = AuthorExpense::create(['author_id' => $author['id'], 'type' => 'expense', 'parent_id' => $expense1->id]);
+				$proposition->authorExpenses()->saveMany([
+					$expense1, $expense2
 				]);
 			}
 		}
@@ -454,15 +459,17 @@ class PropositionController extends Controller {
 		if (!$type) {
 			$type = 'budget';
 		}
-		return [
+		$out = [
 			'authors' => $proposition->authors()->with( [
 				'expenses' => function ( $query ) use ( $proposition, $type ) {
-					$query->where( 'proposition_id', '=', $proposition->id )->where('type', '=', $type)->first();
+					$query->where( 'proposition_id', '=', $proposition->id )->where('type', '=', $type)->with('parent')->first();
 				}
 			] )->get()->keyBy( 'id' ),
-			'other'   => $proposition->authorOtherExpenses()->where('type', '=', 'author_other_expense')->get(),
-			'note'    => $this->getNote( $proposition, 'authors_expense' )
+			'other'   => $proposition->authorOtherExpenses()->where('type', '=', 'author_other_expense_'.$type)->get(),
+			'note'    => $this->getNote( $proposition, 'authors_expense' ),
+
 		];
+		return $out;
 	}
 
 	private function setAuthorsExpense( Request $request, BookProposition $proposition, $type ) {
@@ -503,7 +510,7 @@ class PropositionController extends Controller {
 		}
 		$other_expenses = [];
 		foreach($request->input( 'other' ) as $other) {
-			if ($other['id']) {
+			if (isset($other['id']) && $other['id']) {
 				$o = AdditionalExpense::find($other['id']);
 			}
 			else {
@@ -535,9 +542,6 @@ class PropositionController extends Controller {
 		}
 		$out = $proposition->productionExpenses()->where('type', '=', $type)->first();
 		$out['note'] = $this->getNote( $proposition, 'production_expense' );
-		if ($type === 'expense') {
-			$out['placeholders'] = $proposition->productionExpenses()->where('type', '=','budget')->first();
-		}
 		return $out;
 	}
 
@@ -577,8 +581,8 @@ class PropositionController extends Controller {
 		$expense->methodical_instrumentarium    = $request->input( 'methodical_instrumentarium' );
 
 		$other_expenses = [];
-		foreach($request->input( 'additional_expense' ) as $other) {
-			if ($other['id']) {
+		foreach($request->input( 'additional_expenses' ) as $other) {
+			if (isset($other['id']) && $other['id']) {
 				$o = AdditionalExpense::find($other['id']);
 			}
 			else {
@@ -588,7 +592,7 @@ class PropositionController extends Controller {
 			$o->amount = $other['amount'];
 			$o->save();
 			$other_expenses[] = $o->id;
-			$expense->save($o);
+			$expense->additionalExpenses()->save($o);
 		}
 		if ($expense->additionalExpenses && $other_expenses) {
 			foreach ( $expense->additionalExpenses as $o ) {
@@ -609,12 +613,6 @@ class PropositionController extends Controller {
 			$type = 'budget';
 		}
 		$out = $proposition->marketingExpenses()->where('type', '=', $type)->first();
-		if (!$out) {
-			$out = MarketingExpense::create(['proposition_id' => $proposition->id, 'type' => $type]);
-		}
-		if ($type === 'expense') {
-			$out['placeholders'] = $proposition->marketingExpenses()->where('type', '=','budget')->first();
-		}
 		$out['note'] = $this->getNote( $proposition, 'marketing_expense' );
 		return $out;
 	}
@@ -624,13 +622,10 @@ class PropositionController extends Controller {
 			$type = 'budget';
 		}
 		$expense = $proposition->marketingExpenses()->where('type', '=', $type)->first();
-		if (!$expense) {
-			$expense = new MarketingExpense(['proposition_id' => $proposition->id, 'type' => $type]);
-		}
 		$expense->expense  = $request->input( 'expense' );
 		$other_expenses = [];
-		foreach($request->input( 'additional_expense' ) as $other) {
-			if ($other['id']) {
+		foreach($request->input( 'additional_expenses' ) as $other) {
+			if (isset($other['id']) && $other['id']) {
 				$o = AdditionalExpense::find($other['id']);
 			}
 			else {
@@ -640,7 +635,7 @@ class PropositionController extends Controller {
 			$o->amount = $other['amount'];
 			$o->save();
 			$other_expenses[] = $o->id;
-			$expense->save($o);
+			$expense->additionalExpenses()->save($o);
 		}
 		if ($expense->additionalExpenses && $other_expenses) {
 			foreach ( $expense->additionalExpenses as $o ) {
@@ -768,21 +763,13 @@ class PropositionController extends Controller {
 	}
 
 	private function getCompare( BookProposition $proposition ) {
-		$marketing_expense = $proposition->marketing_expense + collect($proposition->marketing_additional_expense)->sum('amount');
-
-		$authors = $proposition->authorExpenses;
-		$authors_other = $authors->sum(function($author) {
-			return collect($author->additional_expenses)->sum('amount');
-		});
-		$authors_total = $authors->sum('amount') + $authors_other + collect($proposition->author_other_expense)->sum('amount');
-
 		$marketing_expense = $proposition->marketingExpenses->keyBy('type');
 		$production_expense = $proposition->productionExpenses->keyBy('type');
-		$authors_expense = $proposition->authorExpenses->keyBy('type');
+		$authors = $proposition->authors()->with('expenses')->get();
 		return [
 			'marketing_expense' => $marketing_expense,
 			'production_expense' => $production_expense,
-			'authors_expense' => $authors_expense
+			'authors' => $authors
 		];
 	}
 

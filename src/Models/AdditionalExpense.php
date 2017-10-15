@@ -28,7 +28,19 @@ use Illuminate\Database\Eloquent\Model;
 class AdditionalExpense extends Model {
 	protected $table = 'additional_expenses';
 
+	protected $fillable = ['expense', 'connection_id', 'connection_type', 'parent_id'];
+
+	protected $with = ['parent'];
+
 	public function connection() {
 		return $this->morphTo();
+	}
+
+	public function parent() {
+		return $this->belongsTo('Inspirium\BookProposition\Models\AdditionalExpense', 'parent_id');
+	}
+
+	public function child(){
+		return $this->hasOne('Inspirium\BookProposition\Models\AdditionalExpense', 'parent_id');
 	}
 }
