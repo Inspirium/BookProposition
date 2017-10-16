@@ -104,7 +104,7 @@ class ProductionExpense extends Model {
 			'photos' => $this->photos * $this->photos_amount,
 			'illustrations' => $this->illustrations * $this->illustrations_amount,
 			'technical_drawings' => $this->technical_drawings * $this->technical_drawings_amount,
-			'export_report' => $this->expert_report,
+			'expert_report' => $this->expert_report,
 			'copyright' => $this->copyright,
 			'copyright_mediator' => $this->copyright_mediator,
 			'methodical_instrumentarium' => $this->methodical_instrumentarium,
