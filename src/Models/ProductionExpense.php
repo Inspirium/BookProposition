@@ -111,9 +111,37 @@ class ProductionExpense extends Model {
 			'selection' => $this->selection,
 			'powerpoint_presentation' => $this->powerpoint_presentation,
 			'additional_expenses' => $this->additionalExpenses->sum('amount'),
+			'layout' => $this->calcDesignLayoutExpense()
 		];
 		$out['total'] = collect($out)->sum();
 		return $out;
+	}
+	private function calcDesignLayoutExpense() {
+		if (!$this->layout_complexity || !$this->design_complexity) {
+			return 0;
+		}
+		$lcomplexity = [
+			1 => 0.65,
+			2 => 0.8,
+			3 => 1,
+			4 => 1.2,
+			5 => 1.35
+		];
+		$rcomplexity = [
+			1 => 0.4,
+			2 => 0.7,
+			3 => 1,
+			4 => 1.3,
+			5 => 1.6
+		];
+		$this->load('proposition');
+		$coefficient = $this->proposition->bookCategories()->with('parent')->first()->parent->coefficient / 60;
+		$number_of_hours = ($coefficient * $this->proposition->number_of_pages + $this->photos_amount/30 + $this->illustrations_amount/30 + $this->technical_drawings_amount/30) * $lcomplexity[$this->layout_complexity];
+		return $number_of_hours * 8000/175 + $number_of_hours * 15000 / 175 * $rcomplexity[$this->design_complexity]/2;
+	}
+
+	public function proposition() {
+		return $this->belongsTo('Inspirium\BookProposition\Models\BookProposition', 'proposition_id');
 	}
 
 	public function additionalExpenses() {

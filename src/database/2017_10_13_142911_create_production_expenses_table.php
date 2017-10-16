@@ -46,6 +46,14 @@ class CreateProductionExpensesTable extends Migration
 	        $table->string('selection')->nullable();
 	        $table->string('powerpoint_presentation')->nullable();
 	        $table->string('methodical_instrumentarium')->nullable();
+
+	        $table->string('layout_complexity')->nullable();
+	        $table->boolean('layout_include')->nullable();
+	        $table->string('design_complexity')->nullable();
+	        $table->boolean('design_include')->nullable();
+
+	        $table->string('distribution_margin')->nullable();
+
 	        $table->timestamps();
         });
     }

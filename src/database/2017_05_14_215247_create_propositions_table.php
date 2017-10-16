@@ -52,15 +52,6 @@ class CreatePropositionsTable extends Migration
             $table->boolean('uv_print')->nullable();
             $table->string('book_binding')->nullable();
 
-            $table->string('margin')->nullable();
-
-            $table->string('layout_complexity')->nullable();
-            $table->boolean('layout_include')->nullable();
-            $table->string('design_complexity')->nullable();
-            $table->boolean('design_include')->nullable();
-            $table->text('layout_note')->nullable();
-            $table->text('design_note')->nullable();
-
             $table->datetime('deadline')->nullable();
             $table->string('priority')->nullable();
 

@@ -147,6 +147,9 @@ class PropositionController extends Controller {
 		if ( in_array( $step, $allowed_steps ) ) {
 			$function = 'get' . str_replace( ' ', '', ucfirst( str_replace( '_', ' ', $step ) ) );
 			if (strpos($function, 'expense')) {
+				if (!$type) {
+					$type = 'budget';
+				}
 				$out = $this->$function( $proposition, $type );
 			}
 			else {
@@ -188,6 +191,9 @@ class PropositionController extends Controller {
 			$function = 'set' . str_replace( ' ', '', ucfirst( str_replace( '_', ' ', $step ) ) );
 
 			if (strpos($function, 'expense')) {
+				if (!$type) {
+					$type = 'budget';
+				}
 				$out = $this->$function( $request, $proposition, $type );
 			}
 			else {
@@ -671,42 +677,46 @@ class PropositionController extends Controller {
 	}
 
 	private function getDistributionExpense( BookProposition $proposition, $type ) {
+		$expense = $proposition->productionExpenses()->where('type', '=', $type)->first();
 		return [
-			'margin' => $proposition->margin,
-			'note'   => $this->getNote( $proposition, 'distribution_expense' )
+			'margin' => $expense->distribution_margin,
+			'note'   => $this->getNote( $proposition, 'distribution_expense_'.$type )
 		];
 	}
 
 	private function setDistributionExpense( Request $request, BookProposition $proposition, $type ) {
-		$proposition->margin = $request->input( 'margin' );
-		$this->setNote( $proposition, $request->input( 'note' ), 'distribution_expense' );
-		$proposition->save();
+		$expense = $proposition->productionExpenses()->where('type', '=', $type)->first();
+		$expense->margin = $request->input( 'margin' );
+		$this->setNote( $proposition, $request->input( 'note' ), 'distribution_expense_'.$type );
+		$expense->save();
 	}
 
 	private function getLayoutExpense( BookProposition $proposition, $type ) {
+		$expense = $proposition->productionExpenses()->where('type' , '=', $type)->first();
 		return [
-			'layout_complexity'         => $proposition->layout_complexity,
-			'layout_include'            => $proposition->layout_include,
-			'layout_note'               => $this->getNote( $proposition, 'layout_note' ),
-			'design_complexity'         => $proposition->design_complexity,
-			'design_include'            => $proposition->design_include,
-			'design_note'               => $this->getNote( $proposition, 'design_note' ),
+			'layout_complexity'         => $expense->layout_complexity,
+			'layout_include'            => $expense->layout_include,
+			'layout_note'               => $this->getNote( $proposition, 'layout_note_' . $type ),
+			'design_complexity'         => $expense->design_complexity,
+			'design_include'            => $expense->design_include,
+			'design_note'               => $this->getNote( $proposition, 'design_note_' . $type ),
 			'number_of_pages'           => $proposition->number_of_pages,
-			'photos_amount'             => $proposition->photos_amount,
-			'illustrations_amount'      => $proposition->illustrations_amount,
-			'technical_drawings_amount' => $proposition->technical_drawings_amount,
+			'photos_amount'             => $expense->photos_amount,
+			'illustrations_amount'      => $expense->illustrations_amount,
+			'technical_drawings_amount' => $expense->technical_drawings_amount,
 			'group'                     => $proposition->bookCategories()->with( 'parent.parent' )->first(),
 		];
 	}
 
 	private function setLayoutExpense( Request $request, BookProposition $proposition, $type ) {
-		$proposition->layout_complexity = $request->input( 'layout_complexity' );
-		$proposition->layout_include    = $request->input( 'layout_include' );
-		$proposition->design_complexity = $request->input( 'design_complexity' );
-		$proposition->design_include    = $request->input( 'design_include' );
-		$this->setNote( $proposition, $request->input( 'note' ), 'layout_note' );
-		$this->setNote( $proposition, $request->input( 'note' ), 'design_note' );
-		$proposition->save();
+		$expense = $proposition->productionExpenses()->where('type' , '=', $type)->first();
+		$expense->layout_complexity = $request->input( 'layout_complexity' );
+		$expense->layout_include    = $request->input( 'layout_include' );
+		$expense->design_complexity = $request->input( 'design_complexity' );
+		$expense->design_include    = $request->input( 'design_include' );
+		$expense->save();
+		$this->setNote( $proposition, $request->input( 'note' ), 'layout_note_' . $type );
+		$this->setNote( $proposition, $request->input( 'note' ), 'design_note_' . $type );
 	}
 
 	private function getDeadline( BookProposition $proposition ) {
@@ -752,27 +762,7 @@ class PropositionController extends Controller {
 		];
 	}
 
-	private function calcDesignLayoutExpense(BookProposition $proposition) {
-		$lcomplexity = [
-				1 => 0.65,
-				2 => 0.8,
-				3 => 1,
-				4 => 1.2,
-				5 => 1.35
-		];
-		$rcomplexity = [
-			1 => 0.4,
-                    2 => 0.7,
-                    3 => 1,
-                    4 => 1.3,
-                    5 => 1.6
-                ];
-		$coefficient = $proposition->bookCategories()->with('parent')->first()->parent->coefficient / 60;
-		$number_of_hours = ($coefficient * $proposition->number_of_pages + $proposition->photos_amount/30 + $proposition->illustrations_amount/30 + $proposition->technical_drawings_amount/30) * $lcomplexity[$proposition->layout_complexity];
 
-		return $number_of_hours * 8000/175 + $number_of_hours * 15000 / 175 * $rcomplexity[$proposition->design_complexity]/2;
-
-	}
 	private function setCalculation(Request $request, BookProposition $proposition ) {
 		foreach ($request->input('offers') as $offer) {
 			$option = PropositionOption::find($offer['id']);
