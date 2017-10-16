@@ -82,11 +82,16 @@ class PropositionController extends Controller {
 	public function getInitData( $id ) {
 		$proposition       = BookProposition::withTrashed()->find( $id );
 		$out               = [];
-		$out['id']         = $proposition->id;
-		$out['created_at'] = $proposition->created_at;
-		$out['updated_at'] = $proposition->updated_at;
-		$out['deleted_at'] = $proposition->deleted_at;
-		$out['owner']      = $proposition->owner;
+		if ($proposition) {
+			$out['proposition_id']         = $proposition->id;
+			$out['created_at'] = $proposition->created_at;
+			$out['updated_at'] = $proposition->updated_at;
+			$out['deleted_at'] = $proposition->deleted_at;
+			$out['owner'] = $proposition->owner;
+		}
+		else {
+			$out['owner'] = Auth::user()->employee;
+		}
 
 		return response()->json( $out );
 	}
@@ -109,7 +114,11 @@ class PropositionController extends Controller {
 			$expense2 = MarketingExpense::create(['type' => 'expense', 'proposition_id' => $proposition->id, 'parent_id' => $expense1->id]);
 		}
 
-		return response()->json( [ 'id' => $proposition->id ] );
+		return response()->json( [
+			'proposition_id' => $proposition->id,
+			'owner' => $proposition->owner,
+			'created_at' => $proposition->created_at
+			] );
 	}
 
 	public function getPropositionStep( $id, $step, $type = null ) {
