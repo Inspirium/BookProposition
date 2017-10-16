@@ -544,7 +544,7 @@ class PropositionController extends Controller {
 			}
 			$o->expense = $other['expense'];
 			$o->amount = $other['amount'];
-			$o->type = 'author_other_expense';
+			$o->type = 'author_other_expense_'.$type;
 			$o->save();
 			$other_expenses[] = $o->id;
 			$proposition->authorOtherExpenses()->save($o);
@@ -735,13 +735,6 @@ class PropositionController extends Controller {
 	}
 
 	private function getCalculation( BookProposition $proposition ) {
-
-		$marketing_expense = $proposition->marketing_expense + collect($proposition->marketing_additional_expense)->sum('amount');
-
-		$production_expense = $proposition->text_price * $proposition->text_price_amount + $proposition->lecture + $proposition->lecture_amount + $proposition->correction + $proposition->correction_amount + $proposition->proofreading + $proposition->proofreading_amount + $proposition->translation + $proposition->translation_amount + $proposition->index + $proposition->index_amount + $proposition->photos + $proposition->photos_amount + $proposition->illustrations + $proposition->illustrations_amount + $proposition->technical_drawings + $proposition->technical_drawings_amount + $proposition->accontation + $proposition->reviews + $proposition->epilogue + $proposition->accontation + $proposition->reviews + $proposition->epilogue + $proposition->expert_report + $proposition->copyright + $proposition->copyright_mediator + $proposition->methodical_instrumentarium + $proposition->selection + $proposition->powerpoint_presentation + collect($proposition->production_additional_expense)->sum('amount');
-
-		$design_layout_expense = $this->calcDesignLayoutExpense($proposition);
-
 		$authors = $proposition->authorExpenses;
 		$authors_other = $authors->sum(function($author) {
 			return collect($author->additional_expenses)->sum('amount');
