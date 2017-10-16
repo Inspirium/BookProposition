@@ -689,6 +689,7 @@ class PropositionController extends Controller {
 		$expense->margin = $request->input( 'margin' );
 		$this->setNote( $proposition, $request->input( 'note' ), 'distribution_expense_'.$type );
 		$expense->save();
+		return $this->getDistributionExpense($proposition, $type);
 	}
 
 	private function getLayoutExpense( BookProposition $proposition, $type ) {
@@ -717,6 +718,7 @@ class PropositionController extends Controller {
 		$expense->save();
 		$this->setNote( $proposition, $request->input( 'note' ), 'layout_note_' . $type );
 		$this->setNote( $proposition, $request->input( 'note' ), 'design_note_' . $type );
+		return $this->getLayoutExpense($proposition, $type);
 	}
 
 	private function getDeadline( BookProposition $proposition ) {
