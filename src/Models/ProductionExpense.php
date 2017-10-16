@@ -110,12 +110,14 @@ class ProductionExpense extends Model {
 			'methodical_instrumentarium' => $this->methodical_instrumentarium,
 			'selection' => $this->selection,
 			'powerpoint_presentation' => $this->powerpoint_presentation,
-			'additional_expenses' => $this->additionalExpenses->sum('amount'),
-			'layout' => $this->calcDesignLayoutExpense()
+			'additional_expenses' => $this->additionalExpenses->sum('amount')
 		];
 		$out['total'] = collect($out)->sum();
+		$out['layout'] = $this->calcDesignLayoutExpense();
+		$out['accontation'] = $this->accontation;
 		return $out;
 	}
+
 	private function calcDesignLayoutExpense() {
 		if (!$this->layout_complexity || !$this->design_complexity) {
 			return 0;

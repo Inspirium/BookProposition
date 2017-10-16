@@ -735,12 +735,16 @@ class PropositionController extends Controller {
 	}
 
 	private function getCalculation( BookProposition $proposition ) {
-		$authors = $proposition->authorExpenses;
-		$authors_other = $authors->sum(function($author) {
-			return collect($author->additional_expenses)->sum('amount');
+		$authors = $proposition->authorExpenses()->where('type', '=', 'budget')->get();
+		$authors_other = $authors->sum(function($expense) {
+			return $expense->additionalExpenses->sum('amount');
 		});
 		$authors_advance = $authors->sum('accontation');
-		$authors_total = $authors->sum('amount') + $authors_other + collect($proposition->author_other_expense)->sum('amount');
+		$authors_total = $authors->sum('amount') + $authors_other + $proposition->authorOtherExpenses()->where('type', 'author_other_expense_budget')->get()->sum('amount');
+
+		$production_expense = $proposition->productionExpenses()->where('type', '=', 'budget')->first();
+
+		$marketing_expense = $proposition->marketingExpenses()->where('type', '=', 'budget')->first();
 
 		return [
 			'authors_total' => $authors_total,
@@ -748,9 +752,9 @@ class PropositionController extends Controller {
 			'authors_other' => $authors_other,
 			'author_expenses' => $authors,
 			'offers' => $proposition->offers,
-			'marketing_expense' => $marketing_expense,
-			'production_expense' => $production_expense,
-			'design_layout_expense' => $design_layout_expense,
+			'marketing_expense' => $marketing_expense->totals,
+			'production_expense' => $production_expense->totals['total'] + $production_expense->totals['accontation'],
+			'design_layout_expense' => $production_expense->totals['layout'],
 			'dotation' => $proposition->dotation_amount
 		];
 	}
