@@ -96,7 +96,18 @@ class PropositionController extends Controller {
 		$proposition->project_name              = $request->input( 'project_name' );
 		$proposition->project_number            = $request->input( 'project_number' );
 		$proposition->additional_project_number = $request->input( 'additional_project_number' );
+		$proposition->status                    = 'unfinished';
+		$employee = Employee::where('user_id', Auth::id())->first();
+		$proposition->owner()->associate($employee);
 		$proposition->save();
+		if (!$proposition->productionExpenses->count()) {
+			$expense1 = ProductionExpense::create(['type' => 'budget', 'proposition_id' => $proposition->id]);
+			$expense2 = ProductionExpense::create(['type' => 'expense', 'proposition_id' => $proposition->id, 'parent_id' => $expense1->id]);
+		}
+		if (!$proposition->marketingExpenses->count()) {
+			$expense1 = MarketingExpense::create(['type' => 'budget', 'proposition_id' => $proposition->id]);
+			$expense2 = MarketingExpense::create(['type' => 'expense', 'proposition_id' => $proposition->id, 'parent_id' => $expense1->id]);
+		}
 
 		return response()->json( [ 'id' => $proposition->id ] );
 	}
