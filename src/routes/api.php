@@ -1,25 +1,26 @@
 <?php
 
 Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\BookProposition\Controllers\Api', 'prefix' => 'api/proposition'], function() {
-	Route::post('assign/{id}', 'PropositionController@assignProposition');
-	Route::get('{id}', 'PropositionController@getProposition');
 	Route::post('start', 'PropositionController@initProposition');
 
-	Route::get('{id}/files/multimedia', 'PropositionController@getMultimedia');
-	Route::post('{id}/files/multimedia', 'PropositionController@setMultimedia');
-	Route::get('{id}/files/marketing', 'PropositionController@getMarketing');
-	Route::post('{id}/files/marketing', 'PropositionController@setMarketing');
+	Route::group(['prefix' => '{id}'], function() {
+		Route::get('/', 'PropositionController@getProposition');
+		Route::get('init', 'PropositionController@getInitData');
 
-	Route::get('{id}/files/{type}', 'PropositionController@getFiles');
-	Route::post('{id}/files/{type}', 'PropositionController@setFiles');
+		Route::delete('/', 'PropositionMaintenanceController@deleteProposition');
+		Route::post('assign', 'PropositionMaintenanceController@assignProposition');
+		Route::post('request_approval', 'PropositionMaintenanceController@requestApproval');
+		Route::post('restore', 'PropositionMaintenanceController@restoreProposition');
 
-	Route::get('{id}/init', 'PropositionController@getInitData');
-	Route::get('{id}/{step}/{type?}', 'PropositionController@getPropositionStep');
-	Route::post('{id}/{step}/{type?}', 'PropositionController@setPropositionStep');
-    Route::post('/', 'PropositionController@saveProposition');
-    Route::patch('{id?}', 'PropositionController@saveProposition');
-    Route::delete('{id?}', 'PropositionController@deleteProposition');
-    Route::post('restore/{id?}', 'PropositionController@restoreProposition');
+		Route::get('files/multimedia', 'PropositionController@getMultimedia');
+		Route::post('files/multimedia', 'PropositionController@setMultimedia');
+		Route::get('files/marketing', 'PropositionController@getMarketing');
+		Route::post('files/marketing', 'PropositionController@setMarketing');
 
+		Route::get('files/{type}', 'PropositionController@getFiles');
+		Route::post('files/{type}', 'PropositionController@setFiles');
 
+		Route::get('{step}/{type?}', 'PropositionController@getPropositionStep');
+		Route::post('{step}/{type?}', 'PropositionController@setPropositionStep');
+	});
 });

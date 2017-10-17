@@ -3,11 +3,8 @@
 namespace Inspirium\BookProposition\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Notifications\TaskAssigned;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
-use Inspirium\BookManagement\Models\Book;
 use Inspirium\BookProposition\Models\AdditionalExpense;
 use Inspirium\BookProposition\Models\AuthorExpense;
 use Inspirium\BookProposition\Models\BookProposition;
@@ -17,67 +14,8 @@ use Inspirium\BookProposition\Models\PropositionNote;
 use Inspirium\BookProposition\Models\PropositionOption;
 use Inspirium\FileManagement\Models\File;
 use Inspirium\HumanResources\Models\Employee;
-use Inspirium\TaskManagement\Models\Task;
 
 class PropositionController extends Controller {
-
-	public function deleteProposition( $id ) {
-		BookProposition::destroy( $id );
-
-		return response()->json( [] );
-	}
-
-	public function restoreProposition( $id ) {
-		$proposition = BookProposition::withTrashed()->find( $id );
-		$proposition->restore();
-
-		return response()->json( [] );
-	}
-
-	public function assignProposition( Request $request, $id ) {
-		$proposition = BookProposition::find( $id );
-		$departments = $request->input( 'departments' );
-		$employees   = $request->input( 'employees' );
-		$assigner    = Employee::where( 'user_id', Auth::id() )->first();
-		if ( $employees ) {
-			$employees = array_pluck( $employees, 'id' );
-			$task      = new Task();
-			$task->assigner()->associate( $assigner );
-			$task->name = 'Proposition: ' . $proposition->title;
-			$task->related()->associate( $proposition );
-			$task->description = $request->input('description');
-			if ($request->input('access') === 'onepage') {
-				$task->description .= ' <a href="'.$request->input('path').'">Link</a>';
-			}
-			$task->status      = 'new';
-			$task->priority = $request->input('priority');
-			$task->deadline = $request->input('date');
-			$task->type        = 1;
-			$task->save();
-			$task->employees()->attach( $employees );
-			foreach ( $employees as $employee_id ) {
-				$employee = Employee::find( $employee_id );
-				$employee->user->notify( new TaskAssigned( $task ) );
-			}
-		} else if ( $departments ) {
-			$departments = array_pluck( $departments, 'id' );
-			$task        = new Task();
-			$task->assigner()->associate( $assigner );
-			$task->name = 'Proposition: ' . $proposition->title;
-			$task->related()->associate( $proposition );
-			$task->description = $request->input('description');
-			if ($request->input('access') === 'onepage') {
-				$task->description .= ' <a href="'.$request->input('path').'">Link</a>';
-			}
-			$task->status      = 'new';
-			$task->priority = $request->input('priority');
-			$task->deadline = $request->input('date');
-			$task->type        = 1;
-			$task->save();
-			$task->departments()->attach( $departments );
-			//TODO: send notification
-		}
-	}
 
 	public function getInitData( $id ) {
 		$proposition       = BookProposition::withTrashed()->find( $id );
@@ -205,8 +143,6 @@ class PropositionController extends Controller {
 
 		return response()->json( $out );
 	}
-
-	//TODO: move
 
 	private function getStart( BookProposition $proposition ) {
 		return [

@@ -81,6 +81,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $parent_id
  * @property-read \Inspirium\BookProposition\Models\ProductionExpense|null $parent
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereParentId($value)
+ * @property string|null $layout_complexity
+ * @property int|null $layout_include
+ * @property string|null $design_complexity
+ * @property int|null $design_include
+ * @property-read \Inspirium\BookProposition\Models\BookProposition $proposition
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereDesignComplexity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereDesignInclude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereLayoutComplexity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereLayoutInclude($value)
  */
 class ProductionExpense extends Model {
 	protected $table = 'production_expenses';

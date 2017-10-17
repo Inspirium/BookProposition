@@ -3,6 +3,8 @@
 namespace Inspirium\BookProposition;
 
 use Illuminate\Support\ServiceProvider;
+use Inspirium\BookProposition\Models\ApprovalRequest;
+use Inspirium\BookProposition\Observers\ApprovalRequestObserver;
 
 class BookPropositionServiceProvider extends ServiceProvider
 {
@@ -17,6 +19,8 @@ class BookPropositionServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes/api.php');
 
         $this->loadMigrationsFrom(__DIR__ . '/database');
+
+        ApprovalRequest::observe(ApprovalRequestObserver::class);
     }
 
     /**
