@@ -755,7 +755,7 @@ class PropositionController extends Controller {
 			'author_expenses' => $authors,
 			'offers' => $proposition->offers,
 			'marketing_expense' => $marketing_expense->totals,
-			'production_expense' => $production_expense->totals['total'] + $production_expense->totals['accontation'],
+			'production_expense' => $production_expense->totals['total'],
 			'design_layout_expense' => $production_expense->totals['layout'],
 			'dotation' => $proposition->dotation_amount
 		];
