@@ -13,7 +13,7 @@ class ApprovalRequestObserver {
 		$task->description = $request->description;
 		$task->assigner()->associate($request->requester);
 		$task->name = $request->name;
-		$task->status = 'unfinished';
+		$task->status = 'pending';
 		$task->type = 3;
 		$task->save();
 		$task->employees()->sync($request->requestees);
