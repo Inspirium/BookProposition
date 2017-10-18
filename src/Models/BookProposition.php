@@ -241,6 +241,10 @@ class BookProposition extends Model {
 		return $this->hasMany('Inspirium\BookProposition\Models\MarketingExpense', 'proposition_id');
 	}
 
+	public function approvalRequests() {
+    	return $this->hasMany('Inspirium\BookProposition\Models\ApprovalRequest', 'proposition_id');
+	}
+
 	//polymorph
 	public function authors() {
         return $this->morphToMany('Inspirium\BookManagement\Models\Author', 'connection', 'author_pivot', 'connection_id', 'author_id');

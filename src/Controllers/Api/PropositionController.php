@@ -711,16 +711,17 @@ class PropositionController extends Controller {
 		$marketing_expense = $proposition->marketingExpenses->keyBy('type');
 		$production_expense = $proposition->productionExpenses->keyBy('type');
 		$authors = $proposition->authors()->with('expenses')->get();
+		$requests = $proposition->approvalRequests()->orderBy('updated_at')->get()->groupBy('designation');
 		return [
 			'marketing_expense' => $marketing_expense,
 			'production_expense' => $production_expense,
+			'requests' => $requests,
 			'authors' => $authors
 		];
 	}
 
 	private function setCompare( Request $request, $proposition ) {
-		$proposition->expenses = $request->input( 'expenses' );
-		$proposition->save();
+
 	}
 
 	public function getFiles( $id, $type ) {

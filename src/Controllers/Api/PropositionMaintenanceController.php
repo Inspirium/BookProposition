@@ -56,6 +56,7 @@ class PropositionMaintenanceController extends Controller {
 			'expense' => $request->input('expense'),
 			'name' => $request->input('name'),
 			'description' => $request->input('description'),
+			'designation' => $request->input('designation'),
 			'status' => 'requested',
 			'proposition_id' => $id,
 			'requester_id' => \Auth::id()

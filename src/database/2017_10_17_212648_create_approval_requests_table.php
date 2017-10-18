@@ -16,6 +16,7 @@ class CreateApprovalRequestsTable extends Migration
         Schema::create('approval_requests', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('designation');
             $table->text('description');
             $table->string('budget');
             $table->string('expense');

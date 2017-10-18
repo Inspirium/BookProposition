@@ -8,12 +8,11 @@ use Inspirium\TaskManagement\Models\Task;
 class ApprovalRequestObserver {
 
 	public function assigned(ApprovalRequest $request) {
-		//todo: create task
 		$task = new Task();
 		$task->description = $request->description;
 		$task->assigner()->associate($request->requester);
 		$task->name = $request->name;
-		$task->status = 'pending';
+		$task->status = 'new';
 		$task->type = 3;
 		$task->save();
 		$task->employees()->sync($request->requestees);
