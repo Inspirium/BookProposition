@@ -17,6 +17,7 @@ class ApprovalRequestObserver {
 		$task->type = 3;
 		$task->save();
 		$task->employees()->sync($request->requestees);
+		$task->triggerAssigned();
 	}
 
 	public function deleted(ApprovalRequest $request) {
