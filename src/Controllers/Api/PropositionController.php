@@ -711,7 +711,7 @@ class PropositionController extends Controller {
 		$marketing_expense = $proposition->marketingExpenses->keyBy('type');
 		$production_expense = $proposition->productionExpenses->keyBy('type');
 		$authors = $proposition->authors()->with('expenses')->get();
-		$requests = $proposition->approvalRequests()->orderBy('updated_at')->get()->groupBy('designation');
+		$requests = $proposition->approvalRequests()->orderBy('updated_at', 'desc')->get()->groupBy('designation');
 		return [
 			'marketing_expense' => $marketing_expense,
 			'production_expense' => $production_expense,

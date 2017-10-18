@@ -43,6 +43,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\Inspirium\BookProposition\Models\ApprovalRequest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\Inspirium\BookProposition\Models\ApprovalRequest withoutTrashed()
  * @mixin \Eloquent
+ * @property string $designation
+ * @property string $status
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\HumanResources\Models\Employee[] $requestees
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ApprovalRequest whereDesignation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ApprovalRequest whereStatus($value)
  */
 class ApprovalRequest extends Model {
 
@@ -52,9 +57,11 @@ class ApprovalRequest extends Model {
 
 	protected $dates = ['deleted_at'];
 
-	protected $observables = ['assigned'];
+	protected $observables = ['assigned', 'accepted', 'denied'];
 
 	protected $fillable = ['name', 'description', 'budget', 'expense', 'requester_id', 'requestee_id', 'proposition_id', 'status', 'designation'];
+
+	protected $with = ['requestees'];
 
 	public function proposition() {
 		return $this->belongsTo('Inspirium\BookProposition\Models\BookProposition', 'proposition_id');
@@ -68,8 +75,24 @@ class ApprovalRequest extends Model {
 		return $this->belongsToMany('Inspirium\HumanResources\Models\Employee', 'approval_requests_requestees_pivot', 'approval_request_id', 'requestee_id');
 	}
 
+	public function tasks() {
+		return $this->morphMany('Inspirium\TaskManagement\Models\Task', 'related');
+	}
+
 	//todo: not happy with this
 	public function triggerAssigned() {
 		$this->fireModelEvent('assigned', false);
+	}
+
+	public function approveRequest() {
+		$this->status = 'accepted';
+		$this->save();
+		$this->fireModelEvent('accepted', false);
+	}
+
+	public function rejectRequest() {
+		$this->status = 'denied';
+		$this->save();
+		$this->fireModelEvent('denied', false);
 	}
 }

@@ -191,6 +191,7 @@ use Inspirium\FileManagement\Models\File;
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\ProductionExpense[] $productionExpenses
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\MarketingExpense[] $marketingExpenses
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AdditionalExpense[] $authorOtherExpenses
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\ApprovalRequest[] $approvalRequests
  */
 class BookProposition extends Model {
     use SoftDeletes;

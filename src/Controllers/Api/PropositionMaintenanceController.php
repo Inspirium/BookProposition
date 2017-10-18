@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inspirium\BookProposition\Models\ApprovalRequest;
 use Inspirium\BookProposition\Models\BookProposition;
 use Inspirium\HumanResources\Models\Employee;
+use Inspirium\TaskManagement\Models\Task;
 
 class PropositionMaintenanceController extends Controller {
 
@@ -27,7 +28,7 @@ class PropositionMaintenanceController extends Controller {
 		$departments = $request->input( 'departments' );
 		$employees   = $request->input( 'employees' );
 		$assigner    = Employee::where( 'user_id', Auth::id() )->first();
-		/*if ( $employees ) {
+		if ( $employees ) {
 			$employees = array_pluck( $employees, 'id' );
 			$task      = new Task();
 			$task->assigner()->associate( $assigner );
@@ -42,12 +43,9 @@ class PropositionMaintenanceController extends Controller {
 			$task->deadline = $request->input('date');
 			$task->type        = 1;
 			$task->save();
-			$task->employees()->attach( $employees );
-			foreach ( $employees as $employee_id ) {
-				$employee = Employee::find( $employee_id );
-				$employee->user->notify( new TaskAssigned( $task ) );
-			}
-		} */
+			$task->employees()->save( $employees );
+			$task->triggerAssigned();
+		}
 	}
 
 	public function requestApproval( Request $request, $id) {
