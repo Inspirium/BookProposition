@@ -58,7 +58,7 @@ class ApprovalRequestDenied extends Notification
     public function toArray($notifiable)
     {
 	    return [
-		    'message' => 'Request for expense has been approved',
+		    'message' => 'Request for expense has been denied',
 		    'link' => '/proposition/'.$this->request->proposition_id.'/expenses/compare'
 	    ];
     }
