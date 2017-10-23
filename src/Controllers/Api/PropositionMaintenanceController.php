@@ -36,7 +36,7 @@ class PropositionMaintenanceController extends Controller {
 			$task->related()->associate( $proposition );
 			$task->description = $request->input('description');
 			if ($request->input('access') === 'onepage') {
-				$task->related_link = $request->input('link');
+				$task->related_link = $request->input('path');
 			}
 			$task->status      = 'new';
 			$task->priority = $request->input('priority');
