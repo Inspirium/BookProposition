@@ -27,7 +27,7 @@ class PropositionMaintenanceController extends Controller {
 		$proposition = BookProposition::find( $id );
 		$departments = $request->input( 'departments' );
 		$employees   = $request->input( 'employees' );
-		$assigner    = Employee::where( 'user_id', Auth::id() )->first();
+		$assigner    = Employee::where( 'user_id', \Auth::id() )->first();
 		if ( $employees ) {
 			$employees = array_pluck( $employees, 'id' );
 			$task      = new Task();
@@ -36,7 +36,7 @@ class PropositionMaintenanceController extends Controller {
 			$task->related()->associate( $proposition );
 			$task->description = $request->input('description');
 			if ($request->input('access') === 'onepage') {
-				$task->description .= ' <a href="'.$request->input('path').'">Link</a>';
+				$task->related_link = $request->input('link');
 			}
 			$task->status      = 'new';
 			$task->priority = $request->input('priority');
