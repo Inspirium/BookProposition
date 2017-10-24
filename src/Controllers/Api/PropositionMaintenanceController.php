@@ -2,6 +2,7 @@
 namespace Inspirium\BookProposition\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inspirium\BookProposition\Models\ApprovalRequest;
 use Inspirium\BookProposition\Models\BookProposition;
@@ -40,10 +41,10 @@ class PropositionMaintenanceController extends Controller {
 			}
 			$task->status      = 'new';
 			$task->priority = $request->input('priority');
-			$task->deadline = $request->input('date');
-			$task->type        = 1;
+			$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
+			$task->type     = 1;
 			$task->save();
-			$task->employees()->save( $employees );
+			$task->employees()->sync($employees);
 			$task->triggerAssigned();
 		}
 	}
