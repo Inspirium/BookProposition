@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\HumanResources\Models\Employee[] $requestees
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ApprovalRequest whereDesignation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ApprovalRequest whereStatus($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\TaskManagement\Models\Task[] $tasks
  */
 class ApprovalRequest extends Model {
 
