@@ -40,6 +40,10 @@ Route::group(['prefix' => 'proposition'], function() {
 	Route::get('department-list', function() {
 		return view(config('app.template') . '::proposition.department-list');
 	});
+
+	Route::get('{id}/edit/print/{offer_id}/{doc_type}', 'Api\PropositionController@getOfferDoc');
+
+
 	Route::any('{id}/{all}/{step}', function() {
 		return view(config('app.template') . '::router-view');
 	});

@@ -14,6 +14,9 @@ use Inspirium\BookProposition\Models\PropositionNote;
 use Inspirium\BookProposition\Models\PropositionOption;
 use Inspirium\FileManagement\Models\File;
 use Inspirium\HumanResources\Models\Employee;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 class PropositionController extends Controller {
 
@@ -817,6 +820,46 @@ class PropositionController extends Controller {
 					'type'  => 'marketing.leaflet'
 				] );
 			}
+		}
+	}
+
+	public function getOfferDoc($id, $offer_id, $doc_type) {
+		$proposition = BookProposition::find($id);
+		$offer = PropositionOption::find($offer_id);
+		$templateProcessor = new TemplateProcessor(resource_path('print_offer_template.docx'));
+		$templateProcessor->setValue('project_name', $proposition->title);
+		$templateProcessor->setValue('circulation', $offer->title);
+		$templateProcessor->setValue('paper_type', $offer->paper_type);
+		$templateProcessor->setValue('book_binding', $offer->book_binding);
+		$templateProcessor->setValue('colors', $offer->colors);
+		$templateProcessor->setValue('colors_first_page', $offer->colors_first_page);
+		$templateProcessor->setValue('colors_last_page', $offer->colors_last_page);
+		$templateProcessor->setValue('additional_work', $offer->additional_work);
+		$templateProcessor->setValue('cover_type', $offer->cover_type);
+		$templateProcessor->setValue('hard_cover_circulation', $offer->hard_cover_circulation);
+		$templateProcessor->setValue('soft_cover_circulation', $offer->soft_cover_circulation);
+		$templateProcessor->setValue('cover_paper_type', $offer->cover_paper_type);
+		$templateProcessor->setValue('cover_colors', $offer->cover_colors);
+		$templateProcessor->setValue('cover_plastification', $offer->cover_plastification);
+		$templateProcessor->setValue('film_print', $offer->film_print);
+		$templateProcessor->setValue('blind_print', $offer->blind_print);
+		$templateProcessor->setValue('uv_print', $offer->uv_print);
+		$templateProcessor->setValue('note', $this->getNote( $proposition, 'print' )); //TODO: fix for proper note
+		$templateProcessor->setValue('owner', $proposition->owner->name);
+		$templateProcessor->setValue('date', date('d.m.Y.'));
+
+		$templateProcessor->saveAs(storage_path("offers/upit-$offer_id.docx"));//TODO: without saving
+
+		if ($doc_type === 'pdf') {
+			Settings::setPdfRendererPath('../vendor/dompdf/dompdf');
+			Settings::setPdfRendererName('DomPDF');
+			$phpWord = IOFactory::load(storage_path( "offers/upit-$offer_id.docx" ));
+			$xmlWriter = IOFactory::createWriter($phpWord , 'PDF');
+			$xmlWriter->save(storage_path( "offers/upit-$offer_id.pdf" ));
+			return response()->download( storage_path( "offers/upit-$offer_id.pdf" ) );
+		}
+		else {
+			return response()->download( storage_path( "offers/upit-$offer_id.docx" ) );
 		}
 	}
 }
