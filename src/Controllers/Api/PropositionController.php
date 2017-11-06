@@ -17,6 +17,7 @@ use Inspirium\HumanResources\Models\Employee;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\TemplateProcessor;
+use Unoconv\Unoconv;
 
 class PropositionController extends Controller {
 
@@ -851,12 +852,12 @@ class PropositionController extends Controller {
 		$templateProcessor->saveAs(storage_path("offers/upit-$offer_id.docx"));//TODO: without saving
 
 		if ($doc_type === 'pdf') {
-			Settings::setPdfRendererPath('../vendor/dompdf/dompdf');
-			Settings::setPdfRendererName('DomPDF');
-			$phpWord = IOFactory::load(storage_path( "offers/upit-$offer_id.docx" ));
-			$xmlWriter = IOFactory::createWriter($phpWord , 'PDF');
-			$xmlWriter->save(storage_path( "offers/upit-$offer_id.pdf" ));
-			return response()->download( storage_path( "offers/upit-$offer_id.pdf" ) );
+			$unoconv = Unoconv::create(array(
+				'timeout'          => 42,
+				'unoconv.binaries' => '/usr/bin/unoconv',
+			));
+			$unoconv->transcode(storage_path( "offers/upit-$offer_id.docx" ), 'pdf', storage_path( "offers/upit-$offer_id.pdf" ));
+			return response()->download( storage_path( "offers/upit-$offer_id.pdf" ) );;
 		}
 		else {
 			return response()->download( storage_path( "offers/upit-$offer_id.docx" ) );
