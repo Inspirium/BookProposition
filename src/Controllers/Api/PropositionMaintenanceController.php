@@ -48,6 +48,25 @@ class PropositionMaintenanceController extends Controller {
 		}
 	}
 
+	public function assignDocument(Request $request, $id) {
+		$proposition = BookProposition::find( $id );
+		$employees   = $request->input( 'employees' );
+		$assigner    = Employee::where( 'user_id', \Auth::id() )->first();
+		$task      = new Task();
+		$task->assigner()->associate( $assigner );
+		$task->assignee_id = $employees[0]['id'];
+		$task->name = 'Proposition: ' . $proposition->title;
+		$task->related()->associate( $proposition );
+		$task->description = $request->input('description');
+		$task->related_link = $request->input('path');
+		$task->status      = 'new';
+		$task->priority = $request->input('priority');
+		$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
+		$task->type     = 4;
+		$task->save();
+		$task->assignThread($employees);
+	}
+
 	public function requestApproval( Request $request, $id) {
 		$approval_request = new ApprovalRequest([
 			'budget' => $request->input('budget'),
