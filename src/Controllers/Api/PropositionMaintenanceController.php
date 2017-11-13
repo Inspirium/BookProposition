@@ -30,9 +30,9 @@ class PropositionMaintenanceController extends Controller {
 		$employees   = $request->input( 'employees' );
 		$assigner    = Employee::where( 'user_id', \Auth::id() )->first();
 		if ( $employees ) {
-			$employees = array_pluck( $employees, 'id' );
 			$task      = new Task();
 			$task->assigner()->associate( $assigner );
+			$task->assignee_id = $employees[0]['id'];
 			$task->name = 'Proposition: ' . $proposition->title;
 			$task->related()->associate( $proposition );
 			$task->description = $request->input('description');
@@ -44,8 +44,7 @@ class PropositionMaintenanceController extends Controller {
 			$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
 			$task->type     = 1;
 			$task->save();
-			$task->employees()->sync($employees);
-			$task->triggerAssigned();
+			$task->assignThread($employees);
 		}
 	}
 

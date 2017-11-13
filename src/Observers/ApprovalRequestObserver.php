@@ -19,8 +19,7 @@ class ApprovalRequestObserver {
 		$task->type = 3;
 		$task->related_link = '/proposition/'.$request->proposition_id.'/expenses/compare';
 		$task->save();
-		$task->employees()->sync($request->requestees);
-		$task->triggerAssigned();
+		$task->assignThread($request->requestees);
 	}
 
 	public function accepted(ApprovalRequest $request) {
