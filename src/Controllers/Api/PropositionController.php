@@ -676,6 +676,10 @@ class PropositionController extends Controller {
 			'price_first_year' => $proposition->price_first_year,
 			'price_second_year' => $proposition->price_second_year,
 			'retail_price' => $proposition->retail_price,
+			'offers' => $proposition->options->mapWithKeys(function($option) {
+				return [$option['id'] => $option['title']];
+			}),
+			'selected_circulation' => $proposition->options()->where('is_final', 1)->first()->id
 		];
 	}
 
@@ -683,8 +687,20 @@ class PropositionController extends Controller {
 		$proposition->price_first_year = $request->input('price_first_year');
 		$proposition->price_second_year = $request->input('price_second_year');
 		$proposition->retail_price = $request->input('retail_price');
-		//TODO: save selected offer
 		$proposition->save();
+		$offers = $proposition->options;
+		$selected = $request->input('selected_circulation');
+		foreach ($offers as $one) {
+			if ($one->id == $selected) {
+				$one->is_final = true;
+			}
+			else {
+				$one->is_final = false;
+			}
+			$one->save();
+		}
+
+
 	}
 
 	private function setDeadline( Request $request, BookProposition $proposition ) {
