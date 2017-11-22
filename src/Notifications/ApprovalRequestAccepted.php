@@ -3,6 +3,7 @@
 namespace Inspirium\BookProposition\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -31,7 +32,7 @@ class ApprovalRequestAccepted extends Notification
      */
     public function via($notifiable)
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     /**
@@ -61,4 +62,12 @@ class ApprovalRequestAccepted extends Notification
 		    'link' => '/proposition/'.$this->request->proposition_id.'/expenses/compare'
 	    ];
     }
+
+	public function toBroadcast($notifiable)
+	{
+		return new BroadcastMessage([ 'data' => [
+			'message' => 'Request for expense has been approved',
+			'link' => '/proposition/'.$this->request->proposition_id.'/expenses/compare'
+		]]);
+	}
 }
