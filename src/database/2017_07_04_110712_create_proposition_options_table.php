@@ -41,6 +41,8 @@ class CreatePropositionOptionsTable extends Migration
             $table->string('calculated_profit_percent')->nullable();
             $table->string('shop_percent')->nullable();
             $table->string('vat_percent')->nullable();
+
+            $table->boolean('is_final')->default(false);
             $table->timestamps();
         });
     }

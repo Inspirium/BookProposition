@@ -57,6 +57,11 @@ class CreatePropositionsTable extends Migration
 
             $table->text('expenses')->nullable();
 
+            $table->text('price_first_year')->nullable();
+            $table->text('price_second_year')->nullable();
+
+            $table->string('retail_price')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

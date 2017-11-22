@@ -213,7 +213,9 @@ class BookProposition extends Model {
 	    'possible_products' => 'array',
 	    'marketing_additional_expense' => 'array',
 	    'author_other_expense' => 'array',
-	    'expenses' => 'array'
+	    'expenses' => 'array',
+	    'price_first_year' => 'array',
+	    'price_second_year' => 'array'
     ];
 
     //relationships
@@ -441,5 +443,35 @@ class BookProposition extends Model {
 			'marketing_expense' => 0,
 			'technical_drawings' => 0
 		];
+	}
+
+	public function getPriceFirstYearAttribute($value) {
+    	if (!$value) {
+    		return [
+			    'retail' => 0,
+			    'wholesale' => 0,
+			    'direct' => 0,
+			    'field' => 0,
+			    'promotors' => 0,
+			    'export' => 0
+		    ];
+
+	    }
+	    return json_decode($value, true);
+	}
+
+	public function getPriceSecondYearAttribute($value) {
+		if (!$value) {
+			return [
+				'retail' => 0,
+				'wholesale' => 0,
+				'direct' => 0,
+				'field' => 0,
+				'promotors' => 0,
+				'export' => 0
+			];
+
+		}
+		return json_decode($value, true);
 	}
 }

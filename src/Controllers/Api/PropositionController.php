@@ -83,7 +83,8 @@ class PropositionController extends Controller {
 			'layout_expense',
 			'deadline',
 			'compare',
-			'calculation'
+			'calculation',
+			'price_definition'
 		];
 		$out           = [];
 		if ( in_array( $step, $allowed_steps ) ) {
@@ -126,7 +127,8 @@ class PropositionController extends Controller {
 			'layout_expense',
 			'deadline',
 			'compare',
-			'calculation'
+			'calculation',
+			'price_definition'
 		];
 		$out           = [];
 		if ( in_array( $step, $allowed_steps ) ) {
@@ -667,6 +669,22 @@ class PropositionController extends Controller {
 			'priority' => $proposition->priority,
 			'note'     => $this->getNote( $proposition, 'deadline' )
 		];
+	}
+
+	private function getPriceDefinition(BookProposition $proposition) {
+		return [
+			'price_first_year' => $proposition->price_first_year,
+			'price_second_year' => $proposition->price_second_year,
+			'retail_price' => $proposition->retail_price,
+		];
+	}
+
+	private function setPriceDefinition(Request $request, BookProposition $proposition) {
+		$proposition->price_first_year = $request->input('price_first_year');
+		$proposition->price_second_year = $request->input('price_second_year');
+		$proposition->retail_price = $request->input('retail_price');
+		//TODO: save selected offer
+		$proposition->save();
 	}
 
 	private function setDeadline( Request $request, BookProposition $proposition ) {
