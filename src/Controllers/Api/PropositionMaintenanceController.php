@@ -8,6 +8,7 @@ use Inspirium\BookProposition\Models\ApprovalRequest;
 use Inspirium\BookProposition\Models\BookProposition;
 use Inspirium\HumanResources\Models\Employee;
 use Inspirium\TaskManagement\Models\Task;
+use Zend\Validator\Db\RecordExists;
 
 class PropositionMaintenanceController extends Controller {
 
@@ -44,6 +45,7 @@ class PropositionMaintenanceController extends Controller {
 			$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
 			$task->type     = 1;
 			$task->save();
+			$employees[] = $assigner->toArray();
 			$task->assignThread($employees);
 		}
 	}
@@ -87,5 +89,24 @@ class PropositionMaintenanceController extends Controller {
 
 		$approval_request->triggerAssigned();
 		return response()->json([]);
+	}
+
+	public function approvalProposition(Request $request, $id) {
+		$proposition = BookProposition::find($id);
+		$proposition->status= 'requested';
+		$proposition->save();
+		$task = new Task();
+		$task->type = 5;
+		$task->name = 'Proposition Approval';
+		$assigner = Employee::where('user_id', \Auth::id())->first();
+		$task->assigner()->associate($assigner);
+		$task->description = $request->input('description');
+		$task->status = 'new';
+		$task->assignee_id = $request->input('employees')[0]['id'];
+		$task->related()->associate($proposition);
+		$task->save();
+		$employees = $request->input('employees');
+		$employees[] = $assigner->toArray();
+		$task->assignThread($employees);
 	}
 }

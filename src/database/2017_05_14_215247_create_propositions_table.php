@@ -62,6 +62,10 @@ class CreatePropositionsTable extends Migration
 
             $table->string('retail_price')->nullable();
 
+            $table->boolean('approved')->default(false);
+			$table->integer('approved_by')->nullable();
+			$table->timestamp('approved_on')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });
