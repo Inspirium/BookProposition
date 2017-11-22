@@ -672,6 +672,7 @@ class PropositionController extends Controller {
 	}
 
 	private function getPriceDefinition(BookProposition $proposition) {
+		$final = $proposition->options()->where('is_final', 1)->first();
 		return [
 			'price_first_year' => $proposition->price_first_year,
 			'price_second_year' => $proposition->price_second_year,
@@ -679,7 +680,7 @@ class PropositionController extends Controller {
 			'offers' => $proposition->options->mapWithKeys(function($option) {
 				return [$option['id'] => $option['title']];
 			}),
-			'selected_circulation' => $proposition->options()->where('is_final', 1)->first()->id
+			'selected_circulation' => $final?$final->id:0
 		];
 	}
 
