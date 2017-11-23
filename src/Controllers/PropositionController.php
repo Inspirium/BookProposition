@@ -9,9 +9,9 @@ use Inspirium\BookProposition\Models\BookProposition;
 class PropositionController extends Controller {
 
     public function show() {
-    	$approval = BookProposition::where('status', 'pending')->get();
+    	$approval = BookProposition::where('status', 'requested')->get();
     	$unfinished = BookProposition::where('status', 'unfinished')->get();
-    	$active = BookProposition::where('status', 'active')->get();
+    	$active = BookProposition::where('status', 'approved')->get();
     	$rejected = BookProposition::where('status', 'rejected')->get();
     	$deleted = BookProposition::onlyTrashed()->get();
         return view(config('app.template') . '::proposition.list', compact('approval', 'unfinished', 'active', 'rejected', 'deleted'));
