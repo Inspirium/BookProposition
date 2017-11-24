@@ -2,7 +2,7 @@
 
 namespace Inspirium\BookProposition\Controllers;
 
-use App\Http\Controllers\Controller;
+use Inspirium\Http\Controllers\Controller;
 use Inspirium\BookManagement\Models\BookCategory;
 use Inspirium\BookProposition\Models\BookProposition;
 
