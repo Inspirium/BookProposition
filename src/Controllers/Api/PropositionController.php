@@ -155,7 +155,8 @@ class PropositionController extends Controller {
 			'project_number'            => $proposition->project_number,
 			'project_name'              => $proposition->project_name,
 			'additional_project_number' => $proposition->additional_project_number,
-			'note'                      => $this->getNote( $proposition, 'start' )
+			'note'                      => $this->getNote( $proposition, 'start' ),
+			'status' => $proposition->status
 		];
 	}
 
