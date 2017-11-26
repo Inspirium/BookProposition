@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property array $additional_expenses
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \Inspirium\BookManagement\Models\Author|null $author
+ * @property-read \Inspirium\Models\BookManagement\Author|null $author
  * @property-read mixed $total
  * @property-read \Inspirium\BookProposition\Models\BookProposition|null $proposition
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\AuthorExpense whereAccontation($value)
@@ -50,7 +50,7 @@ class AuthorExpense extends Model {
     protected $with = ['additionalExpenses', 'parent'];
 
     public function author() {
-        return $this->belongsTo('Inspirium\BookManagement\Models\Author');
+        return $this->belongsTo('Inspirium\Models\BookManagement\Author');
     }
 
     public function proposition() {

@@ -3,7 +3,7 @@
 namespace Inspirium\BookProposition\Controllers;
 
 use Inspirium\Http\Controllers\Controller;
-use Inspirium\BookManagement\Models\BookCategory;
+use Inspirium\Models\BookManagement\BookCategory;
 use Inspirium\BookProposition\Models\BookProposition;
 
 class PropositionController extends Controller {

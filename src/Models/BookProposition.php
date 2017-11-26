@@ -5,7 +5,7 @@ namespace Inspirium\BookProposition\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Inspirium\BookManagement\Models\Book;
+use Inspirium\Models\BookManagement\Book;
 use Inspirium\FileManagement\Models\File;
 
 /**
@@ -91,18 +91,18 @@ use Inspirium\FileManagement\Models\File;
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AuthorExpense[] $authorExpenses
- * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookManagement\Models\Author[] $authors
- * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookManagement\Models\BookBiblioteca[] $bibliotecas
- * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookManagement\Models\BookCategory[] $bookCategories
- * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookManagement\Models\BookType[] $bookTypes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\Author[] $authors
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\BookBiblioteca[] $bibliotecas
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\BookCategory[] $bookCategories
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\BookType[] $bookTypes
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\FileManagement\Models\File[] $documents
  * @property-read mixed $offers
  * @property-read mixed $school_type
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\PropositionNote[] $notes
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\PropositionOption[] $options
  * @property-read \Inspirium\HumanResources\Models\Employee|null $owner
- * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookManagement\Models\SchoolSubject[] $schoolSubjects
- * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookManagement\Models\SchoolType[] $schoolTypes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\SchoolSubject[] $schoolSubjects
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\SchoolType[] $schoolTypes
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\Inspirium\BookProposition\Models\BookProposition onlyTrashed()
  * @method static bool|null restore()
@@ -250,27 +250,27 @@ class BookProposition extends Model {
 
 	//polymorph
 	public function authors() {
-        return $this->morphToMany('Inspirium\BookManagement\Models\Author', 'connection', 'author_pivot', 'connection_id', 'author_id');
+        return $this->morphToMany('Inspirium\Models\BookManagement\Author', 'connection', 'author_pivot', 'connection_id', 'author_id');
     }
 
 	public function bookCategories() {
-		return $this->morphToMany('Inspirium\BookManagement\Models\BookCategory', 'connection', 'book_category_pivot', 'connection_id', 'book_category_id');
+		return $this->morphToMany('Inspirium\Models\BookManagement\BookCategory', 'connection', 'book_category_pivot', 'connection_id', 'book_category_id');
 	}
 
 	public function bibliotecas() {
-		return $this->morphToMany('Inspirium\BookManagement\Models\BookBiblioteca', 'connection', 'biblioteca_pivot', 'connection_id', 'biblioteca_id');
+		return $this->morphToMany('Inspirium\Models\BookManagement\BookBiblioteca', 'connection', 'biblioteca_pivot', 'connection_id', 'biblioteca_id');
 	}
 
 	public function bookTypes() {
-		return $this->morphToMany('Inspirium\BookManagement\Models\BookType', 'connection', 'book_type_pivot', 'connection_id', 'book_type_id');
+		return $this->morphToMany('Inspirium\Models\BookManagement\BookType', 'connection', 'book_type_pivot', 'connection_id', 'book_type_id');
 	}
 
 	public function schoolSubjects() {
-		return $this->morphToMany('Inspirium\BookManagement\Models\SchoolSubject', 'connection', 'school_subjects_pivot', 'connection_id', 'school_subject_id');
+		return $this->morphToMany('Inspirium\Models\BookManagement\SchoolSubject', 'connection', 'school_subjects_pivot', 'connection_id', 'school_subject_id');
 	}
 
 	public function schoolTypes() {
-		return $this->morphToMany('Inspirium\BookManagement\Models\SchoolType', 'connection', 'school_type_pivot', 'connection_id', 'school_type_id');
+		return $this->morphToMany('Inspirium\Models\BookManagement\SchoolType', 'connection', 'school_type_pivot', 'connection_id', 'school_type_id');
 	}
 
 	public function documents() {
