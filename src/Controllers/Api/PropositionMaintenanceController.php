@@ -6,9 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inspirium\BookProposition\Models\ApprovalRequest;
 use Inspirium\BookProposition\Models\BookProposition;
-use Inspirium\HumanResources\Models\Employee;
 use Inspirium\TaskManagement\Models\Task;
-use Zend\Validator\Db\RecordExists;
 
 class PropositionMaintenanceController extends Controller {
 
@@ -29,7 +27,7 @@ class PropositionMaintenanceController extends Controller {
 		$proposition = BookProposition::find( $id );
 		$departments = $request->input( 'departments' );
 		$employees   = $request->input( 'employees' );
-		$assigner    = Employee::where( 'user_id', \Auth::id() )->first();
+		$assigner    = \Auth::user();
 		if ( $employees ) {
 			$task      = new Task();
 			$task->assigner()->associate( $assigner );
@@ -53,7 +51,7 @@ class PropositionMaintenanceController extends Controller {
 	public function assignDocument(Request $request, $id) {
 		$proposition = BookProposition::find( $id );
 		$employees   = $request->input( 'employees' );
-		$assigner    = Employee::where( 'user_id', \Auth::id() )->first();
+		$assigner    = \Auth::user();
 		$task      = new Task();
 		$task->assigner()->associate( $assigner );
 		$task->assignee_id = $employees[0]['id'];
@@ -98,7 +96,7 @@ class PropositionMaintenanceController extends Controller {
 		$task = new Task();
 		$task->type = 5;
 		$task->name = 'Proposition Approval';
-		$assigner = Employee::where('user_id', \Auth::id())->first();
+		$assigner = \Auth::user();
 		$task->assigner()->associate($assigner);
 		$task->description = $request->input('description');
 		$task->status = 'new';

@@ -32,7 +32,7 @@ class PropositionController extends Controller {
 			$out['owner'] = $proposition->owner;
 		}
 		else {
-			$out['owner'] = Auth::user()->employee;
+			$out['owner'] = Auth::user();
 		}
 
 		return response()->json( $out );
@@ -44,7 +44,7 @@ class PropositionController extends Controller {
 		$proposition->project_number            = $request->input( 'project_number' );
 		$proposition->additional_project_number = $request->input( 'additional_project_number' );
 		$proposition->status                    = 'unfinished';
-		$employee = Employee::where('user_id', Auth::id())->first();
+		$employee = \Auth::user();
 		$proposition->owner()->associate($employee);
 		$proposition->save();
 		if (!$proposition->productionExpenses->count()) {
@@ -164,7 +164,7 @@ class PropositionController extends Controller {
 		$proposition->project_name              = $request->input( 'project_name' );
 		$proposition->additional_project_number = $request->input( 'additional_project_number' );
 		$proposition->status                    = 'unfinished';
-		$employee = Employee::where('user_id', Auth::id())->first();
+		$employee = Auth::user();
 		$proposition->owner()->associate($employee);
 		$this->setNote( $proposition, $request->input( 'note' ), 'start' );
 		$proposition->save();

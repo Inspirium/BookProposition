@@ -221,7 +221,7 @@ class BookProposition extends Model {
     //relationships
 	//one-to-many
     public function owner() {
-    	return $this->belongsTo('Inspirium\HumanResources\Models\Employee', 'owner_id');
+    	return $this->belongsTo('Inspirium\Models\HumanResources\Employee', 'owner_id');
     }
 
 	public function notes() {

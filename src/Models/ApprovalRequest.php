@@ -69,11 +69,11 @@ class ApprovalRequest extends Model {
 	}
 
 	public function requester() {
-		return $this->belongsTo('Inspirium\HumanResources\Models\Employee', 'requester_id');
+		return $this->belongsTo('Inspirium\Models\HumanResources\Employee', 'requester_id');
 	}
 
 	public function requestees() {
-		return $this->belongsToMany('Inspirium\HumanResources\Models\Employee', 'approval_requests_requestees_pivot', 'approval_request_id', 'requestee_id');
+		return $this->belongsToMany('Inspirium\Models\HumanResources\Employee', 'approval_requests_requestees_pivot', 'approval_request_id', 'requestee_id');
 	}
 
 	public function tasks() {
