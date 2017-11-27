@@ -274,7 +274,7 @@ class BookProposition extends Model {
 	}
 
 	public function documents() {
-		return $this->morphToMany('Inspirium\FileManagement\Models\File', 'fileable')->withPivot('type');
+		return $this->morphToMany('Inspirium\Models\FileManagement\File', 'fileable')->withPivot('type');
 	}
 
 	public function authorOtherExpenses() {
