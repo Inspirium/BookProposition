@@ -430,8 +430,8 @@ class PropositionController extends Controller {
 		}
 		$out = [
 			'authors' => $proposition->authors()->with( [
-				'expenses' => function ( $query ) use ( $proposition, $type ) {
-					$query->where( 'proposition_id', '=', $proposition->id )->where('type', '=', $type)->with('parent')->first();
+				'expenses' => function ( $query ) use ( $type ) {
+					$query->where('type', $type);
 				}
 			] )->get()->keyBy( 'id' ),
 			'other'   => $proposition->authorOtherExpenses()->where('type', '=', 'author_other_expense_'.$type)->get(),
