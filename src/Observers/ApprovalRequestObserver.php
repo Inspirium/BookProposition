@@ -13,6 +13,7 @@ class ApprovalRequestObserver {
 		$task = new Task();
 		$task->description = $request->description;
 		$task->assigner()->associate($request->requester);
+		$task->assignee()->associate($request->requestees[0]);
 		$task->related()->associate($request);
 		$task->name = $request->name;
 		$task->status = 'new';
