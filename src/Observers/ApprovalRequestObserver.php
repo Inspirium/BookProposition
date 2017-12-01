@@ -24,10 +24,10 @@ class ApprovalRequestObserver {
 	}
 
 	public function accepted(ApprovalRequest $request) {
-		$request->requester->user->notify(new ApprovalRequestAccepted($request));
+		$request->requester->notify(new ApprovalRequestAccepted($request));
 	}
 
 	public function denied(ApprovalRequest $request) {
-		$request->requester->user->notify(new ApprovalRequestDenied($request));
+		$request->requester->notify(new ApprovalRequestDenied($request));
 	}
 }
