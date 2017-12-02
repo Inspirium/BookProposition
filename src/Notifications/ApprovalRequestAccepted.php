@@ -58,8 +58,15 @@ class ApprovalRequestAccepted extends Notification
     public function toArray($notifiable)
     {
 	    return [
-		    'message' => 'Request for expense has been approved',
-		    'link' => '/proposition/'.$this->request->proposition_id.'/expenses/compare'
+		    'title' => 'User assigned you new task',
+		    'message' => $this->task->assigner->name . ' je zadao/la novi zadatak - ' . $this->task->name,
+		    'tasktype' => 'assignment',
+		    'link' => '/task/show/'.$this->task->id,
+		    'sender' => [
+			    'name' => $this->task->assigner->name,
+			    'image' => $this->task->assigner->image,
+			    'link' => $this->task->assigner->link
+		    ]
 	    ];
     }
 

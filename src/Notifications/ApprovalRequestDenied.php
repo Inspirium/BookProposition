@@ -59,8 +59,15 @@ class ApprovalRequestDenied extends Notification
     public function toArray($notifiable)
     {
 	    return [
-		    'message' => 'Request for expense has been denied',
-		    'link' => '/proposition/'.$this->request->proposition_id.'/expenses/compare'
+		    'title' => 'Cost Approval has been rejected',
+		    'message' => $this->request->requestees . '',
+		    'tasktype' => 'assignment',
+		    'link' => '/task/show/'.$this->request->relate->id,
+		    'sender' => [
+			    'name' => $this->task->assigner->name,
+			    'image' => $this->task->assigner->image,
+			    'link' => $this->task->assigner->link
+		    ]
 	    ];
     }
 
