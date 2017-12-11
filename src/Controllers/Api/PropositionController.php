@@ -354,13 +354,7 @@ class PropositionController extends Controller {
 		$proposition->book_binding = $request->input( 'book_binding' );
 		$circs                     = [];
 		foreach ( $request->input( 'circulations' ) as $circulation ) {
-			$option = PropositionOption::find( $circulation['id'] );
-			if ( $option ) {
-				//do not modify existing;
-				$circs[] = $option->id;
-				continue;
-			}
-			$option        = new PropositionOption();
+			$option = PropositionOption::findOrNew( $circulation['id'] );
 			$option->title = $circulation['title'];
 			//$option->proposition_id = $id;
 			$option->cover_type                = $request->input( 'cover_type' );
@@ -430,8 +424,8 @@ class PropositionController extends Controller {
 		}
 		$out = [
 			'authors' => $proposition->authors()->with( [
-				'expenses' => function ( $query ) use ( $type ) {
-					$query->where('type', $type);
+				'expenses' => function ( $query ) use ( $type, $proposition ) {
+					$query->where('type', $type)->where('proposition_id', $proposition->id);
 				}
 			] )->get()->keyBy( 'id' ),
 			'other'   => $proposition->authorOtherExpenses()->where('type', '=', 'author_other_expense_'.$type)->get(),
