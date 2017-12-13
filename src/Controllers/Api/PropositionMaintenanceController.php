@@ -43,8 +43,7 @@ class PropositionMaintenanceController extends Controller {
 			$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
 			$task->type     = 1;
 			$task->save();
-			$employees[] = $assigner->toArray();
-			$task->assignThread($employees);
+			$task->assignNewThread();
 		}
 	}
 
@@ -64,7 +63,7 @@ class PropositionMaintenanceController extends Controller {
 		$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
 		$task->type     = 4;
 		$task->save();
-		$task->assignThread($employees);
+		$task->assignNewThread();
 	}
 
 	public function requestApproval( Request $request, $id) {
@@ -80,10 +79,8 @@ class PropositionMaintenanceController extends Controller {
 		]);
 		$approval_request->save();
 
-		$requestees = collect($request->input('requestees'))->map(function($e) {
-			return $e['id'];
-		});
-		$approval_request->requestees()->sync($requestees);
+		$requestee = Employee::find($request->input('requestees')[0]['id']);
+		$approval_request->requestee()->associate($requestee);
 
 		$approval_request->triggerAssigned();
 		return response()->json([]);
@@ -103,8 +100,6 @@ class PropositionMaintenanceController extends Controller {
 		$task->assignee_id = $request->input('employees')[0]['id'];
 		$task->related()->associate($proposition);
 		$task->save();
-		$employees = $request->input('employees');
-		$employees[] = $assigner->toArray();
-		$task->assignThread($employees);
+		$task->assignNewThread();
 	}
 }

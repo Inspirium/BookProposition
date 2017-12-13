@@ -58,23 +58,19 @@ class ApprovalRequestAccepted extends Notification
     public function toArray($notifiable)
     {
 	    return [
-		    'title' => 'User assigned you new task',
-		    'message' => $this->task->assigner->name . ' je zadao/la novi zadatak - ' . $this->task->name,
-		    'tasktype' => 'assignment',
-		    'link' => '/task/show/'.$this->task->id,
+		    'title' => __('Approval Request has been accepted'),
+		    'message' => __(':requestee has accepted your request in :related', ['requestee' => $this->request->requestee->name, ':related' => $this->request->proposition->project_name]),
+		    'link' => '/proposition/'.$this->request->proposition->id. '/expenses/compare',
 		    'sender' => [
-			    'name' => $this->task->assigner->name,
-			    'image' => $this->task->assigner->image,
-			    'link' => $this->task->assigner->link
+			    'name' => $this->request->requestee->name,
+			    'image' => $this->request->requestee->image,
+			    'link' => $this->request->requestee->link
 		    ]
 	    ];
     }
 
 	public function toBroadcast($notifiable)
 	{
-		return new BroadcastMessage([ 'data' => [
-			'message' => 'Request for expense has been approved',
-			'link' => '/proposition/'.$this->request->proposition_id.'/expenses/compare'
-		]]);
+		return new BroadcastMessage([ 'data' => $this->toArray($notifiable)]);
 	}
 }

@@ -59,23 +59,19 @@ class ApprovalRequestDenied extends Notification
     public function toArray($notifiable)
     {
 	    return [
-		    'title' => 'Cost Approval has been rejected',
-		    'message' => $this->request->requestees . '',
-		    'tasktype' => 'assignment',
-		    'link' => '/task/show/'.$this->request->relate->id,
+		    'title' => __('Approval Request has been denied'),
+		    'message' => __(':requestee has denied your request in :related', ['requestee' => $this->request->requestee->name, ':related' => $this->request->proposition->project_name]),
+		    'link' => '/proposition/'.$this->request->proposition->id. '/expenses/compare',
 		    'sender' => [
-			    'name' => $this->task->assigner->name,
-			    'image' => $this->task->assigner->image,
-			    'link' => $this->task->assigner->link
+			    'name' => $this->request->requestee->name,
+			    'image' => $this->request->requestee->image,
+			    'link' => $this->request->requestee->link
 		    ]
 	    ];
     }
 
 	public function toBroadcast($notifiable)
 	{
-		return new BroadcastMessage([ 'data' => [
-			'message' => 'Request for expense has been denied',
-			'link' => '/proposition/'.$this->request->proposition_id.'/expenses/compare'
-		]]);
+		return new BroadcastMessage([ 'data' => $this->toArray($notifiable)]);
 	}
 }
