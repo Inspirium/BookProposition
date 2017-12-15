@@ -32,7 +32,7 @@ class PropositionMaintenanceController extends Controller {
 			$task      = new Task();
 			$task->assigner()->associate( $assigner );
 			$task->assignee_id = $employees[0]['id'];
-			$task->name = 'Proposition: ' . $proposition->title;
+			$task->name = __('Proposition') . ': ' . $proposition->title;
 			$task->related()->associate( $proposition );
 			$task->description = $request->input('description');
 			if ($request->input('access') === 'onepage') {
@@ -54,7 +54,7 @@ class PropositionMaintenanceController extends Controller {
 		$task      = new Task();
 		$task->assigner()->associate( $assigner );
 		$task->assignee_id = $employees[0]['id'];
-		$task->name = 'Proposition: ' . $proposition->title;
+		$task->name = __('Proposition') . ': ' . $proposition->title;
 		$task->related()->associate( $proposition );
 		$task->description = $request->input('description');
 		$task->related_link = $request->input('path');
@@ -90,7 +90,7 @@ class PropositionMaintenanceController extends Controller {
 		$proposition->save();
 		$task = new Task();
 		$task->type = 5;
-		$task->name = 'Proposition Approval';
+		$task->name = __('Proposition Approval');
 		$assigner = \Auth::user();
 		$task->assigner()->associate($assigner);
 		$task->description = $request->input('description');
