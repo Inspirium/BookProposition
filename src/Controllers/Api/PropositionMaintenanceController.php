@@ -75,12 +75,10 @@ class PropositionMaintenanceController extends Controller {
 			'designation' => $request->input('designation'),
 			'status' => 'requested',
 			'proposition_id' => $id,
-			'requester_id' => \Auth::id()
+			'requester_id' => \Auth::id(),
+			'requestee_id' => $request->input('requestees')[0]['id']
 		]);
 		$approval_request->save();
-
-		$requestee = Employee::find($request->input('requestees')[0]['id']);
-		$approval_request->requestee()->associate($requestee);
 
 		$approval_request->triggerAssigned();
 		return response()->json([]);
