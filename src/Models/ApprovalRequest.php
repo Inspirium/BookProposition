@@ -62,8 +62,6 @@ class ApprovalRequest extends Model {
 
 	protected $fillable = ['name', 'description', 'budget', 'expense', 'requester_id', 'requestee_id', 'proposition_id', 'status', 'designation'];
 
-	protected $with = ['requestees'];
-
 	public function proposition() {
 		return $this->belongsTo('Inspirium\BookProposition\Models\BookProposition', 'proposition_id');
 	}
