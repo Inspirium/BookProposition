@@ -216,7 +216,8 @@ class BookProposition extends Model {
     	'deadline',
 	    'created_at',
 	    'updated_at',
-	    'deleted_at'
+	    'deleted_at',
+	    'completed_at'
     ];
 
     protected $casts = [

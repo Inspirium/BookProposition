@@ -14,7 +14,8 @@ class PropositionController extends Controller {
     	$active = BookProposition::where('status', 'approved')->get();
     	$rejected = BookProposition::where('status', 'rejected')->get();
     	$deleted = BookProposition::onlyTrashed()->get();
-        return view(config('app.template') . '::proposition.list', compact('approval', 'unfinished', 'active', 'rejected', 'deleted'));
+    	$archived = BookProposition::where('status', 'archived')->get();
+        return view(config('app.template') . '::proposition.list', compact('approval', 'unfinished', 'active', 'rejected', 'deleted', 'archived'));
     }
 
     public function edit( $id = null ) {

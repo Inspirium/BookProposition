@@ -2,6 +2,7 @@
 
 namespace Inspirium\BookProposition\Controllers\Api;
 
+use Carbon\Carbon;
 use Inspirium\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -899,6 +900,7 @@ class PropositionController extends Controller {
 		//set prop to archive
 		$proposition = BookProposition::find($id);
 		$proposition->status = 'archived';
+		$proposition->completed_at = Carbon::now();
 		$proposition->save();
 		//create book
 		$book = Book::create([
