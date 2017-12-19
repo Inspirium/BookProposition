@@ -192,6 +192,18 @@ use Inspirium\FileManagement\Models\File;
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\MarketingExpense[] $marketingExpenses
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\AdditionalExpense[] $authorOtherExpenses
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\BookProposition\Models\ApprovalRequest[] $approvalRequests
+ * @property array $price_first_year
+ * @property array $price_second_year
+ * @property string|null $retail_price
+ * @property int $approved
+ * @property int|null $approved_by
+ * @property string|null $approved_on
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\BookProposition whereApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\BookProposition whereApprovedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\BookProposition whereApprovedOn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\BookProposition wherePriceFirstYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\BookProposition wherePriceSecondYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\BookProposition whereRetailPrice($value)
  */
 class BookProposition extends Model {
     use SoftDeletes;

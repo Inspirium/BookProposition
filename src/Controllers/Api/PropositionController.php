@@ -12,6 +12,7 @@ use Inspirium\BookProposition\Models\MarketingExpense;
 use Inspirium\BookProposition\Models\ProductionExpense;
 use Inspirium\BookProposition\Models\PropositionNote;
 use Inspirium\BookProposition\Models\PropositionOption;
+use Inspirium\Models\BookManagement\Book;
 use Inspirium\Models\FileManagement\File;
 use Inspirium\Models\HumanResources\Employee;
 use PhpOffice\PhpWord\IOFactory;
@@ -892,5 +893,38 @@ class PropositionController extends Controller {
 		else {
 			return response()->download( storage_path( "offers/upit-$offer_id.docx" ) );
 		}
+	}
+
+	public function postWarehouse(Request $request, $id) {
+		//set prop to archive
+		$proposition = BookProposition::find($id);
+		$proposition->status = 'archived';
+		$proposition->save();
+		//create book
+		$book = Book::create([
+			'title' => $proposition->title,
+			'description' => $proposition->concept,
+			'proposition_id' => $proposition->id,
+			'school_level' => $proposition->school_level,
+			'school_assignment' => $proposition->school_assignment,
+			'retail_price' => $proposition->retail_price,
+			'number_of_pages' => $proposition->number_of_pages,
+			'width' => $proposition->width,
+			'height' => $proposition->height,
+			'paper_type' => $proposition->paper_type,
+			'colors' => $proposition->colors,
+			'colors_first_page' => $proposition->colors_first_page,
+			'colors_last_page' => $proposition->colors_last_page,
+			'cover_type' => $proposition->cover_type,
+			'cover_paper_type' => $proposition->cover_paper_type,
+			'cover_plastification' => $proposition->cover_plastification,
+			'film_print' => $proposition->film_print,
+			'blind_print' => $proposition->blind_print,
+			'uv_print' => $proposition->uv_print,
+			'book_binding' => $proposition->book_binding,
+			'cover' => $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->first()->link
+		]);
+		//TODO: sync relations
+		return response()->json(['link' => $book->link]);
 	}
 }

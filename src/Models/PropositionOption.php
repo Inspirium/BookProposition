@@ -65,6 +65,8 @@ use Illuminate\Support\Facades\Schema;
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereUvPrint($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereVatPercent($value)
  * @mixin \Eloquent
+ * @property int $is_final
+ * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereIsFinal($value)
  */
 class PropositionOption extends Model {
 	protected $table = 'proposition_options';

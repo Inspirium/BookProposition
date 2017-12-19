@@ -6,6 +6,7 @@ Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\Boo
 	Route::group(['prefix' => '{id}'], function() {
 		Route::get('/', 'PropositionController@getProposition');
 		Route::get('init', 'PropositionController@getInitData');
+		Route::post('warehouse', 'PropositionController@postWarehouse');
 
 		Route::delete('/', 'PropositionMaintenanceController@deleteProposition');
 		Route::post('assign/document', 'PropositionMaintenanceController@assignDocument');
