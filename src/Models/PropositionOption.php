@@ -73,6 +73,12 @@ class PropositionOption extends Model {
 
 	protected $guarded = [];
 
+	protected $with = ['files'];
+
+	public function files() {
+		return $this->morphToMany('Inspirium\Models\FileManagement\File', 'fileable')->withPivot('type');
+	}
+
 	//attributes
 	public function getFilmPrintAttribute($value) {
 		if ($value) {

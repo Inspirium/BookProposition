@@ -130,8 +130,13 @@ class ProductionExpense extends Model {
 	}
 
 	private function calcDesignLayoutExpense() {
-		if (!$this->layout_complexity || !$this->design_complexity) {
-			return 0;
+		$lc = 3;
+		$dc = 3;
+		if ($this->layout_complexity) {
+			$lc = $this->layout_complexity;
+		}
+		if ($this->design_complexity) {
+			$dc = $this->design_complexity;
 		}
 		$lcomplexity = [
 			1 => 0.65,
@@ -149,8 +154,22 @@ class ProductionExpense extends Model {
 		];
 		$this->load('proposition');
 		$coefficient = $this->proposition->bookCategories()->with('parent')->first()->parent->coefficient / 60;
-		$number_of_hours = ($coefficient * $this->proposition->number_of_pages + $this->photos_amount/30 + $this->illustrations_amount/30 + $this->technical_drawings_amount/30) * $lcomplexity[$this->layout_complexity];
-		return $number_of_hours * 8000/175 + $number_of_hours * 15000 / 175 * $rcomplexity[$this->design_complexity]/2;
+		$number_of_hours = ($coefficient * $this->proposition->number_of_pages + $this->photos_amount/30 + $this->illustrations_amount/30 + $this->technical_drawings_amount/30) * $lcomplexity[$lc];
+
+		if ($this->layout_exact_price) {
+			$layout = $this->layout_exact_price;
+		}
+		else {
+			$layout = $number_of_hours * 8000/175;
+		}
+
+		if ($this->design_exact_price) {
+			$design = $this->design_exact_price;
+		}
+		else {
+			$design = $number_of_hours * 15000 / 175 * $rcomplexity[$dc]/2;
+		}
+		return $layout + $design;
 	}
 
 	public function proposition() {

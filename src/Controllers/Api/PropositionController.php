@@ -416,6 +416,14 @@ class PropositionController extends Controller {
 				'title' => $option->title,
 				'id'    => $option->id
 			];
+			foreach ( $offer['files'] as $document ) {
+				$file        = File::find( $document['id'] );
+				$file->title = $document['title'];
+				$file->save();
+				if ( ! $option->files()->get()->contains( $document['id'] ) ) {
+					$option->files()->save( $file, ['type'=> 'print'] );
+				}
+			}
 		}
 		$this->setNote( $proposition, $request->input( 'note' ), 'print' );
 	}
@@ -637,9 +645,11 @@ class PropositionController extends Controller {
 			'layout_complexity'         => $expense->layout_complexity,
 			'layout_include'            => $expense->layout_include,
 			'layout_note'               => $this->getNote( $proposition, 'layout_note_' . $type ),
+			'layout_exact_price'        => $expense->layout_exact_price,
 			'design_complexity'         => $expense->design_complexity,
 			'design_include'            => $expense->design_include,
 			'design_note'               => $this->getNote( $proposition, 'design_note_' . $type ),
+			'design_exact_price'        => $expense->design_exact_price,
 			'number_of_pages'           => $proposition->number_of_pages,
 			'photos_amount'             => $expense->photos_amount,
 			'illustrations_amount'      => $expense->illustrations_amount,
