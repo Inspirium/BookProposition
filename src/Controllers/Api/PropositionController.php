@@ -421,7 +421,7 @@ class PropositionController extends Controller {
 				$file->title = $document['title'];
 				$file->save();
 				if ( ! $option->files()->get()->contains( $document['id'] ) ) {
-					$option->files()->save( $file, ['type'=> 'print'] );
+					$option->files()->save( $file, ['type'=> 'proposition_option'] );
 				}
 			}
 		}

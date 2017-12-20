@@ -87,6 +87,7 @@ class PropositionMaintenanceController extends Controller {
 	public function approvalProposition(Request $request, $id) {
 		$proposition = BookProposition::find($id);
 		$proposition->status= 'requested';
+		$proposition->approved_on = Carbon::now();
 		$proposition->save();
 		$task = new Task();
 		$task->type = 5;
