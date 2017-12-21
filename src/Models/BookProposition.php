@@ -491,6 +491,6 @@ class BookProposition extends Model {
 	}
 
 	public function getLinkAttribute() {
-    	return '/proposition/'.$this->id.'/start';
+    	return '/proposition/'.$this->id.'/edit/start';
 	}
 }
