@@ -664,6 +664,8 @@ class PropositionController extends Controller {
 		$expense->layout_include    = $request->input( 'layout_include' );
 		$expense->design_complexity = $request->input( 'design_complexity' );
 		$expense->design_include    = $request->input( 'design_include' );
+		$expense->layout_exact_price = $request->input('layout_exact_price');
+		$expense->design_exact_price = $request->input('design_exact_price');
 		$expense->save();
 		$this->setNote( $proposition, $request->input( 'note' ), 'layout_note_' . $type );
 		$this->setNote( $proposition, $request->input( 'note' ), 'design_note_' . $type );
@@ -747,6 +749,7 @@ class PropositionController extends Controller {
 	private function setCalculation(Request $request, BookProposition $proposition ) {
 		foreach ($request->input('offers') as $offer) {
 			$option = PropositionOption::find($offer['id']);
+			unset($offer['files']);
 			$option->fill($offer);
 			$option->save();
 		}

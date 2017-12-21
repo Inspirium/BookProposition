@@ -27,3 +27,12 @@ Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\Boo
 		Route::post('{step}/{type?}', 'PropositionController@setPropositionStep');
 	});
 });
+
+Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\BookProposition\Controllers\Api', 'prefix' => 'api/propositions'], function() {
+	Route::post('approval', 'PropositionsController@approval');
+	Route::post('unfinished', 'PropositionsController@unfinished');
+	Route::post('active', 'PropositionsController@active');
+	Route::post('rejected', 'PropositionsController@rejected');
+	Route::post('deleted', 'PropositionsController@deleted');
+	Route::post('archive', 'PropositionsController@archive');
+});

@@ -231,6 +231,7 @@ class BookProposition extends Model {
 	    'price_first_year' => 'array',
 	    'price_second_year' => 'array'
     ];
+    protected $appends = ['link'];
 
     //relationships
 	//one-to-many
@@ -487,5 +488,9 @@ class BookProposition extends Model {
 
 		}
 		return json_decode($value, true);
+	}
+
+	public function getLinkAttribute() {
+    	return '/proposition/'.$this->id.'/start';
 	}
 }

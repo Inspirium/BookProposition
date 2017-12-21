@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Inspirium\BookProposition\Controllers'], function() {
 
-	Route::get('propositions', 'PropositionController@show');
+	Route::get('propositions', function() {
+		return view(config('app.template') . '::router-view');
+	});
 
 Route::group(['prefix' => 'proposition'], function() {
 
