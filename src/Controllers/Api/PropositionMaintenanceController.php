@@ -57,12 +57,24 @@ class PropositionMaintenanceController extends Controller {
 		$task->name = __('Proposition') . ': ' . $proposition->title;
 		$task->related()->associate( $proposition );
 		$task->description = $request->input('description');
+		$type = $request->input('dir');
 		$task->related_link = $request->input('path');
 		$task->status      = 'new';
 		$task->priority = $request->input('priority');
 		$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
 		$task->type     = 1;
 		$task->save();
+		$files = [
+			'files' => $proposition->documents()->wherePivot( 'type', $type )->wherePivot( 'final', false )->get(),
+			'final' => $proposition->documents()->wherePivot( 'type', $type )->wherePivot( 'final', true )->get()
+		];
+		foreach ($files['files'] as $file) {
+			$task->documents()->attach($file->id, ['is_final' => false ]);
+		}
+
+		foreach ($files['final'] as $file) {
+			$task->documents()->attach($file->id, ['is_final' => true ]);
+		}
 		$task->assignNewThread();
 	}
 
