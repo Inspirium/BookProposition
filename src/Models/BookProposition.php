@@ -495,33 +495,33 @@ class BookProposition extends Model {
 	}
 
 	public function getStepAttribute() {
-    	$files = $this->documents;
+    	$files = $this->documents()->withPivot('type')->get();
 		$order = [
 			'translation', 'technical_preparation', 'proofreading', 'additional_materials', 'reviews', 'lecture', 'technical_correction', 'final_review',
 			'cover_design', 'layout_design',
 			'first_block_layout', 'cover', 'layout', 'first_revision', 'correction', 'correction_input', 'revisions',
 			'print_proof', 'print_proof_correction',
-			'print',
+			'print', 'multimedia.jpg'
 
 		];
 		$latest = '';
 			foreach ($files as $file) {
-				if (isset($latest[$file->fileable_id])) {
-					$new_key = array_search($file->type, $order);
+				if ($latest) {
+					$new_key = array_search($file->pivot->type, $order);
 					$old_key = array_search($latest, $order);
 					if ($new_key>$old_key) {
-						$latest = $file->type;
+						$latest = $file->pivot->type;
 					}
 				}
 				else {
-					$latest = $file->type;
+					$latest = $file->pivot->type;
 				}
 			}
-		$key = array_search($latest, $order);
-			if ($key == 0){
+			if (!in_array($latest, $order)) {
 				return __('On Approval');
 			}
-		else if ($key < 8) {
+		$key = array_search($latest, $order);
+		if ($key < 8) {
 			return __('Text preparation');
 		}
 		else if ($key < 10) {
