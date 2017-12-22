@@ -61,7 +61,7 @@ class PropositionMaintenanceController extends Controller {
 		$task->status      = 'new';
 		$task->priority = $request->input('priority');
 		$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
-		$task->type     = 4;
+		$task->type     = 1;
 		$task->save();
 		$task->assignNewThread();
 	}
