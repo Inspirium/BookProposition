@@ -231,7 +231,7 @@ class BookProposition extends Model {
 	    'price_first_year' => 'array',
 	    'price_second_year' => 'array'
     ];
-    protected $appends = ['link'];
+    protected $appends = ['link', 'step'];
 
     //relationships
 	//one-to-many
@@ -492,5 +492,49 @@ class BookProposition extends Model {
 
 	public function getLinkAttribute() {
     	return '/proposition/'.$this->id.'/edit/start';
+	}
+
+	public function getStepAttribute() {
+    	$files = $this->documents;
+		$order = [
+			'translation', 'technical_preparation', 'proofreading', 'additional_materials', 'reviews', 'lecture', 'technical_correction', 'final_review',
+			'cover_design', 'layout_design',
+			'first_block_layout', 'cover', 'layout', 'first_revision', 'correction', 'correction_input', 'revisions',
+			'print_proof', 'print_proof_correction',
+			'print',
+
+		];
+		$latest = '';
+			foreach ($files as $file) {
+				if (isset($latest[$file->fileable_id])) {
+					$new_key = array_search($file->type, $order);
+					$old_key = array_search($latest, $order);
+					if ($new_key>$old_key) {
+						$latest = $file->type;
+					}
+				}
+				else {
+					$latest = $file->type;
+				}
+			}
+		$key = array_search($latest, $order);
+			if ($key == 0){
+				return __('On Approval');
+			}
+		else if ($key < 8) {
+			return __('Text preparation');
+		}
+		else if ($key < 10) {
+			return __('Design');
+		}
+		else if ($key<17) {
+			return __('Layout');
+		}
+		else if ($key<19) {
+			return __('Preparation');
+		}
+		else {
+			return __('Print');
+		}
 	}
 }
