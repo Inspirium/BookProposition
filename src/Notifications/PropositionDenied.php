@@ -62,6 +62,7 @@ class PropositionDenied extends Notification
 		    'title' => __('Proposition has been denied'),
 		    'message' => __(':requestee has denied your request: :related', ['requestee' => $this->task->assignee->name, 'related' => $this->task->related->project_name]),
 		    'link' => '/proposition/'.$this->task->related->id. '/edit/start',
+		    'tasktype' => __('approval'),
 		    'sender' => [
 			    'name' => $this->task->assignee->name,
 			    'image' => $this->task->assignee->image,
