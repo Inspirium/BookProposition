@@ -40,7 +40,7 @@ class PropositionMaintenanceController extends Controller {
 			}
 			$task->status      = 'new';
 			$task->priority = $request->input('priority');
-			$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
+			$task->deadline = Carbon::createFromFormat('!d. m. Y.', $request->input('date'));
 			$task->type     = 1;
 			$task->save();
 			$task->assignNewThread();
@@ -61,7 +61,7 @@ class PropositionMaintenanceController extends Controller {
 		$task->related_link = $request->input('path');
 		$task->status      = 'new';
 		$task->priority = $request->input('priority');
-		$task->deadline = Carbon::createFromFormat('d. m. Y.', $request->input('date'));
+		$task->deadline = Carbon::createFromFormat('!d. m. Y.', $request->input('date'));
 		$task->type     = 1;
 		$task->save();
 		$files = [
