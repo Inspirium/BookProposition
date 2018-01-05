@@ -263,6 +263,10 @@ class BookProposition extends Model {
     	return $this->hasMany('Inspirium\BookProposition\Models\ApprovalRequest', 'proposition_id');
 	}
 
+	public function editors() {
+    	return $this->belongsToMany('Inspirium\Models\HumanResources\Employee', 'pivot_proposition_user_tasks', 'proposition_id', 'employee_id')->withPivot(['step', 'complete']);
+	}
+
 	//polymorph
 	public function authors() {
         return $this->morphToMany('Inspirium\Models\BookManagement\Author', 'connection', 'author_pivot', 'connection_id', 'author_id');

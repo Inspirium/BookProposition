@@ -25,7 +25,6 @@ class PropositionMaintenanceController extends Controller {
 
 	public function assignProposition( Request $request, $id ) {
 		$proposition = BookProposition::find( $id );
-		$departments = $request->input( 'departments' );
 		$employees   = $request->input( 'employees' );
 		$assigner    = \Auth::user();
 		if ( $employees ) {
@@ -37,6 +36,8 @@ class PropositionMaintenanceController extends Controller {
 			$task->description = $request->input('description');
 			if ($request->input('access') === 'onepage') {
 				$task->related_link = $request->input('path');
+				$step = $request->input('step');
+				$proposition->editors()->attach($employees[0]['id'], ['step' => $step]);
 			}
 			$task->status      = 'new';
 			$task->priority = $request->input('priority');
@@ -44,6 +45,7 @@ class PropositionMaintenanceController extends Controller {
 			$task->type     = 1;
 			$task->save();
 			$task->assignNewThread();
+
 		}
 	}
 
