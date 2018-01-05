@@ -65,6 +65,9 @@ class PropositionMaintenanceController extends Controller {
 		$task->priority = $request->input('priority');
 		$task->deadline = Carbon::createFromFormat('!d. m. Y.', $request->input('date'));
 		$task->type     = 1;
+		$step = $request->input('step');
+		$proposition->editors()->attach($employees[0]['id'], ['step' => $step]);
+
 		$task->save();
 		$files = [
 			'files' => $proposition->documents()->wherePivot( 'type', $type )->wherePivot( 'final', false )->get(),
