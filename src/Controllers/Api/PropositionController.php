@@ -74,11 +74,10 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if ($proposition->owner_id !== $user->id) { //if not owner
-			if (!count($proposition->editors)) {
-				return response()->json(['error' => 'not authorized'], 403);
-			}
+		if (!$user->can('view', $proposition) || !count($proposition->editors)) {
+			return response()->json(['error' => 'not authorized'], 403);
 		}
+
 		$allowed_steps = [
 			'basic_data',
 			'translation',
@@ -131,10 +130,8 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if ($proposition->owner_id !== $user->id) { //if not owner
-			if (!count($proposition->editors)) {
-				return response()->json(['error' => 'not authorized'], 403);
-			}
+		if (!$user->can('update', $proposition) || !count($proposition->editors)) {
+			return response()->json(['error' => 'not authorized'], 403);
 		}
 		$allowed_steps = [
 			'basic_data',
@@ -804,10 +801,8 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if ($proposition->owner_id !== $user->id) { //if not owner
-			if (!count($proposition->editors)) {
-				return response()->json(['error' => 'not authorized'], 403);
-			}
+		if (!$user->can('view', $proposition) || !count($proposition->editors)) {
+			return response()->json(['error' => 'not authorized'], 403);
 		}
 
 		return [
@@ -817,7 +812,17 @@ class PropositionController extends Controller {
 	}
 
 	public function setFiles( Request $request, $id, $type ) {
-		$proposition = BookProposition::withTrashed()->find( $id );
+		$user = Auth::user();
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $type) {
+			$query->wherePivot('employee_id', $user->id)->wherePivot('step', $step);
+		}])->find( $id );
+		if (!$proposition) {
+			return response()->json(['error' => 'no proposition found'], 404);
+		}
+
+		if (!$user->can('update', $proposition) || !count($proposition->editors)) {
+			return response()->json(['error' => 'not authorized'], 403);
+		}
 		foreach ( $request->input( 'initial' ) as $document ) {
 			$file        = File::find( $document['id'] );
 			$file->title = $document['title'];
@@ -840,7 +845,17 @@ class PropositionController extends Controller {
 	}
 
 	public function getMultimedia($id) {
-		$proposition = BookProposition::withTrashed()->find( $id );
+		$user = Auth::user();
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $type) {
+			$query->wherePivot('employee_id', $user->id)->wherePivot('step', $step);
+		}])->find( $id );
+		if (!$proposition) {
+			return response()->json(['error' => 'no proposition found'], 404);
+		}
+
+		if (!$user->can('view', $proposition) || !count($proposition->editors)) {
+			return response()->json(['error' => 'not authorized'], 403);
+		}
 
 		return [
 			'webshop' => $this->getNote($proposition, 'webshop'),
@@ -850,7 +865,17 @@ class PropositionController extends Controller {
 	}
 
 	public function setMultimedia(Request $request, $id) {
-		$proposition = BookProposition::withTrashed()->find( $id );
+		$user = Auth::user();
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $type) {
+			$query->wherePivot('employee_id', $user->id)->wherePivot('step', $step);
+		}])->find( $id );
+		if (!$proposition) {
+			return response()->json(['error' => 'no proposition found'], 404);
+		}
+
+		if (!$user->can('update', $proposition) || !count($proposition->editors)) {
+			return response()->json(['error' => 'not authorized'], 403);
+		}
 		$this->setNote($proposition, $request->input('webshop'), 'webshop');
 		foreach ( $request->input( 'jpg' ) as $document ) {
 			$file        = File::find( $document['id'] );
@@ -873,7 +898,17 @@ class PropositionController extends Controller {
 	}
 
 	public function getMarketing($id) {
-		$proposition = BookProposition::withTrashed()->find( $id );
+		$user = Auth::user();
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $type) {
+			$query->wherePivot('employee_id', $user->id)->wherePivot('step', $step);
+		}])->find( $id );
+		if (!$proposition) {
+			return response()->json(['error' => 'no proposition found'], 404);
+		}
+
+		if (!$user->can('view', $proposition) || !count($proposition->editors)) {
+			return response()->json(['error' => 'not authorized'], 403);
+		}
 
 		return [
 			'cover' => $proposition->documents()->wherePivot( 'type', 'marketing.cover' )->get(),
@@ -882,7 +917,17 @@ class PropositionController extends Controller {
 	}
 
 	public function setMarketing(Request $request, $id) {
-		$proposition = BookProposition::withTrashed()->find( $id );
+		$user = Auth::user();
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $type) {
+			$query->wherePivot('employee_id', $user->id)->wherePivot('step', $step);
+		}])->find( $id );
+		if (!$proposition) {
+			return response()->json(['error' => 'no proposition found'], 404);
+		}
+
+		if (!$user->can('update', $proposition) || !count($proposition->editors)) {
+			return response()->json(['error' => 'not authorized'], 403);
+		}
 		foreach ( $request->input( 'cover' ) as $document ) {
 			$file        = File::find( $document['id'] );
 			$file->title = $document['title'];
