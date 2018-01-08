@@ -74,8 +74,8 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if (!$user->can('view', $proposition) || !count($proposition->editors)) {
-			return response()->json(['error' => 'not authorized'], 403);
+		if (!$user->can('view', $proposition) && !count($proposition->editors)) {
+			return response()->json(['error' => 'not authorized'], 200);
 		}
 
 		$allowed_steps = [
@@ -130,7 +130,7 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if (!$user->can('update', $proposition) || !count($proposition->editors)) {
+		if (!$user->can('update', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
 		$allowed_steps = [
@@ -801,7 +801,7 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if (!$user->can('view', $proposition) || !count($proposition->editors)) {
+		if (!$user->can('view', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
 
@@ -820,7 +820,7 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if (!$user->can('update', $proposition) || !count($proposition->editors)) {
+		if (!$user->can('update', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
 		foreach ( $request->input( 'initial' ) as $document ) {
@@ -853,7 +853,7 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if (!$user->can('view', $proposition) || !count($proposition->editors)) {
+		if (!$user->can('view', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
 
@@ -873,7 +873,7 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if (!$user->can('update', $proposition) || !count($proposition->editors)) {
+		if (!$user->can('update', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
 		$this->setNote($proposition, $request->input('webshop'), 'webshop');
@@ -906,7 +906,7 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if (!$user->can('view', $proposition) || !count($proposition->editors)) {
+		if (!$user->can('view', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
 
@@ -925,7 +925,7 @@ class PropositionController extends Controller {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
 
-		if (!$user->can('update', $proposition) || !count($proposition->editors)) {
+		if (!$user->can('update', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
 		foreach ( $request->input( 'cover' ) as $document ) {
