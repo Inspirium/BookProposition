@@ -37,7 +37,10 @@ class PropositionMaintenanceController extends Controller {
 			if ($request->input('access') === 'onepage') {
 				$task->related_link = $request->input('path');
 				$step = $request->input('step');
-				$proposition->editors()->attach($employees[0]['id'], ['step' => $step]);
+				$proposition->editors()->attach($employees[0]['id'], ['step' => $step, 'complete' => false]);
+			}
+			else {
+				$proposition->editors()->attach($employees[0]['id'], ['complete' => true, 'step' => 0]);
 			}
 			$task->status      = 'new';
 			$task->priority = $request->input('priority');

@@ -68,7 +68,9 @@ class PropositionController extends Controller {
 	public function getPropositionStep( $id, $step, $type = null ) {
 		$user = Auth::user();
 		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $step) {
-			$query->wherePivot('employee_id', $user->id)->wherePivot('step', $step);
+			$query->wherePivot('employee_id', $user->id)->where(function ($query) use ($step) {
+				$query->where('pivot_proposition_user_tasks.step', $step)->orWhere('pivot_proposition_user_tasks.complete', true);
+			});
 		}])->find( $id );
 		if (!$proposition) {
 			return response()->json(['error' => 'no proposition found'], 404);
@@ -124,7 +126,9 @@ class PropositionController extends Controller {
 	public function setPropositionStep( Request $request, $id, $step, $type = null ) {
 		$user = Auth::user();
 		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $step) {
-			$query->wherePivot('employee_id', $user->id)->wherePivot('step', $step);
+			$query->wherePivot('employee_id', $user->id)->where(function ($query) use ($step) {
+				$query->where('pivot_proposition_user_tasks.step', $step)->orWhere('pivot_proposition_user_tasks.complete', true);
+			});
 		}])->find( $id );
 		if (!$proposition) {
 			return response()->json(['error' => 'no proposition found'], 404);
@@ -794,8 +798,10 @@ class PropositionController extends Controller {
 
 	public function getFiles( $id, $type ) {
 		$user = Auth::user();
-		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $type) {
-			$query->wherePivot('employee_id', $user->id)->wherePivot('step', $type);
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $step) {
+			$query->wherePivot('employee_id', $user->id)->where(function ($query) use ($step) {
+				$query->where('pivot_proposition_user_tasks.step', $step)->orWhere('pivot_proposition_user_tasks.complete', true);
+			});
 		}])->find( $id );
 		if (!$proposition) {
 			return response()->json(['error' => 'no proposition found'], 404);
@@ -813,8 +819,10 @@ class PropositionController extends Controller {
 
 	public function setFiles( Request $request, $id, $type ) {
 		$user = Auth::user();
-		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $type) {
-			$query->wherePivot('employee_id', $user->id)->wherePivot('step', $type);
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $step) {
+			$query->wherePivot('employee_id', $user->id)->where(function ($query) use ($step) {
+				$query->where('pivot_proposition_user_tasks.step', $step)->orWhere('pivot_proposition_user_tasks.complete', true);
+			});
 		}])->find( $id );
 		if (!$proposition) {
 			return response()->json(['error' => 'no proposition found'], 404);
@@ -846,8 +854,10 @@ class PropositionController extends Controller {
 
 	public function getMultimedia($id) {
 		$user = Auth::user();
-		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user) {
-			$query->wherePivot('employee_id', $user->id)->wherePivot('step', 'multimedia');
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $step) {
+			$query->wherePivot('employee_id', $user->id)->where(function ($query) use ($step) {
+				$query->where('pivot_proposition_user_tasks.step', $step)->orWhere('pivot_proposition_user_tasks.complete', true);
+			});
 		}])->find( $id );
 		if (!$proposition) {
 			return response()->json(['error' => 'no proposition found'], 404);
@@ -866,8 +876,10 @@ class PropositionController extends Controller {
 
 	public function setMultimedia(Request $request, $id) {
 		$user = Auth::user();
-		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user) {
-			$query->wherePivot('employee_id', $user->id)->wherePivot('step', 'multimedia');
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $step) {
+			$query->wherePivot('employee_id', $user->id)->where(function ($query) use ($step) {
+				$query->where('pivot_proposition_user_tasks.step', $step)->orWhere('pivot_proposition_user_tasks.complete', true);
+			});
 		}])->find( $id );
 		if (!$proposition) {
 			return response()->json(['error' => 'no proposition found'], 404);
@@ -899,8 +911,10 @@ class PropositionController extends Controller {
 
 	public function getMarketing($id) {
 		$user = Auth::user();
-		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user) {
-			$query->wherePivot('employee_id', $user->id)->wherePivot('step', 'marketing');
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $step) {
+			$query->wherePivot('employee_id', $user->id)->where(function ($query) use ($step) {
+				$query->where('pivot_proposition_user_tasks.step', $step)->orWhere('pivot_proposition_user_tasks.complete', true);
+			});
 		}])->find( $id );
 		if (!$proposition) {
 			return response()->json(['error' => 'no proposition found'], 404);
@@ -918,8 +932,10 @@ class PropositionController extends Controller {
 
 	public function setMarketing(Request $request, $id) {
 		$user = Auth::user();
-		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user) {
-			$query->wherePivot('employee_id', $user->id)->wherePivot('step', 'marketing');
+		$proposition   = BookProposition::withTrashed()->with(['editors' => function($query) use ($user, $step) {
+			$query->wherePivot('employee_id', $user->id)->where(function ($query) use ($step) {
+				$query->where('pivot_proposition_user_tasks.step', $step)->orWhere('pivot_proposition_user_tasks.complete', true);
+			});
 		}])->find( $id );
 		if (!$proposition) {
 			return response()->json(['error' => 'no proposition found'], 404);
