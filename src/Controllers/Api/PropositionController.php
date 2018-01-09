@@ -77,7 +77,7 @@ class PropositionController extends Controller {
 		}
 
 		if (!$user->can('view', $proposition) && !count($proposition->editors)) {
-			return response()->json(['error' => 'not authorized'], 200);
+			return response()->json(['error' => 'not authorized'], 403);
 		}
 
 		$allowed_steps = [
