@@ -49,6 +49,7 @@ class PropositionController extends Controller {
 		$employee = \Auth::user();
 		$proposition->owner()->associate($employee);
 		$proposition->save();
+		$this->setNote( $proposition, $request->input( 'note' ), 'start' );
 		if (!$proposition->productionExpenses->count()) {
 			$expense1 = ProductionExpense::create(['type' => 'budget', 'proposition_id' => $proposition->id]);
 			$expense2 = ProductionExpense::create(['type' => 'expense', 'proposition_id' => $proposition->id, 'parent_id' => $expense1->id]);
