@@ -33,7 +33,7 @@ class PropositionMaintenanceController extends Controller {
 			$task->assignee_id = $employees[0]['id'];
 			$task->name = __('Proposition') . ': ' . $proposition->title;
 			$task->related()->associate( $proposition );
-			$task->description = $request->input('description');
+			$task->description = $request->input('description')?$request->input('description'):'';
 			if ($request->input('access') === 'onepage') {
 				$task->related_link = $request->input('path');
 				$step = $request->input('step');
@@ -43,8 +43,13 @@ class PropositionMaintenanceController extends Controller {
 				$proposition->editors()->attach($employees[0]['id'], ['complete' => true, 'step' => 0]);
 			}
 			$task->status      = 'new';
-			$task->priority = $request->input('priority');
-			$task->deadline = Carbon::createFromFormat('!d. m. Y.', $request->input('date'));
+			$task->priority = $request->input('priority')?$request->input('priority'):'low';
+			if ($request->input('date')) {
+				$task->deadline = Carbon::createFromFormat( '!d. m. Y.', $request->input( 'date' ) );
+			}
+			else {
+				$task->deadline = null;
+			}
 			$task->type     = 1;
 			$task->save();
 			$task->assignNewThread();
@@ -61,15 +66,20 @@ class PropositionMaintenanceController extends Controller {
 		$task->assignee_id = $employees[0]['id'];
 		$task->name = __('Proposition') . ': ' . $proposition->title;
 		$task->related()->associate( $proposition );
-		$task->description = $request->input('description');
+		$task->description = $request->input('description')?$request->input('description'):'';
 		$type = $request->input('dir');
 		$task->related_link = $request->input('path');
 		$task->status      = 'new';
-		$task->priority = $request->input('priority');
-		$task->deadline = Carbon::createFromFormat('!d. m. Y.', $request->input('date'));
+		$task->priority = $request->input('priority')?$request->input('priority'):'low';
+		if ($request->input('date')) {
+			$task->deadline = Carbon::createFromFormat( '!d. m. Y.', $request->input( 'date' ) );
+		}
+		else {
+			$task->deadline = null;
+		}
 		$task->type     = 1;
 		$step = $request->input('step');
-		$proposition->editors()->attach($employees[0]['id'], ['step' => $step]);
+		$proposition->editors()->attach($employees[0]['id'], ['step' => $step, 'complete' => 0]);
 
 		$task->save();
 		$files = [
