@@ -832,7 +832,7 @@ class PropositionController extends Controller {
 		if (!$user->can('update', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
-		foreach ( $request->input( 'initial' ) as $document ) {
+		foreach ( $request->input( 'files' ) as $document ) {
 			$file        = File::find( $document['id'] );
 			$file->title = $document['title'];
 			$file->save();
