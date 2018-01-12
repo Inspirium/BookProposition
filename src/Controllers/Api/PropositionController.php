@@ -1005,6 +1005,118 @@ class PropositionController extends Controller {
 		}
 	}
 
+	public function getPropDoc(BookProposition $proposition) {
+		$templateProcessor = new TemplateProcessor(resource_path('proposition_template.docx'));
+
+		//WARNING - STEF'S CODE :D
+		//Blades: Proposition start, basic data
+		$templateProcessor->setValue('project_name', $proposition->title); //duplicirano odozgo
+		$templateProcessor->setValue('project_owner', $proposition->title); //Propoziciju kreirao
+		$templateProcessor->setValue('project_number', $proposition->owner->name);
+		$templateProcessor->setValue('project_number_additional', $proposition->owner->name);
+		$templateProcessor->setValue('book_title', $proposition->owner->name);
+		$templateProcessor->setValue('author', $proposition->owner->name); //Popis autora
+		$templateProcessor->setValue('concept', $proposition->owner->name);
+		$templateProcessor->setValue('manuscript', $proposition->owner->name); //Dostavljen ili Nije dostavljen
+		$templateProcessor->setValue('dotation', $proposition->owner->name); //Da ili ne
+		$templateProcessor->setValue('dotation_source', $proposition->owner->name); //"Nema podatka" ako nema
+		$templateProcessor->setValue('dotation_amount', $proposition->owner->name); //"Nema podatka" ako nema
+		$templateProcessor->setValue('project_extensions', $proposition->owner->name); //popis dodatnih mogućnosti na kraju "osnovnih podataka"
+		$templateProcessor->setValue('project_deadline', $proposition->owner->name);
+		$templateProcessor->setValue('project_importance', $proposition->owner->name);
+		$templateProcessor->setValue('note_basic_data', $proposition->owner->name);
+
+		//Blades: categorization
+		$templateProcessor->setValue('supergroup', $proposition->owner->name);
+		$templateProcessor->setValue('upgroup', $proposition->owner->name);
+		$templateProcessor->setValue('group', $proposition->owner->name);
+		$templateProcessor->setValue('book_type_basic_group', $proposition->owner->name);
+		$templateProcessor->setValue('book_type_group', $proposition->owner->name);
+		$templateProcessor->setValue('school_type', $proposition->owner->name);
+		$templateProcessor->setValue('reading_list', $proposition->owner->name);
+		$templateProcessor->setValue('primary_school', $proposition->owner->name);
+		$templateProcessor->setValue('secondary_school', $proposition->owner->name);
+		$templateProcessor->setValue('Bibliotheca', $proposition->owner->name);
+		$templateProcessor->setValue('note_categorisation', $proposition->owner->name);
+
+		//Blades: marketing potential
+		$templateProcessor->setValue('target_group', $proposition->owner->name);
+		$templateProcessor->setValue('note_marketing_potential', $proposition->owner->name);
+
+		//Blades: technical data
+		$templateProcessor->setValue('circulation', $offer->title);
+		$templateProcessor->setValue('additionals', $proposition->owner->name);
+		$templateProcessor->setValue('pages_number', $proposition->owner->name);
+		$templateProcessor->setValue('width', $proposition->owner->name);
+		$templateProcessor->setValue('height', $proposition->owner->name);
+		$templateProcessor->setValue('pages_binding', $proposition->owner->name);
+		$templateProcessor->setValue('paper_type', $proposition->owner->name);
+		$templateProcessor->setValue('colors', $proposition->owner->name);
+		$templateProcessor->setValue('colors_first_pages', $proposition->owner->name);
+		$templateProcessor->setValue('colors_last_pages', $proposition->owner->name);
+		$templateProcessor->setValue('additional_request', $proposition->owner->name);
+		$templateProcessor->setValue('cover_paper_type', $proposition->owner->name);
+		$templateProcessor->setValue('cover_colors', $proposition->owner->name);
+		$templateProcessor->setValue('plastification', $proposition->owner->name);
+		$templateProcessor->setValue('film_print', $proposition->owner->name);
+		$templateProcessor->setValue('blind_print', $proposition->owner->name);
+		$templateProcessor->setValue('uv_plastification', $proposition->owner->name);
+		$templateProcessor->setValue('note_technical_data', $proposition->owner->name);
+
+		//Blades: author expence; Koliko autora toliko zapisa - ovaj "count" samo stavio kao placeholder za brojku indentifikatora
+		$templateProcessor->setValue('author_count', $proposition->owner->name);
+		$templateProcessor->setValue('author_count_expense', $proposition->owner->name);
+		$templateProcessor->setValue('author_count_precentage ', $proposition->owner->name);
+		$templateProcessor->setValue('author_count_advance ', $proposition->owner->name);
+		$templateProcessor->setValue('author_count_aditional', $proposition->owner->name);
+		$templateProcessor->setValue('expense_name_count', $proposition->owner->name);
+		$templateProcessor->setValue('expense_amount_count', $proposition->owner->name);
+
+		//Blades: production expense
+		$templateProcessor->setValue('text_price', $proposition->owner->name);
+		$templateProcessor->setValue('advance_expence', $proposition->owner->name);
+		$templateProcessor->setValue('precentage_netto_price', $proposition->owner->name);
+		$templateProcessor->setValue('revision', $proposition->owner->name);
+		$templateProcessor->setValue('lecture', $proposition->owner->name);
+		$templateProcessor->setValue('correction', $proposition->owner->name);
+		$templateProcessor->setValue('proofreading ', $proposition->owner->name);
+		$templateProcessor->setValue('translation', $proposition->owner->name);
+		$templateProcessor->setValue('index', $proposition->owner->name);
+		$templateProcessor->setValue('epilogue', $proposition->owner->name);
+		$templateProcessor->setValue('photo', $proposition->owner->name);
+		$templateProcessor->setValue('illustration', $proposition->owner->name);
+		$templateProcessor->setValue('technical_drawings', $proposition->owner->name);
+		$templateProcessor->setValue('expert_revision', $proposition->owner->name);
+		$templateProcessor->setValue('copyright', $proposition->owner->name);
+		$templateProcessor->setValue('copyight_middleman', $proposition->owner->name);
+		$templateProcessor->setValue('methodical_instrumentarium', $proposition->owner->name);
+		$templateProcessor->setValue('selection', $proposition->owner->name);
+		$templateProcessor->setValue('powerpoint', $proposition->owner->name);
+		$templateProcessor->setValue('additional_expense_production', $proposition->owner->name);
+		$templateProcessor->setValue('additional_expense_production_amount', $proposition->owner->name);
+		$templateProcessor->setValue('note_production_expence', $proposition->owner->name);
+
+		//Blades: marketing expense
+		$templateProcessor->setValue('marketing_expense', $proposition->owner->name);
+		$templateProcessor->setValue('additional_expense_marketing', $proposition->owner->name);
+		$templateProcessor->setValue('additional_expense_marketing_amount', $proposition->owner->name);
+		$templateProcessor->setValue('note_marketing_expense', $proposition->owner->name);
+
+		//Blades: Layout and design expense
+		$templateProcessor->setValue('layout_expense', $proposition->owner->name);
+		$templateProcessor->setValue('note_layout_expense', $proposition->owner->name);
+		$templateProcessor->setValue('design_expense ', $proposition->owner->name);
+		$templateProcessor->setValue('note_design_expense ', $proposition->owner->name);
+
+
+		//End of Stef's code :D
+
+		$templateProcessor->saveAs(storage_path("propositions/prop-{$proposition->id}.docx"));//TODO: without saving
+
+		return response()->download( storage_path( "propositions/prop-{$proposition->id}.docx" ) );
+
+	}
+
 	public function postWarehouse(Request $request, $id) {
 		//set prop to archive
 		$proposition = BookProposition::find($id);
