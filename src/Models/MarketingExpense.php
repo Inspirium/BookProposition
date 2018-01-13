@@ -3,6 +3,7 @@
 namespace Inspirium\BookProposition\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * Inspirium\BookProposition\Models\MarketingExpense
@@ -31,7 +32,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Inspirium\BookProposition\Models\MarketingExpense|null $parent
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\MarketingExpense whereParentId($value)
  */
-class MarketingExpense extends Model {
+class MarketingExpense extends Model implements Auditable {
+
+	use \OwenIt\Auditing\Auditable;
+
 	protected $table = 'marketing_expenses';
 
 	protected $fillable = ['type', 'proposition_id', 'parent_id'];

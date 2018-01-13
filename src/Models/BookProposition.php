@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Inspirium\Models\BookManagement\Book;
 use Inspirium\FileManagement\Models\File;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * Inspirium\BookProposition\Models\BookProposition
@@ -205,8 +206,8 @@ use Inspirium\FileManagement\Models\File;
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\BookProposition wherePriceSecondYear($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\BookProposition whereRetailPrice($value)
  */
-class BookProposition extends Model {
-    use SoftDeletes;
+class BookProposition extends Model implements Auditable {
+    use SoftDeletes, \OwenIt\Auditing\Auditable;
 
     protected $table = 'propositions';
 

@@ -3,6 +3,7 @@
 namespace Inspirium\BookProposition\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * Inspirium\BookProposition\Models\ProductionExpense
@@ -93,7 +94,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $distribution_margin
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ProductionExpense whereDistributionMargin($value)
  */
-class ProductionExpense extends Model {
+class ProductionExpense extends Model implements Auditable {
+
+	use \OwenIt\Auditing\Auditable;
+
 	protected $table = 'production_expenses';
 
 	protected $fillable = ['type', 'parent_id', 'proposition_id'];

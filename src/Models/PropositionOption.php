@@ -4,6 +4,7 @@ namespace Inspirium\BookProposition\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * Inspirium\BookProposition\Models\PropositionOption
@@ -68,7 +69,10 @@ use Illuminate\Support\Facades\Schema;
  * @property int $is_final
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\PropositionOption whereIsFinal($value)
  */
-class PropositionOption extends Model {
+class PropositionOption extends Model implements Auditable {
+
+	use \OwenIt\Auditing\Auditable;
+	
 	protected $table = 'proposition_options';
 
 	protected $guarded = [];

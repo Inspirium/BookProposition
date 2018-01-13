@@ -3,6 +3,7 @@ namespace Inspirium\BookProposition\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * Inspirium\BookProposition\Models\ApprovalRequest
@@ -50,9 +51,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\ApprovalRequest whereStatus($value)
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\TaskManagement\Models\Task[] $tasks
  */
-class ApprovalRequest extends Model {
+class ApprovalRequest extends Model implements Auditable {
 
-	use SoftDeletes;
+	use SoftDeletes, \OwenIt\Auditing\Auditable;
 
 	protected $table = 'approval_requests';
 

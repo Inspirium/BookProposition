@@ -3,6 +3,7 @@
 namespace Inspirium\BookProposition\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * Inspirium\BookProposition\Models\AuthorExpense
@@ -38,7 +39,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Inspirium\BookProposition\Models\AuthorExpense|null $parent
  * @method static \Illuminate\Database\Eloquent\Builder|\Inspirium\BookProposition\Models\AuthorExpense whereParentId($value)
  */
-class AuthorExpense extends Model {
+class AuthorExpense extends Model implements Auditable {
+
+	use \OwenIt\Auditing\Auditable;
+
     protected $table = 'author_expenses';
 
     protected $guarded = [];
