@@ -61,7 +61,7 @@ class ApprovalRequestAccepted extends Notification
 		    'title' => __('Approval Request has been accepted'),
 		    'message' => __(':requestee has accepted your request in :related', ['requestee' => $this->request->requestee->name, 'related' => $this->request->proposition->project_name]),
 		    'link' => '/proposition/'.$this->request->proposition->id. '/expenses/compare',
-		    'tasktype' => __('cost'),
+		    'tasktype' => [ 'title' => __('Proposition Approval'), 'className' => 'tasktype-5'],
 		    'sender' => [
 			    'name' => $this->request->requestee->name,
 			    'image' => $this->request->requestee->image,

@@ -62,7 +62,7 @@ class PropositionAccepted extends Notification
 		    'title' => __('Proposition has been accepted'),
 		    'message' => __(':requestee has accepted your request: :related', ['requestee' => $this->task->assignee->name, 'related' => $this->task->related->project_name]),
 		    'link' => '/proposition/'.$this->task->related->id. '/edit/start',
-		    'tasktype' => __('approval'),
+		    'tasktype' => [ 'title' => __('Approval Request'), 'className' => 'tasktype-3'],
 		    'sender' => [
 			    'name' => $this->task->assignee->name,
 			    'image' => $this->task->assignee->image,
