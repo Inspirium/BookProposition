@@ -114,14 +114,20 @@ class PropositionController extends Controller {
 			}
 		}
 
-		$out['proposition_id']         = $proposition->id;
-		$out['created_at'] = $proposition->created_at;
-		$out['updated_at'] = $proposition->updated_at;
-		$out['deleted_at'] = $proposition->deleted_at;
-		$out['owner']      = $proposition->owner;
-		$out['type']      = $type;
+		if (is_array($out)) {
 
-		return response()->json( $out );
+			$out['proposition_id'] = $proposition->id;
+			$out['created_at']     = $proposition->created_at;
+			$out['updated_at']     = $proposition->updated_at;
+			$out['deleted_at']     = $proposition->deleted_at;
+			$out['owner']          = $proposition->owner;
+			$out['type']           = $type;
+
+			return response()->json( $out );
+		}
+		else {
+			return $out;
+		}
 	}
 
 	public function setPropositionStep( Request $request, $id, $step, $type = null ) {
@@ -421,10 +427,15 @@ class PropositionController extends Controller {
 	}
 
 	private function getPrint( BookProposition $proposition ) {
-		return [
-			'offers' => $proposition->offers,
-			'note'   => $this->getNote( $proposition, 'print' )
-		];
+		if (count($proposition->offers)) {
+			return [
+				'offers' => $proposition->offers,
+				'note'   => $this->getNote( $proposition, 'print' )
+			];
+		}
+		else {
+			return response()->json(['error' => 'data missing'], 412);
+		}
 	}
 
 	private function setPrint( Request $request, BookProposition $proposition ) {
@@ -665,6 +676,10 @@ class PropositionController extends Controller {
 
 	private function getLayoutExpense( BookProposition $proposition, $type ) {
 		$expense = $proposition->productionExpenses()->where('type' , '=', $type)->first();
+		$group = $proposition->bookCategories()->with( 'parent.parent' )->first();
+		if (!$group) {
+			return response()->json(['error' => 'data missing'], 412);
+		}
 		return [
 			'layout_complexity'         => $expense->layout_complexity,
 			'layout_include'            => $expense->layout_include,
@@ -678,7 +693,7 @@ class PropositionController extends Controller {
 			'photos_amount'             => $expense->photos_amount,
 			'illustrations_amount'      => $expense->illustrations_amount,
 			'technical_drawings_amount' => $expense->technical_drawings_amount,
-			'group'                     => $proposition->bookCategories()->with( 'parent.parent' )->first(),
+			'group'                     => $group,
 		];
 	}
 
