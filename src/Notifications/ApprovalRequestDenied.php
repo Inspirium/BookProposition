@@ -62,7 +62,7 @@ class ApprovalRequestDenied extends Notification
 		    'title' => __('Approval Request has been denied'),
 		    'message' => __(':requestee has denied your request in :related', ['requestee' => $this->request->requestee->name, 'related' => $this->request->proposition->project_name]),
 		    'link' => '/proposition/'.$this->request->proposition->id. '/expenses/compare',
-		    'tasktype' => [ 'title' => __('Approval Request'), 'className' => 'tasktype-3'],
+		    'tasktype' => $this->request->tasks[0]->formatted_type,
 		    'sender' => [
 			    'name' => $this->request->requestee->name,
 			    'image' => $this->request->requestee->image,
