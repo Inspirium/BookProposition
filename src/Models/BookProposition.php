@@ -5,8 +5,6 @@ namespace Inspirium\BookProposition\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Inspirium\Models\BookManagement\Book;
-use Inspirium\FileManagement\Models\File;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**

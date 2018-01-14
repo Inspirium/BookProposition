@@ -157,7 +157,13 @@ class ProductionExpense extends Model implements Auditable {
 			5 => 1.6
 		];
 		$this->load('proposition');
-		$coefficient = $this->proposition->bookCategories()->with('parent')->first()->parent->coefficient / 60;
+		$group = $this->proposition->bookCategories()->with('parent')->first();
+		if ($group) {
+			$coefficient = $group->parent->coefficient / 60;
+		}
+		else {
+			$coefficient = 1;
+		}
 		$number_of_hours = ($coefficient * $this->proposition->number_of_pages + $this->photos_amount/30 + $this->illustrations_amount/30 + $this->technical_drawings_amount/30) * $lcomplexity[$lc];
 
 		if ($this->layout_exact_price) {
@@ -194,7 +200,7 @@ class ProductionExpense extends Model implements Auditable {
 				$a->load('child');
 				if (!$a->child && !$a->parent) {
 					$e = AdditionalExpense::create(['expense' => $a->expense, 'connection_id' => $this->id, 'connection_type' => $a->connection_type, 'parent_id' => $a->id]);
-					$e->parent = $a;
+					$e->parent()->associate($a);
 					$this->additionalExpenses->push($e);
 				}
 			}
