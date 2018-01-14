@@ -77,7 +77,7 @@ class PropositionMaintenanceController extends Controller {
 		else {
 			$task->deadline = null;
 		}
-		$task->type     = 1;
+		$task->type     = 4;
 		$step = $request->input('step');
 		$proposition->editors()->attach($employees[0]['id'], ['step' => $step, 'complete' => 0]);
 
