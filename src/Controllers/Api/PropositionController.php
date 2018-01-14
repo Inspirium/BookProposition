@@ -784,7 +784,6 @@ class PropositionController extends Controller {
 		];
 	}
 
-
 	private function setCalculation(Request $request, BookProposition $proposition ) {
 		foreach ($request->input('offers') as $offer) {
 			$option = PropositionOption::find($offer['id']);

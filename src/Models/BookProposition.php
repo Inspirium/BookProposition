@@ -545,6 +545,6 @@ class BookProposition extends Model implements Auditable {
     	if (!$value) {
     		return [];
 	    }
-	    return $value;
+	    return json_decode($value);
 	}
 }
