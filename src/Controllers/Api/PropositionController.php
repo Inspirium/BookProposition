@@ -532,7 +532,7 @@ class PropositionController extends Controller {
 			$proposition->authorOtherExpenses()->save($o);
 		}
 		if ($proposition->authorOtherExpenses && $other_expenses) {
-			foreach ( $proposition->authorOtherExpenses as $o ) {
+			foreach ( $proposition->authorOtherExpenses()->where('type', 'author_other_expense_'. $type)->get() as $o ) {
 				if ( ! in_array( $o->id, $other_expenses ) ) {
 					$o->delete();
 				}
