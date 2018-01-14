@@ -798,7 +798,9 @@ class PropositionController extends Controller {
 	private function getCompare( BookProposition $proposition ) {
 		$marketing_expense = $proposition->marketingExpenses->keyBy('type');
 		$production_expense = $proposition->productionExpenses->keyBy('type');
-		$authors = $proposition->authors()->with('expenses')->get();
+		$authors = $proposition->authors()->with(['expenses' => function($query) use ($proposition) {
+			$query->where('proposition_id', $proposition->id);
+		}])->get();
 		$requests = $proposition->approvalRequests()->orderBy('updated_at', 'desc')->get()->groupBy('designation');
 		return [
 			'marketing_expense' => $marketing_expense,
