@@ -801,11 +801,16 @@ class PropositionController extends Controller {
 			$query->where('proposition_id', $proposition->id);
 		}])->get();
 		$requests = $proposition->approvalRequests()->orderBy('updated_at', 'desc')->get()->groupBy('designation');
+		$authors_other = [
+			'budget' => $proposition->authorOtherExpenses()->where('type', '=', 'author_other_expense_budget')->get()->sum('amount'),
+			'expense' => $proposition->authorOtherExpenses()->where('type', '=', 'author_other_expense_expense')->get()->sum('amount'),
+		];
 		return [
 			'marketing_expense' => $marketing_expense,
 			'production_expense' => $production_expense,
 			'requests' => $requests,
-			'authors' => $authors
+			'authors' => $authors,
+			'authors_other' => $authors_other
 		];
 	}
 

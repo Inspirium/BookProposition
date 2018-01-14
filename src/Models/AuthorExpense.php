@@ -79,7 +79,7 @@ class AuthorExpense extends Model implements Auditable {
 				$a->load('child');
 				if (!$a->child && !$a->parent) {
 					$e = AdditionalExpense::create(['expense' => $a->expense, 'connection_id' => $this->id, 'connection_type' => $a->connection_type, 'parent_id' => $a->id]);
-					$e->parent = $a;
+					$e->parent()->associate($a);
 					$this->additionalExpenses->push($e);
 				}
 			}
