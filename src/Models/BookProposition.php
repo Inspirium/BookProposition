@@ -540,4 +540,11 @@ class BookProposition extends Model implements Auditable {
 			return __('Print');
 		}
 	}
+
+	public function getAdditionsAttribute($value) {
+    	if (!$value) {
+    		return [];
+	    }
+	    return $value;
+	}
 }

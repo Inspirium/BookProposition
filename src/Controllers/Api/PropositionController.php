@@ -706,8 +706,8 @@ class PropositionController extends Controller {
 		$expense->layout_exact_price = $request->input('layout_exact_price');
 		$expense->design_exact_price = $request->input('design_exact_price');
 		$expense->save();
-		$this->setNote( $proposition, $request->input( 'note' ), 'layout_note_' . $type );
-		$this->setNote( $proposition, $request->input( 'note' ), 'design_note_' . $type );
+		$this->setNote( $proposition, $request->input( 'layout_note' ), 'layout_note_' . $type );
+		$this->setNote( $proposition, $request->input( 'design_note' ), 'design_note_' . $type );
 		return $this->getLayoutExpense($proposition, $type);
 	}
 
