@@ -1149,8 +1149,8 @@ class PropositionController extends Controller {
 			'title' => $proposition->title,
 			'description' => $proposition->concept,
 			'proposition_id' => $proposition->id,
-			'school_level' => $proposition->school_level,
-			'school_assignment' => $proposition->school_assignment,
+			'school_level' => json_encode($proposition->school_level),
+			'school_assignment' => $proposition->school_assignment=='yes'?1:0,
 			'retail_price' => $proposition->retail_price,
 			'number_of_pages' => $proposition->number_of_pages,
 			'width' => $proposition->width,
@@ -1162,9 +1162,9 @@ class PropositionController extends Controller {
 			'cover_type' => $proposition->cover_type,
 			'cover_paper_type' => $proposition->cover_paper_type,
 			'cover_plastification' => $proposition->cover_plastification,
-			'film_print' => $proposition->film_print,
-			'blind_print' => $proposition->blind_print,
-			'uv_print' => $proposition->uv_print,
+			'film_print' => $proposition->film_print=='yes'?1:0,
+			'blind_print' => $proposition->blind_print=='yes'?1:0,
+			'uv_print' => $proposition->uv_print=='yes'?1:0,
 			'book_binding' => $proposition->book_binding,
 			'cover' => $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->first()->link
 		]);
