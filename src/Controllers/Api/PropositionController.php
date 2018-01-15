@@ -298,7 +298,7 @@ class PropositionController extends Controller {
 		return [
 			'group'             => $proposition->bookCategories()->with( 'parent' )->first(),
 			'book_type'         => $proposition->bookTypes()->first(),
-			'school_type'       => $proposition->schoolTypes,
+			'school_type'       => $proposition->schoolTypes->pluck('id'),
 			'school_level'      => $proposition->school_level,
 			'school_assignment' => $proposition->school_assignment,
 			'school_subject'    => $proposition->schoolSubjects()->first(),
