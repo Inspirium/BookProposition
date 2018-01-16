@@ -44,6 +44,7 @@ Route::group(['prefix' => 'proposition'], function() {
 	});
 
 	Route::get('{id}/edit/print/{offer_id}/{doc_type}', 'Api\PropositionController@getOfferDoc');
+	Route::get('{proposition}/edit/start/{doc_type}', 'Api\PropositionController@getPropDoc');
 
 
 	Route::any('{id}/{all}/{step}', function() {
