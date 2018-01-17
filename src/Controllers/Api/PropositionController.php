@@ -987,63 +987,35 @@ class PropositionController extends Controller {
 	}
 
 	public function getOfferDoc($id, $offer_id, $doc_type) {
-		$book_bindings = [
-			'hard' => __('Hard book binding'),
-			'soft' => __('Soft book binding'),
-			'spiral' => __('Spiral book binding'),
-			'none' => __('None')
-		];
-		$colors = [
-			'', 'One Colour', 'Two Colours', 'Three Colours', 'Full Colour', 'Fifth Colour'
-		];
-		$cover = [
-			'none' => __('None'),
-			'hard' => __('Hard Cover'),
-			'soft' => __('Soft Cover'),
-			'both' => __('Hard and Soft Cover')
-		];
-		$plastification = [
-			'none' => __('None'),
-			'glossy' => __('Glossy plastification'),
-			'mat' => __('Mat plastification')
-		];
 		$proposition = BookProposition::find($id);
 		$offer = PropositionOption::find($offer_id);
+		$formatted = $offer->getFormattedStrings();
 		$templateProcessor = new TemplateProcessor(resource_path('print_offer_template.docx'));
 		$templateProcessor->setValue('project_name', $proposition->title);
 		$templateProcessor->setValue('circulation', $offer->title);
 		$templateProcessor->setValue('paper_type', $offer->paper_type);
-		$templateProcessor->setValue('book_binding', $book_bindings[$offer->book_binding]);
-		$templateProcessor->setValue('colors', __($colors[$offer->colors]));
-		$templateProcessor->setValue('colors_first_page', __($colors[$offer->colors_first_page]));
-		$templateProcessor->setValue('colors_last_page', __($colors[$offer->colors_last_page]));
+		$templateProcessor->setValue('book_binding', $formatted['book_binding']);
+		$templateProcessor->setValue('colors', $formatted['colors']);
+		$templateProcessor->setValue('colors_first_page', $formatted['colors_first_page']);
+		$templateProcessor->setValue('colors_last_page', $formatted['colors_last_page']);
 		$templateProcessor->setValue('additional_work', $offer->additional_work);
-		$templateProcessor->setValue('cover_type', $cover[$offer->cover_type]);
+		$templateProcessor->setValue('cover_type', $formatted['cover_type']);
 		$templateProcessor->setValue('hard_cover_circulation', $offer->hard_cover_circulation);
 		$templateProcessor->setValue('soft_cover_circulation', $offer->soft_cover_circulation);
 		$templateProcessor->setValue('cover_paper_type', $offer->cover_paper_type);
-		$templateProcessor->setValue('cover_colors', __($colors[$offer->cover_colors]));
-		$templateProcessor->setValue('cover_plastification', $plastification[$offer->cover_plastification]);
-		$templateProcessor->setValue('film_print', __( ucfirst($offer->film_print) ));
-		$templateProcessor->setValue('blind_print', __( ucfirst($offer->blind_print) ));
-		$templateProcessor->setValue('uv_print', __( ucfirst($offer->uv_print) ));
-		$templateProcessor->setValue('note', $this->getNote( $proposition, 'print' )); //TODO: fix for proper note
+		$templateProcessor->setValue('cover_colors', $formatted['cover_colors']);
+		$templateProcessor->setValue('cover_plastification', $formatted['plastification']);
+		$templateProcessor->setValue('film_print', $formatted['film_print']);
+		$templateProcessor->setValue('blind_print', $formatted['blind_print']);
+		$templateProcessor->setValue('uv_print', $formatted['uv_print']);
+		$templateProcessor->setValue('note', $this->getNote( $proposition, 'print' ));
 		$templateProcessor->setValue('owner', $proposition->owner->name);
 		$templateProcessor->setValue('date', date('d.m.Y.'));
 
 		$templateProcessor->saveAs(storage_path("offers/upit-$offer_id.docx"));//TODO: without saving
+		
+		return response()->download( storage_path( "offers/upit-$offer_id.docx" ) );
 
-		if ($doc_type === 'pdf') {
-			$unoconv = Unoconv::create(array(
-				'timeout'          => 42,
-				'unoconv.binaries' => '/usr/bin/unoconv',
-			));
-			$unoconv->transcode(storage_path( "offers/upit-$offer_id.docx" ), 'pdf', storage_path( "offers/upit-$offer_id.pdf" ));
-			return response()->download( storage_path( "offers/upit-$offer_id.pdf" ) );;
-		}
-		else {
-			return response()->download( storage_path( "offers/upit-$offer_id.docx" ) );
-		}
 	}
 
 	public function getPropDoc(BookProposition $proposition) {

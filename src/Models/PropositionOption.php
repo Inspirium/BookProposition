@@ -127,4 +127,40 @@ class PropositionOption extends Model implements Auditable {
 		return $this;
 	}
 
+	public function getFormattedStrings() {
+		$book_bindings = [
+			'hard' => __('Hard book binding'),
+			'soft' => __('Soft book binding'),
+			'spiral' => __('Spiral book binding'),
+			'none' => __('None')
+		];
+		$colors = [
+			'No data', 'One Colour', 'Two Colours', 'Three Colours', 'Full Colour', 'Fifth Colour'
+		];
+		$cover = [
+			'none' => __('None'),
+			'hard' => __('Hard Cover'),
+			'soft' => __('Soft Cover'),
+			'both' => __('Hard and Soft Cover')
+		];
+		$plastification = [
+			'' => __('No data'),
+			'none' => __('None'),
+			'glossy' => __('Glossy plastification'),
+			'mat' => __('Mat plastification')
+		];
+		return [
+			'book_binding' => $this->book_binding?$book_bindings[$this->book_binding]:__('No data'),
+			'colors' => $this->colors?$colors[$this->colors]:__('No data'),
+			'colors_first_page' => $this->colors?$colors[$this->colors_first_page]:__('No data'),
+			'colors_last_page' => $this->colors?$colors[$this->colors_last_page]:__('No data'),
+			'cover_colors' => $this->colors?$colors[$this->cover_colors]:__('No data'),
+			'cover_type' => $this->cover_type?$cover[$this->cover_type]:__('No data'),
+			'plastification' => $this->cover_plastification?$plastification[$this->cover_plastification]:__('No data'),
+			'film_print' => __( ucfirst($this->film_print) ),
+			'blind_print' => __( ucfirst($this->film_print) ),
+			'uv_print' => __( ucfirst($this->film_print) ),
+		];
+	}
+
 }
