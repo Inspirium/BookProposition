@@ -129,9 +129,9 @@ class PropositionOption extends Model implements Auditable {
 
 	public function getFormattedStrings() {
 		$book_bindings = [
-			'hard' => __('Hard book binding'),
-			'soft' => __('Soft book binding'),
-			'spiral' => __('Spiral book binding'),
+			'stitch' => __('Stitch Binding'),
+			'glue' => __('Glue Binding'),
+			'clasp' => __('Clasp Binding'),
 			'none' => __('None')
 		];
 		$colors = [
