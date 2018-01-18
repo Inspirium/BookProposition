@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inspirium\BookProposition\Models\ApprovalRequest;
 use Inspirium\BookProposition\Models\BookProposition;
+use Inspirium\Models\HumanResources\Employee;
 use Inspirium\TaskManagement\Models\Task;
 
 class PropositionMaintenanceController extends Controller {
@@ -31,6 +32,7 @@ class PropositionMaintenanceController extends Controller {
 			$task      = new Task();
 			$task->assigner()->associate( $assigner );
 			$task->assignee_id = $employees[0]['id'];
+			$assignee = Employee::find($employees[0]['id']);
 			$task->name = __('Proposition') . ': ' . $proposition->title;
 			$task->related()->associate( $proposition );
 			$task->description = $request->input('description')?$request->input('description'):'';
@@ -44,6 +46,8 @@ class PropositionMaintenanceController extends Controller {
 			}
 			$task->status      = 'new';
 			$task->priority = $request->input('priority')?$request->input('priority'):'low';
+			$task->order = $assignee->tasks->count() + 1;
+			$task->new_order = $assignee->tasks->count() + 1;
 			if ($request->input('date')) {
 				$task->deadline = Carbon::createFromFormat( '!d. m. Y.', $request->input( 'date' ) );
 			}
@@ -78,6 +82,9 @@ class PropositionMaintenanceController extends Controller {
 			$task->deadline = null;
 		}
 		$task->type     = 4;
+		$assignee = Employee::find($employees[0]['id']);
+		$task->order = $assignee->tasks->count() + 1;
+		$task->new_order = $assignee->tasks->count() + 1;
 		$step = $request->input('step');
 		$proposition->editors()->attach($employees[0]['id'], ['step' => $step, 'complete' => 0]);
 
@@ -127,6 +134,9 @@ class PropositionMaintenanceController extends Controller {
 		$task->description = $request->input('description');
 		$task->status = 'new';
 		$task->assignee_id = $request->input('employees')[0]['id'];
+		$assignee = Employee::find($request->input('employees')[0]['id']);
+		$task->order = $assignee->tasks->count() + 1;
+		$task->new_order = $assignee->tasks->count() + 1;
 		$task->related()->associate($proposition);
 		$task->save();
 		$task->assignNewThread();
