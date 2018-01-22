@@ -152,14 +152,14 @@ class PropositionOption extends Model implements Auditable {
 		return [
 			'book_binding' => $this->book_binding?$book_bindings[$this->book_binding]:__('No data'),
 			'colors' => $this->colors?$colors[$this->colors]:__('No data'),
-			'colors_first_page' => $this->colors?$colors[$this->colors_first_page]:__('No data'),
-			'colors_last_page' => $this->colors?$colors[$this->colors_last_page]:__('No data'),
-			'cover_colors' => $this->colors?$colors[$this->cover_colors]:__('No data'),
+			'colors_first_page' => $this->colors_first_page?$colors[$this->colors_first_page]:__('No data'),
+			'colors_last_page' => $this->colors_last_page?$colors[$this->colors_last_page]:__('No data'),
+			'cover_colors' => $this->cover_colors?$colors[$this->cover_colors]:__('No data'),
 			'cover_type' => $this->cover_type?$cover[$this->cover_type]:__('No data'),
 			'plastification' => $this->cover_plastification?$plastification[$this->cover_plastification]:__('No data'),
 			'film_print' => __( ucfirst($this->film_print) ),
-			'blind_print' => __( ucfirst($this->film_print) ),
-			'uv_print' => __( ucfirst($this->film_print) ),
+			'blind_print' => __( ucfirst($this->blind_print) ),
+			'uv_print' => __( ucfirst($this->uv_print) ),
 		];
 	}
 
