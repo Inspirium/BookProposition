@@ -17,6 +17,18 @@ class PropositionMaintenanceController extends Controller {
 		return response()->json( [] );
 	}
 
+	public function forceDeleteProposition($id) {
+		$proposition = BookProposition::withTrashed()->find($id);
+		try {
+			$this->authorize( 'forceDelete', $proposition );
+		}
+		catch (AuthorizationException $e) {
+			return response()->json(['error' => 'unauthorized'], 403);
+		}
+		$proposition->forceDelete();
+		return response()->json( [] );
+	}
+
 	public function restoreProposition( $id ) {
 		$proposition = BookProposition::withTrashed()->find( $id );
 		$proposition->restore();

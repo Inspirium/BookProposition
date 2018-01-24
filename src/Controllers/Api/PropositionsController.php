@@ -20,7 +20,7 @@ class PropositionsController extends Controller {
 			                               ->limit($limit)
 			                               ->offset($offset)
 			                               ->get();
-			$total = \DB::table('propositions')->where('status', 'requested')->count();
+			$total = BookProposition::where('status', 'requested')->count();
 		}
 		else {
 			$propositions = BookProposition::where('status', 'requested')
@@ -30,7 +30,7 @@ class PropositionsController extends Controller {
 			                               ->limit($limit)
 			                               ->offset($offset)
 			                               ->get();
-			$total = \DB::table('propositions')->where('status', 'requested')->where('owner_id', $user->id)->count();
+			$total = BookProposition::where('status', 'requested')->where('owner_id', $user->id)->count();
 		}
 
 
@@ -45,11 +45,11 @@ class PropositionsController extends Controller {
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
 			$propositions = BookProposition::where( 'status', 'unfinished' )->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->where('status', 'unfinished')->count();
+			$total = BookProposition::where('status', 'unfinished')->count();
 		}
 		else {
 			$propositions = BookProposition::where( 'status', 'unfinished' )->where( 'owner_id', $user->id )->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->where('status', 'unfinished')->where('owner_id', $user->id)->count();
+			$total = BookProposition::where('status', 'unfinished')->where('owner_id', $user->id)->count();
 		}
 
 		return response()->json(['rows' => $propositions, 'total' => $total]);
@@ -63,11 +63,11 @@ class PropositionsController extends Controller {
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
 			$propositions = BookProposition::where( 'status', 'approved' )->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->where('status', 'approved')->count();
+			$total = BookProposition::where('status', 'approved')->count();
 		}
 		else {
 			$propositions = BookProposition::where( 'status', 'approved' )->where( 'owner_id', $user->id )->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->where('status', 'approved')->where('owner_id', $user->id)->count();
+			$total = BookProposition::where('status', 'approved')->where('owner_id', $user->id)->count();
 		}
 		return response()->json(['rows' => $propositions, 'total' => $total]);
 	}
@@ -80,11 +80,11 @@ class PropositionsController extends Controller {
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
 			$propositions = BookProposition::where( 'status', 'rejected' )->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->where('status', 'rejected')->count();
+			$total = BookProposition::where('status', 'rejected')->count();
 		}
 		else {
 			$propositions = BookProposition::where( 'status', 'rejected' )->where( 'owner_id', $user->id )->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->where('status', 'rejected')->where('owner_id', $user->id)->count();
+			$total = BookProposition::where('status', 'rejected')->where('owner_id', $user->id)->count();
 		}
 		return response()->json(['rows' => $propositions, 'total' => $total]);
 	}
@@ -97,11 +97,11 @@ class PropositionsController extends Controller {
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
 			$propositions = BookProposition::onlyTrashed()->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->whereNotNull('deleted_at')->count();
+			$total = BookProposition::onlyTrashed()->whereNotNull('deleted_at')->count();
 		}
 		else {
 			$propositions = BookProposition::onlyTrashed()->where( 'owner_id', $user->id )->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->whereNotNull('deleted_at')->where('owner_id', $user->id)->count();
+			$total = BookProposition::onlyTrashed()->where('owner_id', $user->id)->count();
 		}
 		return response()->json(['rows' => $propositions, 'total' => $total]);
 	}
@@ -114,11 +114,11 @@ class PropositionsController extends Controller {
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
 			$propositions = BookProposition::where( 'status', 'archived' )->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->where('status', 'archived')->count();
+			$total = BookProposition::where('status', 'archived')->count();
 		}
 		else {
 			$propositions = BookProposition::where( 'status', 'archived' )->where( 'owner_id', $user->id )->orderBy( $sort ? $sort : 'id', $order )->with( 'owner' )->limit( $limit )->offset( $offset )->get();
-			$total = \DB::table('propositions')->where('status', 'archived')->where('owner_id', $user->id)->count();
+			$total = BookProposition::where('status', 'archived')->where('owner_id', $user->id)->count();
 		}
 		return response()->json(['rows' => $propositions, 'total' => $total]);
 	}
