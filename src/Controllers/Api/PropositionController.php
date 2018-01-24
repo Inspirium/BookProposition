@@ -292,6 +292,7 @@ class PropositionController extends Controller {
 		$proposition->authors()->sync( $authors );
 		$proposition->save();
 		$this->setNote( $proposition, $request->input( 'note' ), 'basic_data' );
+		return $this->getBasicData($proposition);
 	}
 
 	private function getCategorization( BookProposition $proposition ) {
@@ -317,6 +318,7 @@ class PropositionController extends Controller {
 		$proposition->bibliotecas()->sync( $request->input( 'biblioteca' ) );
 		$proposition->save();
 		$this->setNote( $proposition, $request->input( 'note' ), 'categorization' );
+		return $this->getCategorization($proposition);
 	}
 
 	private function getMarketPotential( BookProposition $proposition ) {
@@ -339,6 +341,7 @@ class PropositionController extends Controller {
 		}
 		$proposition->save();
 		$this->setNote( $proposition, $request->input( 'note' ), 'market_potential' );
+		return $this->getMarketPotential($proposition);
 	}
 
 	private function getTechnicalData( BookProposition $proposition ) {
@@ -424,6 +427,7 @@ class PropositionController extends Controller {
 		$this->setNote( $proposition, $request->input( 'note' ), 'technical_data' );
 
 		return [ 'circulations' => $out ];
+		return $this->getTechnicalData($proposition);
 	}
 
 	private function getPrint( BookProposition $proposition ) {
@@ -461,6 +465,7 @@ class PropositionController extends Controller {
 			}
 		}
 		$this->setNote( $proposition, $request->input( 'note' ), 'print' );
+		$this->getPrint($proposition);
 	}
 
 	private function getAuthorsExpense( BookProposition $proposition, $type ) {
@@ -757,6 +762,8 @@ class PropositionController extends Controller {
 		$proposition->priority = $request->input( 'priority' );
 		$this->setNote( $proposition, $request->input( 'note' ), 'deadline' );
 		$proposition->save();
+
+		return $this->getDeadline($proposition);
 	}
 
 	private function getCalculation( BookProposition $proposition ) {
@@ -792,6 +799,8 @@ class PropositionController extends Controller {
 			$option->save();
 		}
 		$proposition->save();
+
+		return $this->getCalculation($proposition);
 	}
 
 	private function getCompare( BookProposition $proposition ) {
@@ -872,6 +881,7 @@ class PropositionController extends Controller {
 				] );
 			}
 		}
+		return $this->getFiles($id, $type);
 	}
 
 	public function getMultimedia($id) {
@@ -929,6 +939,8 @@ class PropositionController extends Controller {
 				] );
 			}
 		}
+
+		return $this->getMultimedia($id);
 	}
 
 	public function getMarketing($id) {
@@ -984,6 +996,8 @@ class PropositionController extends Controller {
 				] );
 			}
 		}
+
+		return $this->getMarketing($id);
 	}
 
 	public function getOfferDoc($id, $offer_id, $doc_type) {
@@ -1013,7 +1027,7 @@ class PropositionController extends Controller {
 		$templateProcessor->setValue('date', date('d.m.Y.'));
 
 		$templateProcessor->saveAs(storage_path("offers/upit-$offer_id.docx"));//TODO: without saving
-		
+
 		return response()->download( storage_path( "offers/upit-$offer_id.docx" ) );
 
 	}
