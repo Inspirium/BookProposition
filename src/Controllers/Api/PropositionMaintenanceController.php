@@ -140,7 +140,7 @@ class PropositionMaintenanceController extends Controller {
 		$proposition->save();
 		$task = new Task();
 		$task->type = 5;
-		$task->name = __('Proposition Approval');
+		$task->name = $proposition->title;
 		$assigner = \Auth::user();
 		$task->assigner()->associate($assigner);
 		$task->description = $request->input('description');
