@@ -106,6 +106,11 @@ class ProductionExpense extends Model implements Auditable {
 
 	protected $with = ['additionalExpenses', 'parent'];
 
+	protected $casts = [
+		'layout_exact_price' => 'float',
+		'design_exact_price' => 'float'
+	];
+
 	public function getTotalsAttribute() {
 		$out =  [
 			'text_price' => $this->text_price * $this->text_price_amount,
@@ -134,6 +139,14 @@ class ProductionExpense extends Model implements Auditable {
 	}
 
 	private function calcDesignLayoutExpense() {
+		if (!$this->layout_complexity || !$this->design_complexity) {
+			if ($this->layout_exact_price || $this->design_exact_price) {
+				return $this->layout_exact_price + $this->design_exact_price;
+			}
+			else {
+				return 0;
+			}
+		}
 		$lc = 3;
 		$dc = 3;
 		if ($this->layout_complexity) {
