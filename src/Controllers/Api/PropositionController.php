@@ -196,7 +196,9 @@ class PropositionController extends Controller {
 		$proposition->project_number            = $request->input( 'project_number' );
 		$proposition->project_name              = $request->input( 'project_name' );
 		$proposition->additional_project_number = $request->input( 'additional_project_number' );
-		$proposition->status                    = 'unfinished';
+		if (!$proposition->status) {
+			$proposition->status = 'unfinished';
+		}
 		$employee = Auth::user();
 		$proposition->owner()->associate($employee);
 		$this->setNote( $proposition, $request->input( 'note' ), 'start' );
@@ -209,6 +211,8 @@ class PropositionController extends Controller {
 			$expense1 = MarketingExpense::create(['type' => 'budget', 'proposition_id' => $proposition->id]);
 			$expense2 = MarketingExpense::create(['type' => 'expense', 'proposition_id' => $proposition->id, 'parent_id' => $expense1->id]);
 		}
+
+		return $this->getStart($proposition);
 	}
 
 	private function setNote( BookProposition $proposition, $text, $type ) {
