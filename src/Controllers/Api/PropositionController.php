@@ -483,7 +483,7 @@ class PropositionController extends Controller {
 				}
 			] )->get()->keyBy( 'id' ),
 			'other'   => $proposition->authorOtherExpenses()->where('type', '=', 'author_other_expense_'.$type)->get(),
-			'note'    => $this->getNote( $proposition, 'authors_expense' ),
+			'note'    => $this->getNote( $proposition, 'authors_expense_'.$type ),
 
 		];
 		return $out;
@@ -548,7 +548,7 @@ class PropositionController extends Controller {
 			}
 		}
 		$proposition->save();
-		$this->setNote( $proposition, $request->input( 'note' ), 'authors_expense' );
+		$this->setNote( $proposition, $request->input( 'note' ), 'authors_expense_'.$type );
 
 		return $this->getAuthorsExpense($proposition, $type);
 	}
@@ -906,7 +906,8 @@ class PropositionController extends Controller {
 		return [
 			'webshop' => $this->getNote($proposition, 'webshop'),
 			'jpg' => $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->get(),
-			'psd' => $proposition->documents()->wherePivot( 'type', 'multimedia.psd' )->get()
+			'psd' => $proposition->documents()->wherePivot( 'type', 'multimedia.psd' )->get(),
+			'preview' => $proposition->documents()->wherePivot( 'type', 'multimedia.preview' )->get()
 		];
 	}
 
@@ -943,7 +944,16 @@ class PropositionController extends Controller {
 				] );
 			}
 		}
-
+		foreach ( $request->input( 'preview' ) as $document ) {
+			$file        = File::find( $document['id'] );
+			$file->title = $document['title'];
+			$file->save();
+			if ( ! $proposition->documents()->wherePivot( 'type', 'multimedia.preview' )->get()->contains( $document['id'] ) ) {
+				$proposition->documents()->save( $file, [
+					'type'  => 'multimedia.preview'
+				] );
+			}
+		}
 		return $this->getMultimedia($id);
 	}
 
