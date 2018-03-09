@@ -7,6 +7,7 @@ Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\Boo
 		Route::get('/', 'PropositionController@getProposition');
 		Route::get('init', 'PropositionController@getInitData');
 		Route::post('warehouse', 'PropositionController@postWarehouse');
+		Route::get('warehouse', 'PropositionController@getWarehouse');
 
 		Route::delete('/', 'PropositionMaintenanceController@deleteProposition');
 		Route::delete('/force', 'PropositionMaintenanceController@forceDeleteProposition');

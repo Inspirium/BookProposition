@@ -1160,9 +1160,26 @@ class PropositionController extends Controller {
 
 	}
 
+	public function getWarehouse($id) {
+		$proposition = BookProposition::find($id);
+		$cover = $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->first();
+		if (!$cover) {
+			return response()->json(['validated' => ['cover' => [ 'title' => 'Cover is missing', 'link' => '/proposition/'.$proposition->id.'/additionals/multimedia']]], 422);
+		}
+
+		return response()->json(['validated' => 'success']);
+	}
+
 	public function postWarehouse(Request $request, $id) {
 		//set prop to archive
 		$proposition = BookProposition::find($id);
+		$cover = $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->first();
+		if (!$cover) {
+			return response()->json(['validated' =>
+				                         ['cover' => [ 'title' => 'Cover is missing', 'link' => url('/proposition/'.$proposition->id.'/additionals/multimedia')]
+				                         ]
+			], 422);
+		}
 		$proposition->status = 'archived';
 		$proposition->completed_at = Carbon::now();
 		$proposition->save();
@@ -1188,7 +1205,7 @@ class PropositionController extends Controller {
 			'blind_print' => $proposition->blind_print=='yes'?1:0,
 			'uv_print' => $proposition->uv_print=='yes'?1:0,
 			'book_binding' => $proposition->book_binding,
-			'cover' => $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->first()->link
+			'cover' => $cover->link
 		]);
 		//TODO: sync relations
 		return response()->json(['link' => $book->link]);
