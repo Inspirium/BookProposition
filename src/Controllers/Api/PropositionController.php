@@ -389,8 +389,14 @@ class PropositionController extends Controller {
 		$proposition->blind_print          = $request->input( 'blind_print' );
 		$proposition->uv_print             = $request->input( 'uv_print' );
 		$proposition->additions            = $request->input( 'additions' );
-		//$proposition->circulations = $request->input('circulations');
+
 		$proposition->book_binding = $request->input( 'book_binding' );
+		$proposition->coverpaper_paper_type = $request->input('coverpaper_paper_type');
+		$proposition->coverpaper_colors = $request->input('coverpaper_colors');
+		$proposition->coverpaper_plastification = $request->input('coverpaper_plastification');
+		$proposition->coverpaper_uv_print = $request->input('coverpaper_uv_print');
+		$proposition->coverpaper_blind_print = $request->input('coverpaper_blind_print');
+		$proposition->coverpaper_film_print = $request->input('coverpaper_film_print');
 		$circs                     = [];
 		foreach ( $request->input( 'circulations' ) as $circulation ) {
 			$option = PropositionOption::findOrNew( $circulation['id'] );
@@ -411,6 +417,12 @@ class PropositionController extends Controller {
 			$option->colors_first_page         = $request->input( 'colors_first_page' );
 			$option->colors_last_page          = $request->input( 'color_last_page' );
 			$option->number_of_pages           = $request->input( 'number_of_pages' );
+			$option->coverpaper_paper_type = $request->input('coverpaper_paper_type');
+			$option->coverpaper_colors = $request->input('coverpaper_colors');
+			$option->coverpaper_plastification = $request->input('coverpaper_plastification');
+			$option->coverpaper_uv_print = $request->input('coverpaper_uv_print');
+			$option->coverpaper_blind_print = $request->input('coverpaper_blind_print');
+			$option->coverpaper_film_print = $request->input('coverpaper_film_print');
 			$option->calculated_profit_percent = 18;
 			$option->shop_percent              = 20;
 			$option->vat_percent               = 5;
@@ -431,7 +443,6 @@ class PropositionController extends Controller {
 		$this->setNote( $proposition, $request->input( 'note' ), 'technical_data' );
 
 		return [ 'circulations' => $out ];
-		return $this->getTechnicalData($proposition);
 	}
 
 	private function getPrint( BookProposition $proposition ) {
@@ -442,7 +453,7 @@ class PropositionController extends Controller {
 			];
 		}
 		else {
-			return response()->json(['error' => 'data missing'], 412);
+			return response()->json(['error' => 'data missing', 'message' => __('You need to enter circulations under section *technical data* in order to enable this screen')], 412);
 		}
 	}
 
@@ -687,7 +698,7 @@ class PropositionController extends Controller {
 		$expense = $proposition->productionExpenses()->where('type' , '=', $type)->first();
 		$group = $proposition->bookCategories()->with( 'parent.parent' )->first();
 		if (!$group) {
-			return response()->json(['error' => 'data missing'], 412);
+			return response()->json(['error' => 'data missing', 'message' => __('You need to select the book group in order to enable this screen')], 412);
 		}
 		return [
 			'layout_complexity'         => $expense->layout_complexity,
