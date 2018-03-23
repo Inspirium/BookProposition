@@ -228,7 +228,8 @@ class BookProposition extends Model implements Auditable {
 	    'author_other_expense' => 'array',
 	    'expenses' => 'array',
 	    'price_first_year' => 'array',
-	    'price_second_year' => 'array'
+	    'price_second_year' => 'array',
+	    'step_status' => 'array'
     ];
     protected $appends = ['link', 'step'];
 

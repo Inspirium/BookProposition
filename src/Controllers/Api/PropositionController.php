@@ -178,7 +178,11 @@ class PropositionController extends Controller {
 		}
 		$out['proposition_id'] = $proposition->id;
 		$out['type']      = $type;
-
+		$status = $request->input('step_status');
+		if (!$status) {
+			$status = 'saved';
+		}
+		$this->saveStepStatus($proposition, $step, $status);
 		return response()->json( $out );
 	}
 
@@ -263,7 +267,8 @@ class PropositionController extends Controller {
 		$proposition->dotation          = $request->input( 'dotation' );
 		$proposition->dotation_amount   = $request->input( 'dotation_amount' );
 		$proposition->dotation_origin   = $request->input( 'dotation_origin' );
-		$proposition->manuscript        = $request->input( 'manuscript' );
+		$proposition->manuscript        = $request->input( 'manuscript'
+		);
 
 		foreach ( $request->input( 'manuscript_documents' ) as $document ) {
 			$file        = File::find( $document['id'] );
@@ -859,7 +864,8 @@ class PropositionController extends Controller {
 
 		return [
 			'files' => $proposition->documents()->wherePivot( 'type', $type )->wherePivot( 'final', false )->get(),
-			'final' => $proposition->documents()->wherePivot( 'type', $type )->wherePivot( 'final', true )->get()
+			'final' => $proposition->documents()->wherePivot( 'type', $type )->wherePivot( 'final', true )->get(),
+			'step_status' => $proposition->step_status[$type]?$proposition->step_status[$type]:''
 		];
 	}
 
@@ -873,28 +879,33 @@ class PropositionController extends Controller {
 		if (!$proposition) {
 			return response()->json(['error' => 'no proposition found'], 404);
 		}
-
 		if (!$user->can('update', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
-		foreach ( $request->input( 'files' ) as $document ) {
-			$file        = File::find( $document['id'] );
-			$file->title = $document['title'];
-			$file->save();
-			if ( ! $proposition->documents()->wherePivot( 'type', $type )->get()->contains( $document['id'] ) ) {
-				$proposition->documents()->save( $file, [ 'type' => $type ] );
+		if ($request->has('files')) {
+			foreach ( $request->input( 'files' ) as $document ) {
+				$file        = File::find( $document['id'] );
+				$file->title = $document['title'];
+				$file->save();
+				if ( ! $proposition->documents()->wherePivot( 'type', $type )->get()->contains( $document['id'] ) ) {
+					$proposition->documents()->save( $file, [ 'type' => $type ] );
+				}
 			}
+			foreach ( $request->input( 'final' ) as $document ) {
+				$file        = File::find( $document['id'] );
+				$file->title = $document['title'];
+				$file->save();
+				if ( ! $proposition->documents()->wherePivot( 'type', $type )->get()->contains( $document['id'] ) ) {
+					$proposition->documents()->save( $file, [
+						'type'  => $type,
+						'final' => true
+					] );
+				}
+			}
+			$this->saveStepStatus($proposition, $type, 'uploaded');
 		}
-		foreach ( $request->input( 'final' ) as $document ) {
-			$file        = File::find( $document['id'] );
-			$file->title = $document['title'];
-			$file->save();
-			if ( ! $proposition->documents()->wherePivot( 'type', $type )->get()->contains( $document['id'] ) ) {
-				$proposition->documents()->save( $file, [
-					'type'  => $type,
-					'final' => true
-				] );
-			}
+		if ($request->has('status')) {
+			$this->saveStepStatus($proposition, $type, $request->input('status'));
 		}
 		return $this->getFiles($id, $type);
 	}
@@ -1220,5 +1231,25 @@ class PropositionController extends Controller {
 		]);
 		//TODO: sync relations
 		return response()->json(['link' => $book->link]);
+	}
+
+	/**
+	 * @param BookProposition $proposition
+	 * @param string $step
+	 * @param string $status
+	 *
+	 */
+	public function saveStepStatus(BookProposition $proposition, $step, $status = 'saved') {
+		if (is_array( $proposition->step_status )) {
+			$out = $proposition->step_status;
+			$out[$step] = $status;
+			$proposition->step_status = $out;
+		}
+		else {
+			$proposition->step_status = [
+				$step => $status
+			];
+		}
+		$proposition->save();
 	}
 }
