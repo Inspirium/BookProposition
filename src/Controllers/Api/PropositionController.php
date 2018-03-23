@@ -929,7 +929,8 @@ class PropositionController extends Controller {
 			'webshop' => $this->getNote($proposition, 'webshop'),
 			'jpg' => $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->get(),
 			'psd' => $proposition->documents()->wherePivot( 'type', 'multimedia.psd' )->get(),
-			'preview' => $proposition->documents()->wherePivot( 'type', 'multimedia.preview' )->get()
+			'preview' => $proposition->documents()->wherePivot( 'type', 'multimedia.preview' )->get(),
+			'step_status' => $proposition->step_status[$type]?$proposition->step_status[$type]:''
 		];
 	}
 
@@ -947,33 +948,38 @@ class PropositionController extends Controller {
 		if (!$user->can('update', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
-		$this->setNote($proposition, $request->input('webshop'), 'webshop');
-		foreach ( $request->input( 'jpg' ) as $document ) {
-			$file        = File::find( $document['id'] );
-			$file->title = $document['title'];
-			$file->save();
-			if ( ! $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->get()->contains( $document['id'] ) ) {
-				$proposition->documents()->save( $file, [ 'type' => 'multimedia.jpg' ] );
-			}
+		if ($request->has('status')) {
+			$this->saveStepStatus($proposition, 'multimedia', $request->input('status'));
 		}
-		foreach ( $request->input( 'psd' ) as $document ) {
-			$file        = File::find( $document['id'] );
-			$file->title = $document['title'];
-			$file->save();
-			if ( ! $proposition->documents()->wherePivot( 'type', 'multimedia.psd' )->get()->contains( $document['id'] ) ) {
-				$proposition->documents()->save( $file, [
-					'type'  => 'multimedia.psd'
-				] );
+		else {
+			$this->setNote( $proposition, $request->input( 'webshop' ), 'webshop' );
+			foreach ( $request->input( 'jpg' ) as $document ) {
+				$file        = File::find( $document['id'] );
+				$file->title = $document['title'];
+				$file->save();
+				if ( ! $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->get()->contains( $document['id'] ) ) {
+					$proposition->documents()->save( $file, [ 'type' => 'multimedia.jpg' ] );
+				}
 			}
-		}
-		foreach ( $request->input( 'preview' ) as $document ) {
-			$file        = File::find( $document['id'] );
-			$file->title = $document['title'];
-			$file->save();
-			if ( ! $proposition->documents()->wherePivot( 'type', 'multimedia.preview' )->get()->contains( $document['id'] ) ) {
-				$proposition->documents()->save( $file, [
-					'type'  => 'multimedia.preview'
-				] );
+			foreach ( $request->input( 'psd' ) as $document ) {
+				$file        = File::find( $document['id'] );
+				$file->title = $document['title'];
+				$file->save();
+				if ( ! $proposition->documents()->wherePivot( 'type', 'multimedia.psd' )->get()->contains( $document['id'] ) ) {
+					$proposition->documents()->save( $file, [
+						'type' => 'multimedia.psd'
+					] );
+				}
+			}
+			foreach ( $request->input( 'preview' ) as $document ) {
+				$file        = File::find( $document['id'] );
+				$file->title = $document['title'];
+				$file->save();
+				if ( ! $proposition->documents()->wherePivot( 'type', 'multimedia.preview' )->get()->contains( $document['id'] ) ) {
+					$proposition->documents()->save( $file, [
+						'type' => 'multimedia.preview'
+					] );
+				}
 			}
 		}
 		return $this->getMultimedia($id);
@@ -996,7 +1002,8 @@ class PropositionController extends Controller {
 
 		return [
 			'cover' => $proposition->documents()->wherePivot( 'type', 'marketing.cover' )->get(),
-			'leaflet' => $proposition->documents()->wherePivot( 'type', 'marketing.leaflet' )->get()
+			'leaflet' => $proposition->documents()->wherePivot( 'type', 'marketing.leaflet' )->get(),
+			'step_status' => $proposition->step_status[$type]?$proposition->step_status[$type]:''
 		];
 	}
 
@@ -1014,25 +1021,29 @@ class PropositionController extends Controller {
 		if (!$user->can('update', $proposition) && !count($proposition->editors)) {
 			return response()->json(['error' => 'not authorized'], 403);
 		}
-		foreach ( $request->input( 'cover' ) as $document ) {
-			$file        = File::find( $document['id'] );
-			$file->title = $document['title'];
-			$file->save();
-			if ( ! $proposition->documents()->wherePivot( 'type', 'marketing.cover' )->get()->contains( $document['id'] ) ) {
-				$proposition->documents()->save( $file, [ 'type' => 'marketing.cover' ] );
+		if ($request->has('status')) {
+			$this->saveStepStatus($proposition, 'multimedia', $request->input('status'));
+		}
+		else {
+			foreach ( $request->input( 'cover' ) as $document ) {
+				$file        = File::find( $document['id'] );
+				$file->title = $document['title'];
+				$file->save();
+				if ( ! $proposition->documents()->wherePivot( 'type', 'marketing.cover' )->get()->contains( $document['id'] ) ) {
+					$proposition->documents()->save( $file, [ 'type' => 'marketing.cover' ] );
+				}
+			}
+			foreach ( $request->input( 'leaflet' ) as $document ) {
+				$file        = File::find( $document['id'] );
+				$file->title = $document['title'];
+				$file->save();
+				if ( ! $proposition->documents()->wherePivot( 'type', 'marketing.leaflet' )->get()->contains( $document['id'] ) ) {
+					$proposition->documents()->save( $file, [
+						'type' => 'marketing.leaflet'
+					] );
+				}
 			}
 		}
-		foreach ( $request->input( 'leaflet' ) as $document ) {
-			$file        = File::find( $document['id'] );
-			$file->title = $document['title'];
-			$file->save();
-			if ( ! $proposition->documents()->wherePivot( 'type', 'marketing.leaflet')->get()->contains( $document['id'] ) ) {
-				$proposition->documents()->save( $file, [
-					'type'  => 'marketing.leaflet'
-				] );
-			}
-		}
-
 		return $this->getMarketing($id);
 	}
 
