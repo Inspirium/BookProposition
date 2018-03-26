@@ -764,10 +764,13 @@ class PropositionController extends Controller {
 			'price_first_year' => $proposition->price_first_year,
 			'price_second_year' => $proposition->price_second_year,
 			'retail_price' => $proposition->retail_price,
+			'final_circulation' => $proposition->final_circulation,
+			'final_print_price' => $proposition->final_print_price,
 			'offers' => $proposition->options->mapWithKeys(function($option) {
 				return [$option['id'] => $option['title']];
 			}),
-			'selected_circulation' => $final?$final->id:0
+			'selected_circulation' => $final?$final->id:0,
+			'print_offers' => $proposition->documents()->wherePivot('type', 'print_offers')->get()
 		];
 	}
 
@@ -775,6 +778,8 @@ class PropositionController extends Controller {
 		$proposition->price_first_year = $request->input('price_first_year');
 		$proposition->price_second_year = $request->input('price_second_year');
 		$proposition->retail_price = $request->input('retail_price');
+		$proposition->final_print_price = $request->input('final_print_price');
+		$proposition->final_circulation = $request->input('final_circulation');
 		$proposition->save();
 		$offers = $proposition->options;
 		$selected = $request->input('selected_circulation');
@@ -788,7 +793,14 @@ class PropositionController extends Controller {
 			$one->save();
 		}
 
-
+		foreach ( $request->input( 'print_offers' ) as $document ) {
+			$file        = File::find( $document['id'] );
+			$file->title = $document['title'];
+			$file->save();
+			if ( ! $proposition->documents()->wherePivot( 'type', 'print_offers' )->get()->contains( $document['id'] ) ) {
+				$proposition->documents()->save( $file, [ 'type' => 'print_offers' ] );
+			}
+		}
 	}
 
 	private function setDeadline( Request $request, BookProposition $proposition ) {
