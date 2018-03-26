@@ -182,7 +182,7 @@ class PropositionController extends Controller {
 		if (!$status) {
 			$status = 'saved';
 		}
-		$this->saveStepStatus($proposition, $step, $status);
+		//$this->saveStepStatus($proposition, $step, $status);
 		return response()->json( $out );
 	}
 
