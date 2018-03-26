@@ -345,6 +345,30 @@ class BookProposition extends Model implements Auditable {
 		$this->attributes['blind_print'] = $value==='yes'?1:0;
 	}
 
+	public function getCoverpaperBlindPrintAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setCoverpaperBlindPrintAttribute($value) {
+		$this->attributes['coverpaper_blind_print'] = $value==='yes'?1:0;
+	}
+
+	public function getCoverpaperFilmPrintAttribute($value) {
+		if ($value) {
+			return 'yes';
+		}
+		return 'no';
+	}
+
+	public function setCoverpaperFilmPrintAttribute($value) {
+		$this->attributes['coverpaper_film_print'] = $value==='yes'?1:0;
+	}
+
+
+
 	public function getLayoutIncludeAttribute($value) {
 		if ($value) {
 			return 'yes';

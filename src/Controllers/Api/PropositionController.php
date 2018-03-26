@@ -256,6 +256,7 @@ class PropositionController extends Controller {
 			'dotation_origin'      => $proposition->dotation_origin,
 			'manuscript'           => $proposition->manuscript,
 			'manuscript_documents' => $proposition->documents()->wherePivot( 'type', 'manuscript' )->get(),
+			'questionnaire' => $proposition->documents()->wherePivot('type', 'questionnaire')->get(),
 			'note'                 => $this->getNote( $proposition, 'basic_data' )
 		];
 	}
@@ -278,8 +279,15 @@ class PropositionController extends Controller {
 				$proposition->documents()->save( $file, [ 'type' => 'manuscript' ] );
 			}
 		}
+		foreach ( $request->input( 'questionnaire' ) as $document ) {
+			$file        = File::find( $document['id'] );
+			$file->title = $document['title'];
+			$file->save();
+			if ( ! $proposition->documents()->wherePivot( 'type', 'questionnaire' )->get()->contains( $document['id'] ) ) {
+				$proposition->documents()->save( $file, [ 'type' => 'questionnaire' ] );
+			}
+		}
 		$authors  = [];
-		$expenses = [];
 		foreach ( $request->input( 'authors' ) as $author ) {
 			$authors[] = $author['id'];
 			if ( ! $proposition->authorExpenses->contains( $author['id'] ) ) {
@@ -373,6 +381,12 @@ class PropositionController extends Controller {
 			'film_print'           => $proposition->film_print,
 			'blind_print'          => $proposition->blind_print,
 			'uv_print'             => $proposition->uv_print,
+			'coverpaper_paper_type'     => $proposition->coverpaper_paper_type,
+			'coverpaper_colors'         => $proposition->coverpaper_colors,
+			'coverpaper_plastification' => $proposition->coverpaper_plastification,
+			'coverpaper_film_print'           => $proposition->coverpaper_film_print,
+			'coverpaper_blind_print'          => $proposition->coverpaper_blind_print,
+			'coverpaper_uv_print'             => $proposition->coverpaper_uv_print,
 			'note'                 => $this->getNote( $proposition, 'technical_data' )
 		];
 	}
@@ -390,8 +404,8 @@ class PropositionController extends Controller {
 		$proposition->cover_paper_type     = $request->input( 'cover_paper_type' );
 		$proposition->cover_colors         = $request->input( 'cover_colors' );
 		$proposition->cover_plastification = $request->input( 'cover_plastification' );
-		$proposition->film_print           = $request->input( 'film_print' );
-		$proposition->blind_print          = $request->input( 'blind_print' );
+		$proposition->film_print           = $request->input( 'film_print' )==='yes';
+		$proposition->blind_print          = $request->input( 'blind_print' )==='yes';
 		$proposition->uv_print             = $request->input( 'uv_print' );
 		$proposition->additions            = $request->input( 'additions' );
 
@@ -865,7 +879,7 @@ class PropositionController extends Controller {
 		return [
 			'files' => $proposition->documents()->wherePivot( 'type', $type )->wherePivot( 'final', false )->get(),
 			'final' => $proposition->documents()->wherePivot( 'type', $type )->wherePivot( 'final', true )->get(),
-			'step_status' => $proposition->step_status[$type]?$proposition->step_status[$type]:''
+			'step_status' => isset($proposition->step_status[$type])?$proposition->step_status[$type]:''
 		];
 	}
 
