@@ -171,6 +171,13 @@ class PropositionOption extends Model implements Auditable {
 			'film_print' => __( ucfirst($this->film_print) ),
 			'blind_print' => __( ucfirst($this->blind_print) ),
 			'uv_print' => __( ucfirst($this->uv_print) ),
+
+			'coverpaper_colors' => $this->coverpaper_colors?$colors[$this->coverpaper_colors]:__('No data'),
+			'coverpaper_paper_type' => $this->coverpaper_paper_type?$cover[$this->coverpaper_paper_type]:__('No data'),
+			'coverpaper_plastification' => $this->coverpaper_plastification?$plastification[$this->coverpaper_plastification]:__('No data'),
+			'coverpaper_film_print' => __( ucfirst($this->coverpaper_film_print) ),
+			'coverpaper_blind_print' => __( ucfirst($this->coverpaper_blind_print) ),
+			'coverpaper_uv_print' => __( ucfirst($this->coverpaper_uv_print) ),
 		];
 	}
 

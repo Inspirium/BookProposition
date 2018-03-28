@@ -1096,12 +1096,12 @@ class PropositionController extends Controller {
 		$templateProcessor->setValue('blind_print', $formatted['blind_print']);
 		$templateProcessor->setValue('uv_print', $formatted['uv_print']);
 
-		$templateProcessor->setValue('coverpaper_paper_type', $offer->cover_paper_type);
-		$templateProcessor->setValue('coverpaper_colors', $formatted['cover_colors']);
-		$templateProcessor->setValue('coverpaper_plastification', $formatted['plastification']);
-		$templateProcessor->setValue('coverpaper_film_print', $formatted['film_print']);
-		$templateProcessor->setValue('coverpaper_blind_print', $formatted['blind_print']);
-		$templateProcessor->setValue('coverpaper_uv_print', $formatted['uv_print']);
+		$templateProcessor->setValue('coverpaper_paper_type', $offer->coverpaper_paper_type);
+		$templateProcessor->setValue('coverpaper_colors', $formatted['coverpaper_colors']);
+		$templateProcessor->setValue('coverpaper_plastification', $formatted['coverpaper_plastification']);
+		$templateProcessor->setValue('coverpaper_film_print', $formatted['coverpaper_film_print']);
+		$templateProcessor->setValue('coverpaper_blind_print', $formatted['coverpaper_blind_print']);
+		$templateProcessor->setValue('coverpaper_uv_print', $formatted['coverpaper_uv_print']);
 
 		$templateProcessor->setValue('note', $this->getNote( $proposition, 'print' ));
 		$templateProcessor->setValue('owner', $proposition->owner->name);
