@@ -146,13 +146,14 @@ class PropositionOption extends Model implements Auditable {
 			'none' => __('None')
 		];
 		$colors = [
-			'No data', 'One Colour', 'Two Colours', 'Three Colours', 'Full Colour', 'Fifth Colour'
+			'No data', 'No Colour', 'Only One Colour', 'Only Two Colours', 'Only Three Colours', 'Only Four Colours', 'One Colour', 'Two Colours', 'Three Colours', 'Full Colour'
 		];
 		$cover = [
 			'none' => __('None'),
 			'hard' => __('Hard Cover'),
 			'soft' => __('Soft Cover'),
-			'both' => __('Hard and Soft Cover')
+			'both' => __('Hard and Soft Cover'),
+			'flex' => __('Flex Cover')
 		];
 		$plastification = [
 			'' => __('No data'),
