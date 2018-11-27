@@ -203,8 +203,10 @@ class PropositionController extends Controller {
 		if (!$proposition->status) {
 			$proposition->status = 'unfinished';
 		}
-		$employee = Auth::user();
-		$proposition->owner()->associate($employee);
+		if (!$proposition->owner) {
+            $employee = Auth::user();
+            $proposition->owner()->associate($employee);
+        }
 		$this->setNote( $proposition, $request->input( 'note' ), 'start' );
 		$proposition->save();
 		if (!$proposition->productionExpenses->count()) {
