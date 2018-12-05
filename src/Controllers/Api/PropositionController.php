@@ -1031,7 +1031,7 @@ class PropositionController extends Controller {
 		return [
 			'cover' => $proposition->documents()->wherePivot( 'type', 'marketing.cover' )->get(),
 			'leaflet' => $proposition->documents()->wherePivot( 'type', 'marketing.leaflet' )->get(),
-			'step_status' => $proposition->step_status['marketing']?$proposition->step_status['marketing']:''
+			'step_status' => isset($proposition->step_status['marketing'])?$proposition->step_status['marketing']:''
 		];
 	}
 
