@@ -958,7 +958,7 @@ class PropositionController extends Controller {
 			'jpg' => $proposition->documents()->wherePivot( 'type', 'multimedia.jpg' )->get(),
 			'psd' => $proposition->documents()->wherePivot( 'type', 'multimedia.psd' )->get(),
 			'preview' => $proposition->documents()->wherePivot( 'type', 'multimedia.preview' )->get(),
-			'step_status' => $proposition->step_status['multimedia']?$proposition->step_status['multimedia']:''
+			'step_status' => isset($proposition->step_status['multimedia'])?$proposition->step_status['multimedia']:''
 		];
 	}
 
