@@ -94,6 +94,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\BookBiblioteca[] $bibliotecas
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\BookCategory[] $bookCategories
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\BookType[] $bookTypes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\Models\BookManagement\BookTender[] $bookTenders
  * @property-read \Illuminate\Database\Eloquent\Collection|\Inspirium\FileManagement\Models\File[] $documents
  * @property-read mixed $offers
  * @property-read mixed $school_type
@@ -279,6 +280,10 @@ class BookProposition extends Model implements Auditable {
 	public function bibliotecas() {
 		return $this->morphToMany('Inspirium\Models\BookManagement\BookBiblioteca', 'connection', 'biblioteca_pivot', 'connection_id', 'biblioteca_id');
 	}
+
+    public function bookTenders() {
+        return $this->morphToMany('Inspirium\Models\BookManagement\BookTender', 'connection', 'book_tender_pivot', 'connection_id', 'book_tender_id');
+    }
 
 	public function bookTypes() {
 		return $this->morphToMany('Inspirium\Models\BookManagement\BookType', 'connection', 'book_type_pivot', 'connection_id', 'book_type_id');

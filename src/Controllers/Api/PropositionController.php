@@ -14,6 +14,7 @@ use Inspirium\BookProposition\Models\ProductionExpense;
 use Inspirium\BookProposition\Models\PropositionNote;
 use Inspirium\BookProposition\Models\PropositionOption;
 use Inspirium\Models\BookManagement\Book;
+use Inspirium\Models\BookManagement\BookTender;
 use Inspirium\Models\FileManagement\File;
 use Inspirium\Models\HumanResources\Employee;
 use PhpOffice\PhpWord\IOFactory;
@@ -323,6 +324,7 @@ class PropositionController extends Controller {
 			'school_assignment' => $proposition->school_assignment,
 			'school_subject'    => $proposition->schoolSubjects()->first(),
 			'biblioteca'        => $proposition->bibliotecas()->first(),
+            'book_tender'       => $proposition->bookTenders()->first(),
 			'note'              => $this->getNote( $proposition, 'categorization' )
 		];
 	}
@@ -334,6 +336,7 @@ class PropositionController extends Controller {
 		$proposition->schoolSubjects()->sync( $request->input( 'school_subject_detailed' ) );
 		$proposition->school_level      = $request->input( 'school_level' );
 		$proposition->school_assignment = $request->input( 'school_assignment' );
+		$proposition->bookTenders()->sync($request->input('book_tender'));
 		$proposition->bibliotecas()->sync( $request->input( 'biblioteca' ) );
 		$proposition->save();
 		$this->setNote( $proposition, $request->input( 'note' ), 'categorization' );
