@@ -34,7 +34,7 @@ class ApprovalRequestAccepted extends Notification
     {
         $notifications = $notifiable->notifications;
         $out = ['database', 'broadcast'];
-        if ( $notifications === 1 || (isset($notifications['task_assigned']) && $notifications['task_assigned'])) {
+        if ( $notifications === 1 || (isset($notifications['approval_request_accepted']) && $notifications['approval_request_accepted'])) {
             $out[] = 'mail';
         }
         return $out;

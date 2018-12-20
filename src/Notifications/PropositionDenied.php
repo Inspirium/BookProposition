@@ -35,7 +35,7 @@ class PropositionDenied extends Notification
     {
         $notifications = $notifiable->notifications;
         $out = ['database', 'broadcast'];
-        if ( $notifications === 1 || (isset($notifications['task_assigned']) && $notifications['task_assigned'])) {
+        if ( $notifications === 1 || (isset($notifications['proposition_denied']) && $notifications['proposition_denied'])) {
             $out[] = 'mail';
         }
         return $out;

@@ -35,7 +35,7 @@ class ApprovalRequestDenied extends Notification
     {
         $notifications = $notifiable->notifications;
         $out = ['database', 'broadcast'];
-        if ( $notifications === 1 || (isset($notifications['task_assigned']) && $notifications['task_assigned'])) {
+        if ( $notifications === 1 || (isset($notifications['approval_request_denied']) && $notifications['approval_request_denied'])) {
             $out[] = 'mail';
         }
         return $out;
