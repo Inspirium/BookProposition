@@ -32,7 +32,7 @@ class ApprovalRequestAccepted extends Notification
      */
     public function via($notifiable)
     {
-        $notifications = $notifiable->notifications;
+        $notifications = $notifiable->notification_settings;
         $out = ['database', 'broadcast'];
         if ( $notifications === 1 || (isset($notifications['approval_request_accepted']) && $notifications['approval_request_accepted'])) {
             $out[] = 'mail';
