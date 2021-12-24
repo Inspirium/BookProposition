@@ -11,6 +11,9 @@ class PropositionsController extends Controller {
 		$limit = $request->input('limit');
 		$offset = $request->input('offset');
 		$order = $request->input('order');
+        if (!$order) {
+            $order = 'asc';
+        }
 		$sort = $request->input('sort');
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
@@ -41,6 +44,9 @@ class PropositionsController extends Controller {
 		$limit = $request->input('limit');
 		$offset = $request->input('offset');
 		$order = $request->input('order');
+        if (!$order) {
+            $order = 'asc';
+        }
 		$sort = $request->input('sort');
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
@@ -59,6 +65,9 @@ class PropositionsController extends Controller {
 		$limit = $request->input('limit');
 		$offset = $request->input('offset');
 		$order = $request->input('order');
+        if (!$order) {
+            $order = 'asc';
+        }
 		$sort = $request->input('sort');
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
@@ -76,6 +85,9 @@ class PropositionsController extends Controller {
 		$limit = $request->input('limit');
 		$offset = $request->input('offset');
 		$order = $request->input('order');
+        if (!$order) {
+            $order = 'asc';
+        }
 		$sort = $request->input('sort');
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
@@ -93,6 +105,9 @@ class PropositionsController extends Controller {
 		$limit = $request->input('limit');
 		$offset = $request->input('offset');
 		$order = $request->input('order');
+        if (!$order) {
+            $order = 'asc';
+        }
 		$sort = $request->input('sort');
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
@@ -110,6 +125,9 @@ class PropositionsController extends Controller {
 		$limit = $request->input('limit');
 		$offset = $request->input('offset');
 		$order = $request->input('order');
+        if (!$order) {
+            $order = 'asc';
+        }
 		$sort = $request->input('sort');
 		$user = \Auth::user();
 		if ($user->hasRole('access_all_propositions')) {
