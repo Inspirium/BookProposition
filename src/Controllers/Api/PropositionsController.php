@@ -7,9 +7,22 @@ use Inspirium\Http\Controllers\Controller;
 
 class PropositionsController extends Controller {
 
+    public function search(Request $request) {
+        $term = $request->input('term');
+        $limit = $request->input('limit', 10);
+        $offset = $request->input('offset', 0);
+        $propositions = BookProposition::where('title', 'like', "%$term%")
+            ->with(['owner'])
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+
+        return response()->json(['rows' => $propositions]);
+    }
+
 	public function approval(Request $request) {
-		$limit = $request->input('limit');
-		$offset = $request->input('offset');
+		$limit = $request->input('limit', 10);
+		$offset = $request->input('offset', 0);
 		$order = $request->input('order');
         if (!$order) {
             $order = 'asc';
@@ -41,8 +54,8 @@ class PropositionsController extends Controller {
 	}
 
 	public function unfinished(Request $request) {
-		$limit = $request->input('limit');
-		$offset = $request->input('offset');
+		$limit = $request->input('limit', 10);
+		$offset = $request->input('offset', 0);
 		$order = $request->input('order');
         if (!$order) {
             $order = 'asc';
@@ -62,8 +75,8 @@ class PropositionsController extends Controller {
 	}
 
 	public function active(Request $request) {
-		$limit = $request->input('limit');
-		$offset = $request->input('offset');
+		$limit = $request->input('limit', 10);
+		$offset = $request->input('offset', 0);
 		$order = $request->input('order');
         if (!$order) {
             $order = 'asc';
@@ -82,8 +95,8 @@ class PropositionsController extends Controller {
 	}
 
 	public function rejected(Request $request) {
-		$limit = $request->input('limit');
-		$offset = $request->input('offset');
+		$limit = $request->input('limit', 10);
+		$offset = $request->input('offset', 0);
 		$order = $request->input('order');
         if (!$order) {
             $order = 'asc';
@@ -102,8 +115,8 @@ class PropositionsController extends Controller {
 	}
 
 	public function deleted(Request $request) {
-		$limit = $request->input('limit');
-		$offset = $request->input('offset');
+		$limit = $request->input('limit', 10);
+		$offset = $request->input('offset', 0);
 		$order = $request->input('order');
         if (!$order) {
             $order = 'asc';
@@ -122,8 +135,8 @@ class PropositionsController extends Controller {
 	}
 
 	public function archive(Request $request) {
-		$limit = $request->input('limit');
-		$offset = $request->input('offset');
+		$limit = $request->input('limit', 10);
+		$offset = $request->input('offset', 0);
 		$order = $request->input('order');
         if (!$order) {
             $order = 'asc';

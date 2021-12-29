@@ -37,4 +37,5 @@ Route::group(['middleware' => ['api', 'auth:api'], 'namespace' => 'Inspirium\Boo
 	Route::post('rejected', 'PropositionsController@rejected');
 	Route::post('deleted', 'PropositionsController@deleted');
 	Route::post('archive', 'PropositionsController@archive');
+    Route::post('search', 'PropositionsController@search');
 });
