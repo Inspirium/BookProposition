@@ -25,4 +25,8 @@ class PropositionNote extends Model {
 	protected $table = 'proposition_notes';
 
 	protected $guarded = [];
+
+    public function proposition() {
+        return $this->belongsTo(BookProposition::class, 'proposition_id');
+    }
 }
