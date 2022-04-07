@@ -1112,7 +1112,14 @@ class PropositionController extends Controller {
 		$templateProcessor->setValue('owner', $proposition->owner->name);
 		$templateProcessor->setValue('date', date('d.m.Y.'));
 
-		$templateProcessor->saveAs(storage_path("offers/upit-$offer_id.docx"));//TODO: without saving
+		//$templateProcessor->saveAs(storage_path("offers/upit-$offer_id.docx"));//TODO: without saving
+
+        $templateProcessor->saveAs("php://output");
+        $contents = ob_get_contents();
+        ob_end_clean();
+        return response()->streamDownload(function () use ($contents) {
+            echo $contents;
+        }, "offers/upit-$offer_id.docx");
 
 		return response()->download( storage_path( "offers/upit-$offer_id.docx" ) );
 
@@ -1136,7 +1143,7 @@ class PropositionController extends Controller {
 		$templateProcessor->setValue('dotation', $proposition->dotation); //Da ili ne
 		$templateProcessor->setValue('dotation_source', $proposition->dotation_origin); //"Nema podatka" ako nema
 		$templateProcessor->setValue('dotation_amount', $proposition->dotation_amount); //"Nema podatka" ako nema
-		$templateProcessor->setValue('project_extensions', $proposition->possible_products); //TODO popis dodatnih mogućnosti na kraju "osnovnih podataka"
+		$templateProcessor->setValue('project_extensions', implode(',', $proposition->possible_products)); //TODO popis dodatnih mogućnosti na kraju "osnovnih podataka"
 		$templateProcessor->setValue('project_deadline', $proposition->deadline);
 		$templateProcessor->setValue('project_importance', $proposition->priority);
 		$templateProcessor->setValue('note_basic_data', $this->getNote($proposition, 'basic_data'));
@@ -1145,13 +1152,13 @@ class PropositionController extends Controller {
 		$templateProcessor->setValue('supergroup', $group->parent->name);
 		$templateProcessor->setValue('upgroup', $group->parent->name);
 		$templateProcessor->setValue('group', $group->name);
-		$templateProcessor->setValue('book_type_basic_group', $book_type->parent->name);
-		$templateProcessor->setValue('book_type_group', $book_type->name);
+		$templateProcessor->setValue('book_type_basic_group', $book_type&&$book_type->parent?$book_type->parent->name:'');
+		$templateProcessor->setValue('book_type_group', $book_type?$book_type->name:'');
 		$templateProcessor->setValue('school_type', $proposition->schoolTypes->implode('name', ', '));
 		$templateProcessor->setValue('reading_list', $proposition->school_assignment);
 		$templateProcessor->setValue('primary_school', implode(',', $proposition->school_level));
 		$templateProcessor->setValue('secondary_school', implode(',', $proposition->school_level));
-		$templateProcessor->setValue('Bibliotheca', $proposition->bibliotecas()->first()->name);
+		$templateProcessor->setValue('Bibliotheca', $proposition->bibliotecas()->first()?$proposition->bibliotecas()->first()->name:'');
 		$templateProcessor->setValue('note_categorisation', $this->getNote($proposition, 'categorization'));
 /*
 		//Blades: marketing potential
@@ -1226,7 +1233,16 @@ class PropositionController extends Controller {
 
 		//End of Stef's code :D
 
-		$templateProcessor->saveAs(storage_path("propositions/prop-{$proposition->id}.docx"));//TODO: without saving
+		//$templateProcessor->saveAs(storage_path("propositions/prop-{$proposition->id}.docx"));//TODO: without saving
+
+
+        ob_start();
+        $templateProcessor->saveAs("php://output");
+        $contents = ob_get_contents();
+        ob_end_clean();
+        return response()->streamDownload(function () use ($contents) {
+            echo $contents;
+        }, "propositions/prop-{$proposition->id}.docx");
 
 		return response()->download( storage_path( "propositions/prop-{$proposition->id}.docx" ) );
 
